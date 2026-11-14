@@ -1,5 +1,7 @@
 # Handoff contract (locked; announce any change in the group chat)
 
+**Tile (agreed Nov 14):** 105.30–105.90°E, 10.40–10.95°N · upper Mekong floodplain, Đồng Tháp side · inside NISAR frame 083 (track 047 desc.) · grid UTM 48N (EPSG:32648), north up · heightmap 2049² · layers 2048² (~30 m/px). Top edge may clip a sliver of Cambodia; kept on purpose.
+
 ```
 handoff/
 ├── terrain/heightmap.r16      16-bit RAW, little-endian, 2049×2049; value = (elev−min)/(max−min)×65535
