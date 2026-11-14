@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-// The "wow" layer on top of OureaSceneBuilder: satellite basemap, DEM normals, diorama base,
-// sky + haze + sun, URP post-processing and glowing check-first beacons.
+// The look layer on top of OureaSceneBuilder, styled after the Urban Sentinel atlas: a clean
+// pale map toned from the satellite basemap, DEM hillshade, a stone diorama base, a light studio
+// background, crisp neutral post-processing and solid score columns on every hamlet.
 // Called once from OureaSceneBuilder.BuildScene; everything it makes lives in Generated/.
 public static class OureaLook
 {
@@ -30,36 +31,33 @@ public static class OureaLook
         var baseGo = new GameObject("Diorama base");
         baseGo.AddComponent<MeshFilter>().sharedMesh = SaveMesh(Skirt(h, n, sizeX, sizeZ, heightScale), GenDir + "/BaseMesh.asset");
         var baseRend = baseGo.AddComponent<MeshRenderer>();
-        baseRend.sharedMaterial = LitMaterial(GenDir + "/Base.mat", new Color(0.13f, 0.10f, 0.08f), 0.1f);
+        baseRend.sharedMaterial = LitMaterial(GenDir + "/Base.mat", new Color(0.80f, 0.78f, 0.74f), 0.15f);
 
-        // 3. Sky, haze, sun
-        var sky = new Material(Shader.Find("Skybox/Procedural"));
-        sky.SetFloat("_SunSize", 0.035f);
-        sky.SetFloat("_AtmosphereThickness", 0.85f);
-        sky.SetColor("_SkyTint", new Color(0.52f, 0.56f, 0.62f));
-        sky.SetColor("_GroundColor", new Color(0.64f, 0.70f, 0.77f)); // below the horizon reads as haze
-        sky.SetFloat("_Exposure", 1.25f);
-        SaveAsset(sky, GenDir + "/Sky.mat");
-        RenderSettings.skybox = sky;
+        // 3. Light studio: flat warm-grey backdrop, a whisper of distance fog, clean white sun
+        var backdrop = new Color(0.905f, 0.898f, 0.878f);
+        RenderSettings.skybox = null;
         RenderSettings.ambientMode = AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.58f, 0.68f, 0.84f);
-        RenderSettings.ambientEquatorColor = new Color(0.50f, 0.52f, 0.50f);
-        RenderSettings.ambientGroundColor = new Color(0.22f, 0.20f, 0.18f);
+        RenderSettings.ambientSkyColor = new Color(0.86f, 0.88f, 0.90f);
+        RenderSettings.ambientEquatorColor = new Color(0.78f, 0.78f, 0.76f);
+        RenderSettings.ambientGroundColor = new Color(0.55f, 0.54f, 0.52f);
         RenderSettings.fog = true;
-        RenderSettings.fogMode = FogMode.ExponentialSquared;
-        RenderSettings.fogColor = new Color(0.70f, 0.77f, 0.84f);
-        RenderSettings.fogDensity = 0.0009f;
+        RenderSettings.fogMode = FogMode.Linear;
+        RenderSettings.fogColor = backdrop;
+        RenderSettings.fogStartDistance = 1400f;
+        RenderSettings.fogEndDistance = 3200f;
 
         if (sun != null)
         {
-            sun.transform.rotation = Quaternion.Euler(34f, -38f, 0f);
-            sun.color = new Color(1f, 0.92f, 0.80f);
-            sun.intensity = 2.1f;
+            sun.transform.rotation = Quaternion.Euler(52f, -32f, 0f);
+            sun.color = new Color(1f, 0.98f, 0.95f);
+            sun.intensity = 1.25f;
             sun.shadows = LightShadows.Soft;
+            sun.shadowStrength = 0.55f;
             RenderSettings.sun = sun;
         }
 
-        cam.clearFlags = CameraClearFlags.Skybox;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = backdrop;
         cam.allowHDR = true;
         cam.allowMSAA = true;
         cam.farClipPlane = 8000f;
@@ -68,25 +66,55 @@ public static class OureaLook
         camData.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
         camData.antialiasingQuality = AntialiasingQuality.High;
 
+        // WebGL uses the PC quality tier (MSAA, soft shadows). Set through the editor so an open
+        // editor doesn't write its in-memory copy back over a hand edit.
+        UseQualityTierForWebGL("PC");
+
         // 4. Post-processing
         var vol = new GameObject("Post FX").AddComponent<Volume>();
         vol.isGlobal = true;
         vol.sharedProfile = PostProfile();
 
-        // 5. Pins glow; top 10 get light columns
+        // 5. Pins stay small and clean; every scored hamlet gets a solid score column
         if (placesRoot != null && placesRoot.childCount > 0)
         {
             var pinMat = placesRoot.GetChild(0).GetComponent<Renderer>().sharedMaterial;
-            pinMat.shader = Shader.Find("Ourea/Beacon");
-            pinMat.SetFloat("_Glow", 1.3f);
+            pinMat.shader = Shader.Find("Universal Render Pipeline/Lit");
+            pinMat.SetFloat("_Smoothness", 0.35f);
             EditorUtility.SetDirty(pinMat);
-            foreach (Transform t in placesRoot)
-                t.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
         }
-        var field = new GameObject("Beacons").AddComponent<BeaconField>();
+        // Re-bind the masks last: imports above can drop the references the builder set.
+        if (app.passes.Count > 0)
+        {
+            var last = app.passes[app.passes.Count - 1].mask;
+            mat.SetTexture("_MaskA", last);
+            mat.SetTexture("_MaskB", last);
+            mat.SetTexture("_MaskBase", app.passes[0].mask);
+            EditorUtility.SetDirty(mat);
+            AssetDatabase.SaveAssetIfDirty(mat);
+        }
+
+        var field = new GameObject("Score columns").AddComponent<BeaconField>();
         field.viewer = app;
-        field.beamMaterial = BeamMaterial(GenDir + "/Beam.mat", false);
-        field.ringMaterial = BeamMaterial(GenDir + "/Ring.mat", true);
+        var colMat = LitMaterial(GenDir + "/Column.mat", Color.white, 0.25f);
+        colMat.SetFloat("_Cull", 0f);  // two-sided, so prism winding never shows holes
+        colMat.doubleSidedGI = true;
+        field.columnMaterial = colMat;
+    }
+
+    static void UseQualityTierForWebGL(string tierName)
+    {
+        int tier = System.Array.IndexOf(QualitySettings.names, tierName);
+        if (tier < 0) return;
+        var so = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset")[0]);
+        var map = so.FindProperty("m_PerPlatformDefaultQuality");
+        for (int i = 0; i < map.arraySize; i++)
+        {
+            var e = map.GetArrayElementAtIndex(i);
+            if (e.FindPropertyRelative("first").stringValue == "WebGL") e.FindPropertyRelative("second").intValue = tier;
+        }
+        so.ApplyModifiedPropertiesWithoutUndo();
+        AssetDatabase.SaveAssets();
     }
 
     // ---------- textures ----------
@@ -102,7 +130,7 @@ public static class OureaLook
         imp.maxTextureSize = 4096;
         imp.wrapMode = TextureWrapMode.Clamp;
         imp.mipmapEnabled = true;
-        imp.anisoLevel = 8;
+        imp.anisoLevel = 16;
         imp.textureCompression = TextureImporterCompression.CompressedHQ;
         imp.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
@@ -199,41 +227,22 @@ public static class OureaLook
         return m;
     }
 
-    static Material BeamMaterial(string path, bool ring)
-    {
-        var m = new Material(Shader.Find("Ourea/Beam"));
-        m.SetFloat("_Ring", ring ? 1f : 0f);
-        m.SetFloat("_Intensity", ring ? 2.2f : 1.4f);
-        SaveAsset(m, path);
-        return m;
-    }
-
     static VolumeProfile PostProfile()
     {
         var p = ScriptableObject.CreateInstance<VolumeProfile>();
         SaveAsset(p, GenDir + "/PostFX.asset");
 
         var tone = p.Add<Tonemapping>(true);
-        tone.mode.Override(TonemappingMode.ACES);
+        tone.mode.Override(TonemappingMode.Neutral);
 
         var bloom = p.Add<Bloom>(true);
-        bloom.threshold.Override(1.05f);
-        bloom.intensity.Override(0.9f);
-        bloom.scatter.Override(0.72f);
-        bloom.highQualityFiltering.Override(true);
+        bloom.threshold.Override(1.2f);
+        bloom.intensity.Override(0.15f);
 
         var grade = p.Add<ColorAdjustments>(true);
-        grade.postExposure.Override(0.35f);
-        grade.contrast.Override(16f);
-        grade.saturation.Override(14f);
-
-        var smh = p.Add<ShadowsMidtonesHighlights>(true);
-        smh.shadows.Override(new Vector4(0.92f, 0.98f, 1.08f, -0.02f));   // cool shadows
-        smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0.02f));  // warm highlights
-
-        var vig = p.Add<Vignette>(true);
-        vig.intensity.Override(0.26f);
-        vig.smoothness.Override(0.45f);
+        grade.postExposure.Override(0.1f);
+        grade.contrast.Override(8f);
+        grade.saturation.Override(6f);
 
         foreach (var c in p.components) AssetDatabase.AddObjectToAsset(c, p);
         EditorUtility.SetDirty(p);

@@ -18,11 +18,24 @@ public class OrbitCamera : MonoBehaviour
     Vector3 goalTarget;
     float goalDistance;
     bool dragging;
+    Vector3 homeTarget;
+    float homeDistance, homeYaw, homePitch;
+    float goalYaw, goalPitch;
 
     void Awake()
     {
-        goalTarget = target;
-        goalDistance = distance;
+        goalTarget = homeTarget = target;
+        goalDistance = homeDistance = distance;
+        goalYaw = homeYaw = yaw;
+        goalPitch = homePitch = pitch;
+    }
+
+    public void ResetView()
+    {
+        goalTarget = homeTarget;
+        goalDistance = homeDistance;
+        goalYaw = homeYaw;
+        goalPitch = homePitch;
     }
 
     public void Focus(Vector3 point, float dist)
@@ -75,8 +88,8 @@ public class OrbitCamera : MonoBehaviour
         if (pressedThisFrame) dragging = !overUI;
         if (!anyButton) dragging = false;
 
-        Vector3 flatRight = Quaternion.Euler(0f, yaw, 0f) * Vector3.right;
-        Vector3 flatForward = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;
+        Vector3 flatRight = Quaternion.Euler(0f, goalYaw, 0f) * Vector3.right;
+        Vector3 flatForward = Quaternion.Euler(0f, goalYaw, 0f) * Vector3.forward;
 
         if (dragging)
         {
@@ -87,8 +100,8 @@ public class OrbitCamera : MonoBehaviour
             }
             else
             {
-                yaw += delta.x * 0.6f;
-                pitch = Mathf.Clamp(pitch - delta.y * 0.6f, 10f, 89f);
+                goalYaw += delta.x * 0.6f;
+                goalPitch = Mathf.Clamp(goalPitch - delta.y * 0.6f, 10f, 89f);
             }
         }
 
@@ -104,6 +117,8 @@ public class OrbitCamera : MonoBehaviour
         float t = 1f - Mathf.Exp(-8f * Time.deltaTime);
         target = Vector3.Lerp(target, goalTarget, t);
         distance = Mathf.Lerp(distance, goalDistance, t);
+        yaw = Mathf.LerpAngle(yaw, goalYaw, t);
+        pitch = Mathf.Lerp(pitch, goalPitch, t);
 
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
         transform.rotation = rot;

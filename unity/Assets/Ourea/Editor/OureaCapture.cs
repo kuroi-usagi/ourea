@@ -35,6 +35,7 @@ public static class OureaCapture
             var p = viewer.passes[i];
             mat.SetTexture("_MaskA", p.mask);
             mat.SetTexture("_MaskB", p.mask);
+            mat.SetTexture("_MaskBase", viewer.passes[0].mask);
             mat.SetFloat("_Blend", 0f);
             viewer.currentPass = i;
             if (beacons != null) beacons.Refresh(i);

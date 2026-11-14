@@ -59,7 +59,6 @@ public class OureaViewer : MonoBehaviour
     MaterialPropertyBlock mpb;
     Material deltaMat;
     float uiScale = 1f;
-    GUIStyle title, body, small, banner, rowStyle, pinLabel;
 
     static readonly Color Gray = new Color(0.85f, 0.85f, 0.82f);
     static readonly Color SchoolBlue = new Color(0.25f, 0.45f, 0.95f);
@@ -91,6 +90,7 @@ public class OureaViewer : MonoBehaviour
         if (deltaMat == null || passes.Count == 0) return;
         deltaMat.SetTexture("_MaskA", passes[a].mask);
         deltaMat.SetTexture("_MaskB", passes[b].mask);
+        deltaMat.SetTexture("_MaskBase", passes[0].mask);
         deltaMat.SetFloat("_Blend", t);
     }
 
@@ -125,121 +125,309 @@ public class OureaViewer : MonoBehaviour
             mpb.SetColor("_Color", c);
             var r = p.pin.GetComponent<Renderer>();
             if (r != null) r.SetPropertyBlock(mpb);
-            var baseScale = p.type == "school" ? 4.5f : 6f;
+            var baseScale = p.type == "school" ? 4f : (hasRank && rank <= 10 ? 5.5f : 3.5f);
             p.pin.localScale = Vector3.one * baseScale * size;
         }
     }
 
+    // ---------------- UI ----------------
+    // Flat dark cards with rounded corners, a big timeline along the bottom,
+    // the check-first list on the left and a compact legend on the right.
+    static readonly Color Ink = new Color(0.12f, 0.14f, 0.16f);
+    static readonly Color Muted = new Color(0.40f, 0.44f, 0.48f);
+    static readonly Color Accent = new Color(0.19f, 0.40f, 0.44f); // deep teal, as in Urban Sentinel
+    static readonly Color Amber = new Color(0.72f, 0.46f, 0.06f);
+    static readonly Color Up = new Color(0.80f, 0.27f, 0.22f);
+    static readonly Color Down = new Color(0.20f, 0.55f, 0.32f);
+
+    Texture2D texPanel, texRound, texRow, texRowHover, texRowSel;
+    GUIStyle sPanel, sEyebrow, sTitle, sSub, sBody, sSmall, sBig, sBadge, sRowName, sRowReason, sTrend, sTick, sTickOn, sBtn, sPlay, sPill, sRow, sRowSel, sCard;
+    Vector2 listScroll;
+    string selectedId;
+    bool draggingTrack;
+
+    static Texture2D Rounded(Color c, int radius)
+    {
+        int size = radius * 2 + 4;
+        var t = new Texture2D(size, size, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float dx = Mathf.Max(0f, Mathf.Max(radius - (x + 0.5f), (x + 0.5f) - (size - radius)));
+                float dy = Mathf.Max(0f, Mathf.Max(radius - (y + 0.5f), (y + 0.5f) - (size - radius)));
+                float a = Mathf.Clamp01(radius + 0.5f - Mathf.Sqrt(dx * dx + dy * dy));
+                t.SetPixel(x, y, new Color(c.r, c.g, c.b, c.a * a));
+            }
+        t.Apply();
+        return t;
+    }
+
+    static GUIStyle Text(int size, Color color, FontStyle fs = FontStyle.Normal, TextAnchor anchor = TextAnchor.UpperLeft, bool wrap = false)
+    {
+        var st = new GUIStyle { fontSize = size, fontStyle = fs, alignment = anchor, wordWrap = wrap, richText = true, clipping = TextClipping.Clip };
+        st.normal.textColor = color;
+        return st;
+    }
+
+    static GUIStyle Box(Texture2D bg, int radius, Color textColor, int fontSize = 13, FontStyle fs = FontStyle.Normal, TextAnchor anchor = TextAnchor.MiddleCenter)
+    {
+        var st = Text(fontSize, textColor, fs, anchor);
+        st.normal.background = bg;
+        st.border = new RectOffset(radius + 1, radius + 1, radius + 1, radius + 1);
+        return st;
+    }
+
     void MakeStyles()
     {
-        if (title != null) return;
-        title = new GUIStyle(GUI.skin.label) { fontSize = 20, fontStyle = FontStyle.Bold, wordWrap = true };
-        body = new GUIStyle(GUI.skin.label) { fontSize = 14, wordWrap = true };
-        small = new GUIStyle(GUI.skin.label) { fontSize = 12, wordWrap = true };
-        banner = new GUIStyle(GUI.skin.box) { fontSize = 13, fontStyle = FontStyle.Bold, wordWrap = true, alignment = TextAnchor.MiddleCenter };
-        banner.normal.textColor = new Color(1f, 0.85f, 0.3f);
-        rowStyle = new GUIStyle(GUI.skin.button) { fontSize = 13, alignment = TextAnchor.MiddleLeft, wordWrap = true };
-        pinLabel = new GUIStyle(GUI.skin.label) { fontSize = 13, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
-        pinLabel.normal.textColor = Color.white;
+        if (sPanel != null) return;
+        texPanel = Rounded(new Color(0.97f, 0.97f, 0.955f, 0.90f), 12); // light frosted card
+        texRound = Rounded(Color.white, 12); // drawn scaled, so it reads as a circle
+        texRow = Rounded(new Color(1f, 1f, 1f, 0f), 8);
+        texRowHover = Rounded(new Color(0f, 0f, 0f, 0.05f), 8);
+        texRowSel = Rounded(new Color(Accent.r, Accent.g, Accent.b, 0.14f), 8);
+
+        sPanel = Box(texPanel, 12, Ink);
+        sEyebrow = Text(11, Accent, FontStyle.Bold);
+        sTitle = Text(19, Ink, FontStyle.Bold);
+        sSub = Text(12, Muted);
+        sBody = Text(13, Ink);
+        sSmall = Text(11, Muted, FontStyle.Normal, TextAnchor.UpperLeft, true);
+        sBig = Text(30, Ink, FontStyle.Bold);
+        sBadge = Box(texRound, 10, Color.white, 12, FontStyle.Bold);
+        sRowName = Text(14, Ink, FontStyle.Bold);
+        sRowReason = Text(11, Muted);
+        sTrend = Text(12, Ink, FontStyle.Bold, TextAnchor.MiddleRight);
+        sTick = Text(11, Muted, FontStyle.Normal, TextAnchor.UpperCenter);
+        sTickOn = Text(12, Ink, FontStyle.Bold, TextAnchor.UpperCenter);
+        sBtn = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 8), 8, Ink, 12, FontStyle.Bold);
+        sBtn.hover.background = Rounded(new Color(0f, 0f, 0f, 0.12f), 8);
+        sBtn.hover.textColor = Ink;
+        sPlay = Box(Rounded(Accent, 20), 20, Color.white, 16, FontStyle.Bold);
+        sPlay.hover.background = Rounded(new Color(0.26f, 0.50f, 0.55f), 20);
+        sPlay.hover.textColor = Color.white;
+        sPill = Box(Rounded(new Color(0.95f, 0.78f, 0.35f, 0.30f), 9), 9, Amber, 11, FontStyle.Bold);
+        sRow = Box(texRow, 8, Ink, 13, FontStyle.Normal, TextAnchor.MiddleLeft);
+        sRow.hover.background = texRowHover;
+        sRowSel = Box(texRowSel, 8, Ink, 13, FontStyle.Normal, TextAnchor.MiddleLeft);
+        sCard = Box(Rounded(new Color(0.97f, 0.97f, 0.955f, 0.94f), 8), 8, Ink, 13, FontStyle.Bold);
+        sCard.padding = new RectOffset(10, 10, 4, 4);
     }
 
     Rect Panel(Rect r)
     {
-        GUI.Box(r, GUIContent.none);
-        GUI.Box(r, GUIContent.none); // darker
+        GUI.Box(r, GUIContent.none, sPanel);
         uiRects.Add(new Rect(r.x * uiScale, r.y * uiScale, r.width * uiScale, r.height * uiScale));
         return r;
+    }
+
+    static string ShortDate(string iso, bool withYear = false)
+    {
+        DateTime d;
+        if (DateTime.TryParseExact(iso, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out d))
+            return d.ToString(withYear ? "d MMM yyyy" : "d MMM", System.Globalization.CultureInfo.InvariantCulture);
+        return iso;
+    }
+
+    static string Hex(Color c) { return ColorUtility.ToHtmlStringRGB(c); }
+
+    Color RankColor(int rank) { return Color.Lerp(Top1, Top10, (rank - 1) / 9f); }
+
+    void Select(Place pl)
+    {
+        if (pl == null) return;
+        selectedId = pl.id;
+        if (orbit != null && pl.pin != null) orbit.Focus(pl.pin.position, 70f);
     }
 
     void OnGUI()
     {
         if (Event.current.type == EventType.Layout) uiRects.Clear();
         MakeStyles();
-        uiScale = Mathf.Max(1f, Screen.height / 900f);
+        uiScale = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(uiScale, uiScale, 1f));
         float W = Screen.width / uiScale, H = Screen.height / uiScale;
+        const float M = 16f;
 
-        // Top bar: title, pass slider, headline
-        var bar = Panel(new Rect(10, 10, W - 20, simulated ? 118 : 92));
-        GUI.Label(new Rect(bar.x + 12, bar.y + 6, 520, 28), "Ourea · Mekong Delta flood watch", title);
-        if (passes.Count > 0)
-        {
-            var p = passes[currentPass];
-            GUI.Label(new Rect(bar.x + 12, bar.y + 34, 520, 22),
-                "NISAR pass " + p.date + "  (" + (currentPass + 1) + " of " + passes.Count + ")", body);
-            string head = "New water since " + passes[0].date + ": " + p.newWaterKm2.ToString("0.0") + " km²";
-            if (p.homesNearWater > 0) head += "  ·  homes near water: " + p.homesNearWater;
-            if (p.childrenNearWater > 0) head += "  ·  children under 5 near water: " + p.childrenNearWater;
-            GUI.Label(new Rect(bar.x + 12, bar.y + 56, W - 60, 22), head, body);
+        DrawMapLabels();
 
-            float sx = Mathf.Max(bar.x + 540, W * 0.5f), sw = bar.xMax - sx - 160;
-            if (GUI.Button(new Rect(sx, bar.y + 14, 40, 26), "◀")) timeline.Step(-1);
-            if (passes.Count > 1)
-            {
-                float nv = GUI.HorizontalSlider(new Rect(sx + 50, bar.y + 22, sw, 20), timeline.Position, 0, passes.Count - 1);
-                if (!Mathf.Approximately(nv, timeline.Position)) timeline.SetPosition(nv);
-            }
-            if (GUI.Button(new Rect(sx + 60 + sw, bar.y + 14, 40, 26), "▶")) timeline.Step(1);
-            if (GUI.Button(new Rect(sx + 110 + sw, bar.y + 14, 40, 26), timeline.Playing ? "❚❚" : "▷")) timeline.TogglePlay();
-            GUI.Label(new Rect(sx + 50, bar.y + 38, sw, 20), passes[0].date + "  →  " + passes[passes.Count - 1].date + "   ·   [ ] step · Space play", small);
-        }
+        // ---- Header (top-left)
+        float headerH = simulated ? 96f : 70f;
+        var head = Panel(new Rect(M, M, 340, headerH));
+        GUI.Label(new Rect(head.x + 16, head.y + 12, 300, 14), "OUREA  ·  NISAR FLOOD WATCH", sEyebrow);
+        GUI.Label(new Rect(head.x + 16, head.y + 28, 310, 26), "Mekong Delta, Vietnam", sTitle);
         if (simulated)
-            GUI.Box(new Rect(bar.x + 8, bar.yMax - 34, bar.width - 16, 28),
-                "SIMULATED DATA: placeholder water maps and places until the NISAR pipeline lands. " + dataNote, banner);
+        {
+            var pill = new Rect(head.x + 16, head.y + 62, 300, 20);
+            GUI.Label(pill, "●  Water: real NISAR  ·  hamlets & scores simulated", sPill);
+        }
 
-        // Check-first list
-        float listTop = bar.yMax + 10;
-        var list = Panel(new Rect(10, listTop, 330, Mathf.Min(H - listTop - 10, 74 + 10 * 46)));
-        GUI.Label(new Rect(list.x + 12, list.y + 6, 300, 26), "Check first: top 10", title);
-        GUI.Label(new Rect(list.x + 12, list.y + 34, 300, 22), "Least water is not \"safe\". Ranked for this pass.", small);
-        float y = list.y + 60;
+        // ---- Timeline (bottom)
+        float tlH = 104f;
+        var tl = Panel(new Rect(M, H - M - tlH, W - 2 * M, tlH));
+        DrawTimeline(tl);
+
+        // ---- Check-first list (left)
+        float listTop = head.yMax + 12f;
+        var list = Panel(new Rect(M, listTop, 340, Mathf.Max(120f, tl.y - 12f - listTop)));
+        DrawList(list);
+
+        // ---- Legend (top-right)
+        var leg = Panel(new Rect(W - M - 220, M, 220, 168));
+        GUI.Label(new Rect(leg.x + 16, leg.y + 12, 190, 14), "LEGEND", sEyebrow);
+        float ly = leg.y + 32;
+        Swatch(leg.x + 16, ly, new Color(0.16f, 0.43f, 0.75f), "Water on this pass"); ly += 22;
+        Swatch(leg.x + 16, ly, new Color(0.45f, 0.80f, 1f), "New since first pass"); ly += 22;
+        Swatch(leg.x + 16, ly, new Color(0.27f, 0.67f, 0.67f), "Rice flooded on purpose"); ly += 22;
+        Swatch(leg.x + 16, ly, Top1, "Check first (top 10)"); ly += 22;
+        Swatch(leg.x + 16, ly, SchoolBlue, "School");
+        if (GUI.Button(new Rect(leg.x + 16, leg.yMax - 34, 188, 24), "Reset view", sBtn) && orbit != null)
+        {
+            selectedId = null;
+            orbit.ResetView();
+        }
+        var hint = new Rect(W - M - 220, leg.yMax + 8, 220, 18);
+        GUI.Label(hint, "Drag to rotate  ·  scroll to zoom  ·  WASD to move", Text(11, new Color(0.12f, 0.14f, 0.16f, 0.6f), FontStyle.Normal, TextAnchor.UpperRight));
+
+        GUI.matrix = Matrix4x4.identity;
+    }
+
+    void DrawMapLabels()
+    {
+        var cam = Camera.main;
+        if (cam == null) return;
+        foreach (var s in top)
+        {
+            Place pl;
+            if (!placeById.TryGetValue(s.placeId, out pl) || pl.pin == null) continue;
+            Vector3 sp = cam.WorldToScreenPoint(pl.pin.position + Vector3.up * 7f);
+            if (sp.z < 0) continue;
+            float x = sp.x / uiScale, y = (Screen.height - sp.y) / uiScale;
+            var old = GUI.color;
+            GUI.color = RankColor(s.rank);
+            GUI.DrawTexture(new Rect(x - 11, y - 22, 22, 22), texRound);
+            GUI.color = old;
+            if (GUI.Button(new Rect(x - 11, y - 22, 22, 22), GUIContent.none, GUIStyle.none)) Select(pl);
+            GUI.color = old;
+            GUI.Label(new Rect(x - 11, y - 22, 22, 22), s.rank.ToString(), Text(12, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
+            if (pl.id == selectedId)
+            {
+                var size = sCard.CalcSize(new GUIContent(pl.name));
+                GUI.Label(new Rect(x - size.x / 2f, y - 52, size.x, 24), pl.name, sCard);
+            }
+        }
+    }
+
+    void DrawList(Rect list)
+    {
+        GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), "CHECK FIRST", sEyebrow);
+        GUI.Label(new Rect(list.x + 16, list.y + 30, 300, 24), "Top 10 hamlets this pass", sTitle);
+        GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), "Ranked by water near homes. Low rank is not \"safe\".", sSub);
+
+        var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
+        const float rowH = 54f;
+        var content = new Rect(0, 0, view.width, Mathf.Max(view.height, top.Count * rowH));
+        listScroll = GUI.BeginScrollView(view, listScroll, content, false, false, GUIStyle.none, GUIStyle.none);
+        float y = 0;
         foreach (var s in top)
         {
             Place pl;
             placeById.TryGetValue(s.placeId, out pl);
             string name = pl != null ? pl.name : s.placeId;
-            string change = s.rankChange > 0 ? "  ▲" + s.rankChange : s.rankChange < 0 ? "  ▼" + (-s.rankChange) : "";
-            string label = s.rank + ". " + name + change + "\n" + s.reason;
-            if (GUI.Button(new Rect(list.x + 8, y, list.width - 16, 42), label, rowStyle) && pl != null && pl.pin != null && orbit != null)
-                orbit.Focus(pl.pin.position, 90f);
-            y += 46;
-            if (y > list.yMax - 40) break;
-        }
-        if (top.Count == 0)
-            GUI.Label(new Rect(list.x + 12, y, 300, 40), "No scores for this pass yet.", body);
+            var row = new Rect(0, y, view.width, rowH - 4);
+            bool sel = pl != null && pl.id == selectedId;
+            if (GUI.Button(row, GUIContent.none, sel ? sRowSel : sRow)) Select(pl);
 
-        // Legend
-        var leg = Panel(new Rect(W - 230, H - 150, 220, 140));
-        GUI.Label(new Rect(leg.x + 10, leg.y + 6, 200, 22), "Legend", body);
-        Swatch(leg.x + 12, leg.y + 34, new Color(0.16f, 0.43f, 0.75f), "Water · bright = new");
-        Swatch(leg.x + 12, leg.y + 56, new Color(0.27f, 0.67f, 0.67f), "Rice flooded on purpose");
-        Swatch(leg.x + 12, leg.y + 78, Top1, "Check-first (top 10)");
-        Swatch(leg.x + 12, leg.y + 100, SchoolBlue, "School");
-        GUI.Label(new Rect(leg.x + 10, leg.y + 118, 200, 20), "Drag: rotate · Scroll: zoom · WASD: move", small);
+            var old = GUI.color;
+            GUI.color = RankColor(s.rank);
+            GUI.DrawTexture(new Rect(row.x + 10, row.y + 12, 26, 26), texRound);
+            GUI.color = old;
+            GUI.Label(new Rect(row.x + 10, row.y + 12, 26, 26), s.rank.ToString(), Text(13, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
 
-        // Rank numbers over the top-10 pins
-        var cam = Camera.main;
-        if (cam != null)
-        {
-            foreach (var s in top)
+            GUI.Label(new Rect(row.x + 46, row.y + 8, row.width - 100, 18), name, sRowName);
+            GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), s.reason, sRowReason);
+
+            if (s.rankChange != 0)
             {
-                Place pl;
-                if (!placeById.TryGetValue(s.placeId, out pl) || pl.pin == null) continue;
-                Vector3 sp = cam.WorldToScreenPoint(pl.pin.position + Vector3.up * 8f);
-                if (sp.z < 0) continue;
-                var r = new Rect(sp.x / uiScale - 15, (Screen.height - sp.y) / uiScale - 12, 30, 24);
-                GUI.Label(r, s.rank.ToString(), pinLabel);
+                string t = s.rankChange > 0 ? "▲ " + s.rankChange : "▼ " + (-s.rankChange);
+                GUI.Label(new Rect(row.xMax - 60, row.y + 8, 50, 18), "<color=#" + Hex(s.rankChange > 0 ? Up : Down) + ">" + t + "</color>", sTrend);
             }
+            y += rowH;
         }
-        GUI.matrix = Matrix4x4.identity;
+        if (top.Count == 0) GUI.Label(new Rect(8, 8, view.width - 16, 40), "No rankings for this pass yet.", sBody);
+        GUI.EndScrollView();
+    }
+
+    void DrawTimeline(Rect tl)
+    {
+        if (passes.Count == 0 || timeline == null)
+        {
+            GUI.Label(new Rect(tl.x + 20, tl.y + 40, 400, 20), "No radar passes loaded.", sBody);
+            return;
+        }
+        var p = passes[currentPass];
+
+        // Headline number
+        GUI.Label(new Rect(tl.x + 20, tl.y + 14, 220, 14), "NEW WATER", sEyebrow);
+        GUI.Label(new Rect(tl.x + 20, tl.y + 30, 230, 38), "+" + p.newWaterKm2.ToString("0") + " km²", sBig);
+        string sub = "since " + ShortDate(passes[0].date);
+        if (p.childrenNearWater > 0) sub += "  ·  " + p.childrenNearWater + " kids under 5 near water";
+        else if (p.homesNearWater > 0) sub += "  ·  " + p.homesNearWater + " homes near water";
+        GUI.Label(new Rect(tl.x + 20, tl.y + 70, 260, 16), sub, sSub);
+
+        // Play / step buttons
+        float bx = tl.x + 270;
+        if (GUI.Button(new Rect(bx, tl.y + 38, 30, 30), "◀", sBtn)) timeline.Step(-1);
+        if (GUI.Button(new Rect(bx + 38, tl.y + 31, 44, 44), timeline.Playing ? "❚❚" : "▶", sPlay)) timeline.TogglePlay();
+        if (GUI.Button(new Rect(bx + 90, tl.y + 38, 30, 30), "▶", sBtn)) timeline.Step(1);
+
+        // Track
+        float tx0 = bx + 150, tx1 = tl.xMax - 40;
+        float trackY = tl.y + 52;
+        GUI.Label(new Rect(tx0, tl.y + 14, tx1 - tx0, 18),
+            "<b>" + ShortDate(p.date, true) + "</b>   <color=#" + Hex(Muted) + ">NISAR pass " + (currentPass + 1) + " of " + passes.Count + "  ·  Space to play</color>", sBody);
+
+        var trackRect = new Rect(tx0, trackY - 3, tx1 - tx0, 6);
+        int max = Mathf.Max(1, passes.Count - 1);
+        float frac = passes.Count > 1 ? timeline.Position / max : 1f;
+        var oldC = GUI.color;
+        GUI.color = new Color(0f, 0f, 0f, 0.10f);
+        GUI.DrawTexture(trackRect, Texture2D.whiteTexture);
+        GUI.color = Accent;
+        GUI.DrawTexture(new Rect(trackRect.x, trackRect.y, trackRect.width * frac, trackRect.height), Texture2D.whiteTexture);
+
+        for (int i = 0; i < passes.Count; i++)
+        {
+            float x = passes.Count > 1 ? Mathf.Lerp(tx0, tx1, i / (float)max) : tx1;
+            bool on = i == currentPass;
+            float d = on ? 18f : 12f;
+            GUI.color = i <= timeline.Position + 0.001f ? Accent : new Color(0.74f, 0.76f, 0.78f);
+            if (on) GUI.color = Accent;
+            GUI.DrawTexture(new Rect(x - d / 2f, trackY - d / 2f, d, d), texRound);
+            GUI.color = oldC;
+            if (GUI.Button(new Rect(x - 30, trackY + 12, 60, 18), ShortDate(passes[i].date), on ? sTickOn : sTick))
+                timeline.Step(i - timeline.Index);
+        }
+        GUI.color = oldC;
+
+        // Drag along the track to scrub (blends between passes)
+        var hit = new Rect(tx0 - 10, trackY - 14, (tx1 - tx0) + 20, 24);
+        var e = Event.current;
+        if (e.type == EventType.MouseDown && hit.Contains(e.mousePosition)) { draggingTrack = true; e.Use(); }
+        if (e.type == EventType.MouseUp) draggingTrack = false;
+        if (draggingTrack && (e.type == EventType.MouseDrag || e.type == EventType.MouseDown))
+        {
+            float t = Mathf.InverseLerp(tx0, tx1, e.mousePosition.x);
+            timeline.SetPosition(t * max);
+            e.Use();
+        }
     }
 
     void Swatch(float x, float y, Color c, string text)
     {
         var old = GUI.color;
         GUI.color = c;
-        GUI.DrawTexture(new Rect(x, y + 3, 16, 14), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(x, y + 2, 14, 14), texRound);
         GUI.color = old;
-        GUI.Label(new Rect(x + 24, y, 180, 22), text, small);
+        GUI.Label(new Rect(x + 24, y + 1, 170, 18), text, sBody);
     }
 }

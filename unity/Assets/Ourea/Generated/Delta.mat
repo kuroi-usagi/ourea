@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Delta
-  m_Shader: {fileID: 4800000, guid: f9a908841ae3c48e6b0ce3a76c8be2ec, type: 3}
+  m_Shader: {fileID: 4800000, guid: 0c3a81dd575fa4c82b132f70a99099d8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 14092afc495084d3aad47afb840eaf1c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 70b0317a5474546d0ab8f3b9d0dd0bd9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskA:
@@ -39,14 +39,24 @@ Material:
         m_Texture: {fileID: 2800000, guid: 418f0f76dd50243fda925ee10c28d18b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: b926044d691804a2c88347a650507930, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Blend: 0
-    - _Shimmer: 0.35
+    - _Detail: 0.35
+    - _GlowAmount: 1
+    - _Hillshade: 0.55
     m_Colors:
-    - _NewWaterColor: {r: 0.09999997, g: 0.62, b: 0.95, a: 1}
-    - _NoDataColor: {r: 0.4699999, g: 0.4699999, b: 0.4699999, a: 1}
-    - _RiceColor: {r: 0.26999995, g: 0.67, b: 0.67, a: 1}
-    - _WaterColor: {r: 0.15999997, g: 0.42999998, b: 0.75, a: 1}
+    - _Built: {r: 0.97999996, g: 0.96999997, b: 0.95, a: 1}
+    - _Flood: {r: 0.35999998, g: 0.58, b: 0.82, a: 1}
+    - _LandHigh: {r: 0.65999997, g: 0.72, b: 0.62, a: 1}
+    - _LandLow: {r: 0.8, g: 0.82, b: 0.76, a: 1}
+    - _NoData: {r: 0.78, g: 0.78, b: 0.78, a: 1}
+    - _Outline: {r: 0.29999998, g: 0.43999997, b: 0.56, a: 1}
+    - _Rice: {r: 0.5, g: 0.74, b: 0.7, a: 1}
+    - _River: {r: 0.62, g: 0.72, b: 0.8, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

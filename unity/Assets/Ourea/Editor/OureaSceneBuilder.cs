@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 public static class OureaSceneBuilder
 {
     const float MetersPerUnit = 100f;   // 1 Unity unit = 100 m, so the 65 km tile is ~650 units wide
-    const float Exaggeration = 40f;     // the delta is ~9 m tall; meta.json suggests 30-50x
+    const float Exaggeration = 16f;     // the delta is ~9 m tall; higher reads as noisy tree-line ridges
     const int MeshRes = 513;
     const string GenDir = "Assets/Ourea/Generated";
     const string ScenePath = "Assets/Scenes/Ourea.unity";
@@ -453,9 +453,10 @@ public static class OureaSceneBuilder
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = new Color(0.08f, 0.1f, 0.13f);
         var orbit = cam.gameObject.AddComponent<OrbitCamera>();
-        orbit.target = new Vector3(sizeX / 2f, 0f, sizeZ / 2f);
-        orbit.distance = Mathf.Max(sizeX, sizeZ) * 1.15f;
-        orbit.pitch = 55f;
+        // Start a little west/south of centre so the map sits right of the list and above the timeline.
+        orbit.target = new Vector3(sizeX * 0.42f, 0f, sizeZ * 0.44f);
+        orbit.distance = Mathf.Max(sizeX, sizeZ) * 0.78f;
+        orbit.pitch = 50f;
         orbit.boundsMin = new Vector2(0f, 0f);
         orbit.boundsMax = new Vector2(sizeX, sizeZ);
         orbit.maxDistance = Mathf.Max(sizeX, sizeZ) * 3f;
