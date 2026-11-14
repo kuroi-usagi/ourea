@@ -6,3 +6,4 @@ pyproj
 shapely
 geopandas
 pillow
+pystac-client
