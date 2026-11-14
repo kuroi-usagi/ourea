@@ -41,26 +41,32 @@ def search(track, frame, start, end, only_dates=None):
 
 
 # ---------- 2. download ----------
-def session():
-    import asf_search as asf
+def download(products):
+    """Plain requests + ~/.netrc (Earthdata redirect login). asf_search's own session login fails for some accounts."""
+    import requests, time
     try:
-        user, _, pw = netrc.netrc().authenticators("urs.earthdata.nasa.gov")
+        netrc.netrc().authenticators("urs.earthdata.nasa.gov")[0]
     except (FileNotFoundError, TypeError):
         sys.exit("No Earthdata login. Add 'machine urs.earthdata.nasa.gov login USER password PW' to ~/.netrc")
-    return asf.ASFSession().auth_with_creds(user, pw)
-
-
-def download(products):
     RAW.mkdir(parents=True, exist_ok=True)
-    s = None
+    s = requests.Session()
     for p in products:
         f = RAW / (p.properties["fileID"] + ".h5")
         if f.exists() and f.stat().st_size > 0:
             print(f"  have {f.name}")
             continue
-        s = s or session()
-        print(f"  downloading {f.name} ...", flush=True)
-        p.download(path=str(RAW), filename=f.name, session=s)
+        part, t = f.with_suffix(".part"), time.time()
+        with s.get(p.properties["url"], stream=True, timeout=120) as r:
+            if r.status_code in (401, 403):
+                sys.exit(f"Earthdata refused the download ({r.status_code}). Check ~/.netrc and that you can log in at urs.earthdata.nasa.gov")
+            r.raise_for_status()
+            size = int(r.headers.get("Content-Length", 0))
+            print(f"  downloading {f.name} ({size / 1e9:.1f} GB)", flush=True)
+            with open(part, "wb") as out:
+                for chunk in r.iter_content(8 << 20):
+                    out.write(chunk)
+        part.rename(f)
+        print(f"    done in {time.time() - t:.0f} s", flush=True)
 
 
 # ---------- 3. read + regrid ----------

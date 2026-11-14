@@ -1,0 +1,23 @@
+[
+  {
+    "date": "2026-07-11",
+    "landwater": "layers/landwater/2026-07-11.png",
+    "backscatter": "layers/backscatter/2026-07-11.png",
+    "optical": null,
+    "cloud_pct": null
+  },
+  {
+    "date": "2026-08-28",
+    "landwater": "layers/landwater/2026-08-28.png",
+    "backscatter": "layers/backscatter/2026-08-28.png",
+    "optical": null,
+    "cloud_pct": null
+  },
+  {
+    "date": "2026-10-03",
+    "landwater": "layers/landwater/2026-10-03.png",
+    "backscatter": "layers/backscatter/2026-10-03.png",
+    "optical": null,
+    "cloud_pct": null
+  }
+]
