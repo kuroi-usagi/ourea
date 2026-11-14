@@ -1,0 +1,12 @@
+{
+  "simulated": true,
+  "notes": "PLACEHOLDER. Water = lowest ground of the DEM plus noise, not radar. Replace with handoff/layers/ from run_pipeline.py.",
+  "crs": "EPSG:32648",
+  "bounds_m": [
+    532778.8035874644,
+    1149653.9563548663,
+    598516.7499547674,
+    1210597.6393508143
+  ],
+  "size": 2048
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "date": "2026-07-11",
+    "cloud_pct": 62,
+    "landwater": "layers/landwater/2026-07-11.png",
+    "backscatter": "layers/backscatter/2026-07-11.png",
+    "optical": "layers/optical/2026-07-11.png"
+  },
+  {
+    "date": "2026-08-28",
+    "cloud_pct": 48,
+    "landwater": "layers/landwater/2026-08-28.png",
+    "backscatter": "layers/backscatter/2026-08-28.png",
+    "optical": "layers/optical/2026-08-28.png"
+  },
+  {
+    "date": "2026-10-03",
+    "cloud_pct": 35,
+    "landwater": "layers/landwater/2026-10-03.png",
+    "backscatter": "layers/backscatter/2026-10-03.png",
+    "optical": "layers/optical/2026-10-03.png"
+  }
+]
