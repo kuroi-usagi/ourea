@@ -78,6 +78,13 @@ public class OureaViewer : MonoBehaviour
         timeline.SetPosition(passes.Count > 0 ? passes.Count - 1 : 0);
     }
 
+    // A script recompile during Play mode re-creates this component without running Start
+    // again (runtime state like the top-10 list and the timeline hooks is lost). Rewire.
+    void Update()
+    {
+        if (mpb == null) Start();
+    }
+
     void OnDestroy()
     {
         if (timeline == null) return;
@@ -133,10 +140,10 @@ public class OureaViewer : MonoBehaviour
     // ---------------- UI ----------------
     // Flat dark cards with rounded corners, a big timeline along the bottom,
     // the check-first list on the left and a compact legend on the right.
-    static readonly Color Ink = new Color(0.12f, 0.14f, 0.16f);
-    static readonly Color Muted = new Color(0.40f, 0.44f, 0.48f);
-    static readonly Color Accent = new Color(0.19f, 0.40f, 0.44f); // deep teal, as in Urban Sentinel
-    static readonly Color Amber = new Color(0.72f, 0.46f, 0.06f);
+    static readonly Color Ink = new Color(0.010f, 0.013f, 0.017f);   // linear values: the project renders in linear space, so these display as ~#1C2024
+    static readonly Color Muted = new Color(0.10f, 0.12f, 0.14f);   // displays as ~#5A6168
+    static readonly Color Accent = new Color(0.03f, 0.13f, 0.16f); // deep teal (#31646E on screen), as in Urban Sentinel
+    static readonly Color Amber = new Color(0.45f, 0.20f, 0.01f);
     static readonly Color Up = new Color(0.80f, 0.27f, 0.22f);
     static readonly Color Down = new Color(0.20f, 0.55f, 0.32f);
 
@@ -286,11 +293,11 @@ public class OureaViewer : MonoBehaviour
             orbit.ResetView();
         }
         var hint = new Rect(W - M - 220, leg.yMax + 8, 220, 18);
-        GUI.Label(hint, "Drag to rotate  ·  scroll to zoom  ·  WASD to move", Text(11, new Color(0.12f, 0.14f, 0.16f, 0.6f), FontStyle.Normal, TextAnchor.UpperRight));
+        GUI.Label(hint, "Drag to rotate  ·  scroll to zoom  ·  WASD to move", Text(11, new Color(0.01f, 0.013f, 0.017f, 0.6f), FontStyle.Normal, TextAnchor.UpperRight));
         // Required by the basemap licence (CC BY-NC-SA 4.0, handoff/basemap/basemap.json)
         GUI.Label(new Rect(W - M - 520, hint.yMax + 2, 520, 16),
             "Water: NISAR (NASA/ISRO, provisional)  ·  Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu",
-            Text(10, new Color(0.12f, 0.14f, 0.16f, 0.5f), FontStyle.Normal, TextAnchor.UpperRight));
+            Text(10, new Color(0.01f, 0.013f, 0.017f, 0.55f), FontStyle.Normal, TextAnchor.UpperRight));
 
         GUI.matrix = Matrix4x4.identity;
     }
@@ -323,9 +330,9 @@ public class OureaViewer : MonoBehaviour
 
     void DrawList(Rect list)
     {
-        GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), "CHECK FIRST", sEyebrow);
+        GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), simulated ? "CHECK FIRST  ·  PLACEHOLDER RANKING" : "CHECK FIRST", simulated ? Text(11, Amber, FontStyle.Bold) : sEyebrow);
         GUI.Label(new Rect(list.x + 16, list.y + 30, 300, 24), "Top 10 hamlets this pass", sTitle);
-        GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), "Ranked by water near homes. Low rank is not \"safe\".", sSub);
+        GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), simulated ? "Simulated until Mitch's scores land." : "Ranked by water near homes. Low rank is not \"safe\".", sSub);
 
         var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
         const float rowH = 54f;
@@ -352,7 +359,7 @@ public class OureaViewer : MonoBehaviour
 
             if (s.rankChange != 0)
             {
-                string t = s.rankChange > 0 ? "▲ " + s.rankChange : "▼ " + (-s.rankChange);
+                string t = s.rankChange > 0 ? "+" + s.rankChange : "-" + (-s.rankChange); // ▲▼ are missing from the WebGL font
                 GUI.Label(new Rect(row.xMax - 60, row.y + 8, 50, 18), "<color=#" + Hex(s.rankChange > 0 ? Up : Down) + ">" + t + "</color>", sTrend);
             }
             y += rowH;
@@ -380,9 +387,9 @@ public class OureaViewer : MonoBehaviour
 
         // Play / step buttons
         float bx = tl.x + 270;
-        if (GUI.Button(new Rect(bx, tl.y + 38, 30, 30), "◀", sBtn)) timeline.Step(-1);
-        if (GUI.Button(new Rect(bx + 38, tl.y + 31, 44, 44), timeline.Playing ? "❚❚" : "▶", sPlay)) timeline.TogglePlay();
-        if (GUI.Button(new Rect(bx + 90, tl.y + 38, 30, 30), "▶", sBtn)) timeline.Step(1);
+        if (GUI.Button(new Rect(bx, tl.y + 38, 30, 30), "<", sBtn)) timeline.Step(-1);
+        if (GUI.Button(new Rect(bx + 38, tl.y + 31, 44, 44), timeline.Playing ? "||" : ">", sPlay)) timeline.TogglePlay();
+        if (GUI.Button(new Rect(bx + 90, tl.y + 38, 30, 30), ">", sBtn)) timeline.Step(1);
 
         // Track
         float tx0 = bx + 150, tx1 = tl.xMax - 40;
