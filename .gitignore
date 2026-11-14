@@ -1,0 +1,29 @@
+# secrets
+.env
+.netrc
+*.pem
+.dev.vars
+# python
+__pycache__/
+.venv/
+*.pyc
+# raw radar data (huge, never commit)
+data/raw/
+*.h5
+*.tif
+*.zip
+# unity
+unity/[Ll]ibrary/
+unity/[Tt]emp/
+unity/[Oo]bj/
+unity/[Bb]uild/
+unity/[Bb]uilds/
+unity/[Ll]ogs/
+unity/[Uu]ser[Ss]ettings/
+unity/*.csproj
+unity/*.sln
+# web
+node_modules/
+.wrangler/
+dist/
+.DS_Store
