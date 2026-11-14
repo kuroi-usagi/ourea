@@ -1,0 +1,102 @@
+[
+  {
+    "pass": "2026-06-17",
+    "image_date": "2026-06-18",
+    "days_off": 1,
+    "cloud_pct": 59.0,
+    "granules": [
+      "S2B_48PWS_20260618_0_L2A",
+      "S2B_48PWT_20260618_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-06-29",
+    "image_date": "2026-06-28",
+    "days_off": -1,
+    "cloud_pct": 43.3,
+    "granules": [
+      "S2B_48PWS_20260628_0_L2A",
+      "S2B_48PWT_20260628_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-07-11",
+    "image_date": "2026-07-13",
+    "days_off": 2,
+    "cloud_pct": 94.9,
+    "granules": [
+      "S2C_48PWS_20260713_0_L2A",
+      "S2C_48PWT_20260713_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-07-23",
+    "image_date": "2026-07-23",
+    "days_off": 0,
+    "cloud_pct": 66.8,
+    "granules": [
+      "S2C_48PWS_20260723_0_L2A",
+      "S2C_48PWT_20260723_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-08-16",
+    "image_date": "2026-08-17",
+    "days_off": 1,
+    "cloud_pct": 93.8,
+    "granules": [
+      "S2B_48PWS_20260817_0_L2A",
+      "S2B_48PWT_20260817_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-08-28",
+    "image_date": "2026-08-27",
+    "days_off": -1,
+    "cloud_pct": 75.8,
+    "granules": [
+      "S2B_48PWS_20260827_0_L2A",
+      "S2B_48PWT_20260827_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-09-09",
+    "image_date": "2026-09-11",
+    "days_off": 2,
+    "cloud_pct": 98.1,
+    "granules": [
+      "S2C_48PWS_20260911_0_L2A",
+      "S2C_48PWT_20260911_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-09-21",
+    "image_date": "2026-09-21",
+    "days_off": 0,
+    "cloud_pct": 74.9,
+    "granules": [
+      "S2C_48PWS_20260921_0_L2A",
+      "S2C_48PWT_20260921_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-10-03",
+    "image_date": "2026-10-01",
+    "days_off": -2,
+    "cloud_pct": 53.5,
+    "granules": [
+      "S2C_48PWS_20261001_0_L2A",
+      "S2C_48PWT_20261001_0_L2A"
+    ]
+  },
+  {
+    "pass": "2026-10-15",
+    "image_date": "2026-10-16",
+    "days_off": 1,
+    "cloud_pct": 36.7,
+    "granules": [
+      "S2B_48PWS_20261016_0_L2A",
+      "S2B_48PWT_20261016_0_L2A"
+    ]
+  }
+]
