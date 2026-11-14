@@ -287,6 +287,10 @@ public class OureaViewer : MonoBehaviour
         }
         var hint = new Rect(W - M - 220, leg.yMax + 8, 220, 18);
         GUI.Label(hint, "Drag to rotate  ·  scroll to zoom  ·  WASD to move", Text(11, new Color(0.12f, 0.14f, 0.16f, 0.6f), FontStyle.Normal, TextAnchor.UpperRight));
+        // Required by the basemap licence (CC BY-NC-SA 4.0, handoff/basemap/basemap.json)
+        GUI.Label(new Rect(W - M - 520, hint.yMax + 2, 520, 16),
+            "Water: NISAR (NASA/ISRO, provisional)  ·  Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu",
+            Text(10, new Color(0.12f, 0.14f, 0.16f, 0.5f), FontStyle.Normal, TextAnchor.UpperRight));
 
         GUI.matrix = Matrix4x4.identity;
     }

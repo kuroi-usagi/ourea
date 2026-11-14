@@ -21,6 +21,11 @@ public class OrbitCamera : MonoBehaviour
     Vector3 homeTarget;
     float homeDistance, homeYaw, homePitch;
     float goalYaw, goalPitch;
+    float idleTime;
+
+    // After this many seconds without input the camera drifts slowly around the map.
+    public float idleDelay = 12f;
+    public float idleDegreesPerSecond = 3f;
 
     void Awake()
     {
@@ -107,6 +112,10 @@ public class OrbitCamera : MonoBehaviour
 
         if (!overUI && Mathf.Abs(scroll) > 0.01f)
             goalDistance = Mathf.Clamp(goalDistance * (scroll > 0f ? 0.9f : 1.11f), minDistance, maxDistance);
+
+        if (anyButton || move.sqrMagnitude > 0f || Mathf.Abs(scroll) > 0.01f || delta.sqrMagnitude > 0.01f) idleTime = 0f;
+        else idleTime += Time.deltaTime;
+        if (idleTime > idleDelay) goalYaw += idleDegreesPerSecond * Time.deltaTime;
 
         if (move.sqrMagnitude > 0f)
             goalTarget += (flatRight * move.x + flatForward * move.y) * goalDistance * 0.8f * Time.deltaTime;
