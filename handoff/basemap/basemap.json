@@ -1,0 +1,14 @@
+{
+  "file": "s2cloudless.jpg",
+  "size": 4096,
+  "crs": "EPSG:32648",
+  "bounds_m": [
+    532778.8035874644,
+    1149653.9563548663,
+    598516.7499547674,
+    1210597.6393508143
+  ],
+  "source": "EOX Sentinel-2 cloudless 2024, web-mercator z14, bilinear to the handoff grid",
+  "licence": "CC BY-NC-SA 4.0",
+  "attribution": "Sentinel-2 cloudless 2024 by EOX IT Services GmbH (s2maps.eu), contains modified Copernicus Sentinel data 2024"
+}

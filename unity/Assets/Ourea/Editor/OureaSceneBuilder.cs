@@ -479,6 +479,7 @@ public static class OureaSceneBuilder
         app.scores = scores;
         app.currentPass = Mathf.Max(0, passes.Count - 1);
 
+        OureaLook.Apply(delta, rend, h, n, sizeX, sizeZ, heightScale, cam, light, root, app);
         EditorSceneManager.SaveScene(scene, ScenePath);
         AssetDatabase.SaveAssets();
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
