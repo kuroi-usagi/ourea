@@ -6,11 +6,11 @@ Shader "Ourea/FloodPlane"
 {
     Properties
     {
-        _Shallow ("Shallow water", Color) = (0.62, 0.70, 0.64, 1)
-        _Deep ("Deep water", Color) = (0.13, 0.25, 0.33, 1)
+        _Shallow ("Shallow water", Color) = (0.36, 0.52, 0.56, 1)
+        _Deep ("Deep water", Color) = (0.06, 0.18, 0.28, 1)
         _SkyHorizon ("Sky horizon", Color) = (0.62, 0.70, 0.78, 1)
         _SkyZenith ("Sky zenith", Color) = (0.30, 0.44, 0.62, 1)
-        _Alpha ("Opacity", Range(0, 1)) = 0.9
+        _Alpha ("Opacity", Range(0, 1)) = 0.94
         _Wobble ("Wobble (set by FloodLab from the level's speed)", Range(0, 1)) = 0
         _GroundTex ("Bare-earth ground, 0..1 over its range", 2D) = "black" {}
         _GroundScale ("World units for the ground range", Float) = 1
@@ -70,13 +70,13 @@ Shader "Ourea/FloodPlane"
                 half spec = pow(saturate(dot(n, normalize(sun.direction + vdir))), 260) * 3;
                 half3 body = lerp(_Shallow.rgb, _Deep.rgb, sqrt(d));
                 half3 col = body * (SampleSH(n) * 0.6 + sun.color * 0.35);
-                col = lerp(col, sky, fres * 0.5) + sun.color * spec;
+                col = lerp(col, sky, fres * 0.6) + sun.color * spec;
                 // a bright line where the water meets dry ground: the flood's edge
                 half shore = 1 - saturate(depthM / 0.15);
                 col = lerp(col, half3(0.92, 0.95, 0.93), shore * 0.6);
                 half edge = saturate(min(min(i.uv.x, 1 - i.uv.x), min(i.uv.y, 1 - i.uv.y)) * 60);
                 col = MixFog(col, i.fog);
-                return half4(col, _Alpha * lerp(0.55, 1.0, d) * edge);
+                return half4(col, _Alpha * lerp(0.78, 1.0, d) * edge);
             }
             ENDHLSL
         }

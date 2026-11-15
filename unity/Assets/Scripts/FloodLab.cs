@@ -39,6 +39,12 @@ public class FloodLab : MonoBehaviour
     float compareOn, compareVel, wipe = 0.5f, wipeTarget = 0.5f, wipeVel;
     Material deltaMat;
 
+    // "Watch a village flood": fly low over the village cluster the NISAR-matching level would
+    // flood most, then raise the modeled water there from almost nothing to that level.
+    bool story;
+    float storyT, storyFrom, storyTo;
+    const float StoryDelay = 1.6f, StoryRise = 9f;
+
     static readonly List<Rect> uiRects = new List<Rect>();
     public static bool PointerOver(Vector2 guiPoint)
     {
@@ -56,6 +62,18 @@ public class FloodLab : MonoBehaviour
         if (deltaMat == null && viewer != null && viewer.deltaRenderer != null) deltaMat = viewer.deltaRenderer.material;
         float dt = Mathf.Min(Time.deltaTime, 0.05f);
 
+        if (story)
+        {
+            if (dragging) story = false;
+            else
+            {
+                storyT += dt;
+                float t = Mathf.Clamp01((storyT - StoryDelay) / StoryRise);
+                target = Mathf.Lerp(storyFrom, storyTo, t * t * (3f - 2f * t));
+                if (t >= 1f) story = false;
+            }
+        }
+
         // under-damped spring: it overshoots a little and settles, like water sloshing up a slope
         float k = dragging ? 140f : 70f, c = dragging ? 16f : 7.5f;
         velocity += (k * (target - level) - c * velocity) * dt;
@@ -66,10 +84,12 @@ public class FloodLab : MonoBehaviour
             float y = (level - minM) / Mathf.Max(0.01f, maxM - minM) * heightScale;
             waterPlane.gameObject.SetActive(level > minM + 0.02f);
             waterPlane.localPosition = new Vector3(waterPlane.localPosition.x, y, waterPlane.localPosition.z);
+            // buildings (Shaders/OureaBuilding.shader) turn red where their ground is under this
+            Shader.SetGlobalFloat("_OureaFloodY", level > minM + 0.02f ? waterPlane.position.y : -1e6f);
             if (waterPlaneMaterial != null)
             {
                 waterPlaneMaterial.SetFloat("_Wobble", Mathf.Clamp01(Mathf.Abs(velocity) * 0.35f));
-                waterPlaneMaterial.SetFloat("_Alpha", 0.9f * (1f - 0.85f * Mathf.Max(radarOn, compareOn)));   // let radar/photo show through
+                waterPlaneMaterial.SetFloat("_Alpha", 0.94f * (1f - 0.85f * Mathf.Max(radarOn, compareOn)));   // let radar/photo show through
             }
         }
 
@@ -140,6 +160,56 @@ public class FloodLab : MonoBehaviour
         }
     }
 
+    float MatchLevel()
+    {
+        if (viewer == null || observedWaterPct == null || observedWaterPct.Length == 0) return LevelForFraction(0.5f);
+        // the baseline pass has the least water: show the latest pass's level instead
+        int pi = viewer.currentPass > 0 ? viewer.currentPass : observedWaterPct.Length - 1;
+        return LevelForFraction(Mathf.Clamp(pi < observedWaterPct.Length ? observedWaterPct[pi] : 50f, 1f, 99f) / 100f);
+    }
+
+    void StartStory()
+    {
+        storyTo = MatchLevel();
+        storyFrom = LevelForFraction(0.03f);
+        Vector3 spot;
+        if (buildings != null && buildings.BestFloodSpot(storyTo, out spot) && viewer != null && viewer.orbit != null)
+            viewer.orbit.Focus(spot, 42f, 30f);
+        target = level = storyFrom; velocity = 0f;
+        storyT = 0f; story = true;
+        if (card == Card.Photo || card == Card.Radar) Toggle(card);   // plain map while it floods
+    }
+
+    // A big readout at the top while modeled water is up: depth and how much village land is under it.
+    void DrawFloodCounter(float W)
+    {
+        bool any = level > minM + 0.02f;
+        float x0 = 16f + 268f + 12f;
+        if (!any)
+        {
+            var b = new Rect(16f, 16f + 58f + 10f, 268f, 40f);
+            Block(b, curScale);
+            if (GUI.Button(b, "Watch a village flood  >", sBtnOn)) StartStory();
+            return;
+        }
+        float cw = Mathf.Min(460f, W - x0 - 16f - 120f);
+        var r = new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
+        GUI.Box(r, GUIContent.none, sPanel);
+        Block(r, curScale);
+        float x = r.x + 18f, y = r.y + 12f;
+        GUI.Label(new Rect(x, y, 140, 34), level.ToString("0.0") + " m", sBig);
+        GUI.Label(new Rect(x, y + 34, 140, 16), "water above sea level", sSmall);
+        float bx = x + 130f, bw = r.xMax - 18f - bx;
+        if (buildings != null && buildings.builtAreaHa > 0f)
+        {
+            float bha = buildings.BuiltAreaBelow(level);
+            GUI.Label(new Rect(bx, y, bw, 34), bha.ToString("#,0") + " ha", sBigRed);
+            GUI.Label(new Rect(bx, y + 34, bw, 16), "of built-up land flooded (" + (bha / buildings.builtAreaHa * 100f).ToString("0") + "% of all)", sSmall);
+        }
+        GUI.Label(new Rect(x, y + 56, r.width - 36 - 64, 16), (FractionBelow(level) * 100f).ToString("0") + "% of the map under water  ·  MODELED, not a forecast", sSmall);
+        if (GUI.Button(new Rect(r.xMax - 70f, r.yMax - 32f, 56f, 22f), "Drain", sBtn)) { story = false; target = minM - 0.5f; }
+    }
+
     // ---------- data ----------
     public float FractionBelow(float m)
     {
@@ -193,11 +263,14 @@ public class FloodLab : MonoBehaviour
     // what the map actually shows (Shaders/OureaWater.shader, OureaFloodPlane.shader, BeaconField)
     static readonly Color KeyRiver = Lin(52, 78, 92);
     static readonly Color KeyFlood = Lin(118, 172, 222);
-    static readonly Color KeySheet = Lin(150, 165, 160);
+    static readonly Color KeySheet = Lin(64, 112, 130);
+    static readonly Color KeyWetBuilding = Lin(219, 66, 46);
     static readonly Color KeyTop1 = Lin(219, 64, 52);
     static readonly Color KeyTop10 = Lin(255, 170, 60);
     static readonly Color KeySchool = Lin(64, 120, 245);
 
+    float curScale = 1f;
+    GUIStyle sBigRed;
     GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn, sKnob, sChip, sDock, sDockOn, sClose;
     Texture2D texTrack, texFill, texKnob, texDot;
 
@@ -225,6 +298,7 @@ public class FloodLab : MonoBehaviour
         sTag = Box(Rounded(new Color(0.95f, 0.78f, 0.35f, 0.35f), 7), 7, Modeled, 10, FontStyle.Bold);
         sTitle = Text(16, Ink, FontStyle.Bold);
         sBig = Text(26, Ink, FontStyle.Bold);
+        sBigRed = Text(26, Lin(196, 58, 40), FontStyle.Bold);
         sBody = Text(12, Ink, FontStyle.Normal, true);
         sSmall = Text(11, Muted, FontStyle.Normal, true);
         sBtn = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 8), 8, Ink, 12, FontStyle.Bold);
@@ -266,7 +340,9 @@ public class FloodLab : MonoBehaviour
         float W = Screen.width / s, H = Screen.height / s;
         const float M = 16f;
 
+        curScale = s;
         DrawWipe(W, H, s);
+        DrawFloodCounter(W);
 
         // --- dock
         string[] labels = { "Water", "Photo", "Radar", "Top 10", "Key" };
@@ -490,7 +566,11 @@ public class FloodLab : MonoBehaviour
             Swatch(x, y, KeyFlood, "Flood water, new since 11 Jul"); y += 22;
         }
         if (compareWanted) { Swatch(x, y, Color.white, "Left of the line: camera photo"); y += 22; }
-        if (level > minM + 0.02f) { Swatch(x, y, KeySheet, "Modeled flat water level"); y += 22; }
+        if (level > minM + 0.02f)
+        {
+            Swatch(x, y, KeySheet, "Modeled flat water level"); y += 22;
+            Swatch(x, y, KeyWetBuilding, "Buildings with ground under it"); y += 22;
+        }
         bool sim = viewer != null && viewer.simulated;
         GradientSwatch(x, y, sim ? "Hamlets ranked 1 to 10 (simulated)" : "Check first, ranked 1 to 10"); y += 22;
         Swatch(x, y, KeySchool, sim ? "School (simulated)" : "School (OpenStreetMap)"); y += 30;

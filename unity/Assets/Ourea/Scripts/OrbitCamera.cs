@@ -49,6 +49,16 @@ public class OrbitCamera : MonoBehaviour
         goalDistance = Mathf.Clamp(dist, minDistance, maxDistance);
     }
 
+    // Fly in low over a point (used by "Watch a village flood").
+    public void Focus(Vector3 point, float dist, float pitchDeg)
+    {
+        Focus(point, dist);
+        goalPitch = Mathf.Clamp(pitchDeg, 10f, 89f);
+        idleTime = 0f;
+    }
+
+    public bool Interacting { get { return dragging; } }
+
     void LateUpdate()
     {
         Vector2 delta = Vector2.zero;

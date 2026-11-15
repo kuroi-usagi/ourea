@@ -282,7 +282,10 @@ public static class OureaLook
         field.sizeX = sizeX; field.sizeZ = sizeZ; field.groundScale = heightScale;
         field.minM = minM; field.maxM = maxM;
         field.metersToUnitsY = OureaSceneBuilder.MetersToUnitsY;
-        field.material = LitMaterial(GenDir + "/Building.mat", new Color(0.88f, 0.85f, 0.80f), 0.12f);
+        var bm = new Material(Shader.Find("Ourea/Building"));   // turns red where the modeled water covers its ground
+        bm.SetFloat("_Blend", OureaSceneBuilder.MetersToUnitsY * 0.3f);   // red over the first 30 cm of water
+        SaveAsset(bm, GenDir + "/Building.mat");
+        field.material = bm;
         return field;
     }
 

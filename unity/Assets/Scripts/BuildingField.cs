@@ -22,6 +22,8 @@ public class BuildingField : MonoBehaviour
     [System.NonSerialized] public float[] builtAreaHaCum;
     [System.NonSerialized] public float builtAreaHa;
     [System.NonSerialized] public int blocks;
+    // every built-up cell: x,z in world units, ground (m), share built — for finding a village to watch
+    [System.NonSerialized] public List<Vector4> cellList;
 
     bool built;
 
@@ -45,6 +47,8 @@ public class BuildingField : MonoBehaviour
 
         var cells = new List<Vector2>();   // (groundM, areaHa) for the readout
         var verts = new List<Vector3>(); var norms = new List<Vector3>(); var tris = new List<int>();
+        var uvs = new List<Vector2>();   // x = ground height under the block (units), for the flood colour
+        cellList = new List<Vector4>();
         int chunk = 0;
         System.Action flush = () =>
         {
@@ -53,13 +57,13 @@ public class BuildingField : MonoBehaviour
             go.hideFlags = Application.isPlaying ? HideFlags.None : HideFlags.DontSave;
             go.transform.SetParent(transform, false);
             var m = new Mesh { name = "Buildings", indexFormat = IndexFormat.UInt32 };
-            m.SetVertices(verts); m.SetNormals(norms); m.SetTriangles(tris, 0);
+            m.SetVertices(verts); m.SetNormals(norms); m.SetUVs(0, uvs); m.SetTriangles(tris, 0);
             m.RecalculateBounds();
             go.GetComponent<MeshFilter>().sharedMesh = m;
             var r = go.GetComponent<MeshRenderer>();
             r.sharedMaterial = material;
             r.shadowCastingMode = ShadowCastingMode.On;
-            verts.Clear(); norms.Clear(); tris.Clear();
+            verts.Clear(); norms.Clear(); tris.Clear(); uvs.Clear();
         };
 
         for (int r = 0; r < h; r++)
@@ -76,6 +80,8 @@ public class BuildingField : MonoBehaviour
                 float y0 = (g - minM) / Mathf.Max(0.01f, maxM - minM) * groundScale - 0.15f;
                 float y1 = y0 + 0.15f + hm * metersToUnitsY;
                 Box(verts, norms, tris, new Vector3(u * sizeX, 0, v * sizeZ), hx, hz, y0, y1);
+                while (uvs.Count < verts.Count) uvs.Add(new Vector2(y0 + 0.15f, 0f));
+                cellList.Add(new Vector4(u * sizeX, v * sizeZ, g, frac));
                 blocks++;
                 if (verts.Count > 200000) flush();
             }
@@ -87,6 +93,35 @@ public class BuildingField : MonoBehaviour
         float acc = 0f;
         for (int k = 0; k < cells.Count; k++) { acc += cells[k].y; builtGroundM[k] = cells[k].x; builtAreaHaCum[k] = acc; }
         builtAreaHa = acc;
+    }
+
+    // The densest cluster of built-up cells that a water level would flood (centre, world units):
+    // where to point the camera to watch villages go under.
+    public bool BestFloodSpot(float levelM, out Vector3 spot)
+    {
+        spot = new Vector3(sizeX * 0.5f, 0f, sizeZ * 0.5f);
+        if (cellList == null || cellList.Count == 0) return false;
+        const int N = 24;   // ~2.7 km bins
+        var score = new float[N * N];
+        foreach (var c in cellList)
+        {
+            if (c.z >= levelM || c.w < 0.12f) continue;
+            int bx = Mathf.Clamp((int)(c.x / sizeX * N), 0, N - 1), bz = Mathf.Clamp((int)(c.y / sizeZ * N), 0, N - 1);
+            score[bz * N + bx] += c.w;
+        }
+        int best = 0;
+        for (int i = 1; i < score.Length; i++) if (score[i] > score[best]) best = i;
+        if (score[best] <= 0f) return false;
+        int gx = best % N, gz = best / N;
+        Vector3 sum = Vector3.zero; float wsum = 0f;
+        foreach (var c in cellList)
+        {
+            if (c.z >= levelM || c.w < 0.12f) continue;
+            if ((int)(c.x / sizeX * N) != gx || (int)(c.y / sizeZ * N) != gz) continue;
+            sum += new Vector3(c.x, (c.z - minM) / Mathf.Max(0.01f, maxM - minM) * groundScale, c.y) * c.w; wsum += c.w;
+        }
+        spot = sum / wsum;
+        return true;
     }
 
     // Built-up area (ha) whose ground is below a water level (m).
