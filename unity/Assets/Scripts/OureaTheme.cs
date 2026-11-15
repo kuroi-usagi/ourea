@@ -8,10 +8,10 @@ public static class OureaTheme
 {
     public static Color S(int r, int g, int b, float a = 1f) { return new Color(Mathf.Pow(r / 255f, 2.2f), Mathf.Pow(g / 255f, 2.2f), Mathf.Pow(b / 255f, 2.2f), a); }
 
-    public static readonly Color Glass = S(8, 14, 17, 0.84f);
+    public static readonly Color Glass = S(8, 14, 17, 0.92f);
     public static readonly Color GlassLine = S(200, 240, 240, 0.16f);
     public static readonly Color Ink = S(238, 245, 243);
-    public static readonly Color Muted = S(147, 168, 163);
+    public static readonly Color Muted = S(178, 196, 192);
     public static readonly Color Accent = S(95, 212, 224);
     public static readonly Color OnAccent = S(3, 23, 26);
     public static readonly Color Warn = S(242, 181, 68);

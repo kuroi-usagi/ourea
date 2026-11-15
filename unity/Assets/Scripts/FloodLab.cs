@@ -312,11 +312,11 @@ public class FloodLab : MonoBehaviour
         sTitle = OureaTheme.Text(16, Ink, true);
         sBig = OureaTheme.Text(26, Ink, true);
         sBigRed = OureaTheme.Text(26, OureaTheme.Bad, true);
-        sBody = Text(12, Ink, FontStyle.Normal, true);
-        sSmall = Text(11, Muted, FontStyle.Normal, true);
+        sBody = Text(13, Ink, FontStyle.Normal, true);
+        sSmall = Text(12, Muted, FontStyle.Normal, true);
         sBtn = OureaTheme.Button(12);
         sBtnOn = OureaTheme.Primary(12);
-        sDock = OureaTheme.Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Ink, 11);
+        sDock = OureaTheme.Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Ink, 12);
         sDock.hover.background = Rounded(new Color(1f, 1f, 1f, 0.07f), 10); sDock.hover.textColor = Ink;
         sDockOn = OureaTheme.Primary(11);
         sClose = OureaTheme.Box(Rounded(new Color(1f, 1f, 1f, 0.06f), 12), 12, Muted, 13);
@@ -346,6 +346,7 @@ public class FloodLab : MonoBehaviour
         GUI.depth = -10;   // dock and cards above the viewer's map labels
         if (viewer != null && viewer.uiFont != null) GUI.skin.font = viewer.uiFont;
         if (Event.current.type == EventType.Layout) uiRects.Clear();
+        if (GlobeJourney.HideHud) return;
         Styles();
         float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));

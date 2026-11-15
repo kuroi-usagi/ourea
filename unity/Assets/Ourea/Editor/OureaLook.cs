@@ -262,6 +262,7 @@ public static class OureaLook
         // the guided story (Scripts/StoryMode.cs), with the team's sourced numbers
         var story = lab.gameObject.AddComponent<StoryMode>();
         story.viewer = app; story.lab = lab;
+        story.journey = AddGlobe(app, sizeX, sizeZ);
         var headPath = Path.Combine(Handoff, "findings", "headline.json");
         if (File.Exists(headPath))
         {
@@ -358,6 +359,62 @@ public static class OureaLook
     }
 
     // ---------- textures ----------
+    [System.Serializable] class GlobeMeta { public float site_lat, site_lon; public float[] context_bounds_deg; }
+
+    // The globe and the fly-in (Scripts/GlobeJourney.cs, pipeline/make_globe.py)
+    static GlobeJourney AddGlobe(OureaViewer app, float sizeX, float sizeZ)
+    {
+        var metaPath = Path.Combine(Handoff, "globe", "globe.json");
+        var earth = ImportImage("globe", "earth.jpg", 4096);
+        var context = ImportImage("globe", "context.jpg", 2048);
+        if (!File.Exists(metaPath) || earth == null) { Debug.LogWarning("Ourea: no handoff/globe (run pipeline/make_globe.py); no globe."); return null; }
+        var gm = JsonUtility.FromJson<GlobeMeta>(File.ReadAllText(metaPath));
+        var j = new GameObject("Globe").AddComponent<GlobeJourney>();
+        j.viewer = app; j.sizeX = sizeX; j.sizeZ = sizeZ;
+        j.siteLat = gm.site_lat; j.siteLon = gm.site_lon;
+        j.contextBoundsDeg = new Vector4(gm.context_bounds_deg[0], gm.context_bounds_deg[1], gm.context_bounds_deg[2], gm.context_bounds_deg[3]);
+        j.earthTex = earth; j.contextTex = context;
+        j.globeMat = new Material(Shader.Find("Ourea/Globe")); j.globeMat.SetTexture("_MainTex", earth);
+        SaveAsset(j.globeMat, GenDir + "/Globe.mat");
+        j.contextMat = new Material(Shader.Find("Ourea/Globe")); j.contextMat.SetTexture("_MainTex", context);
+        j.contextMat.SetVector("_Hole", new Vector4(0f, 0f, sizeX, sizeZ));
+        j.contextMat.SetFloat("_FrameWidth", 2.5f);
+        j.contextMat.SetFloat("_Dim", 0.9f);   // the study area stays the brightest thing on the ground
+        j.contextMat.renderQueue = j.globeMat.shader.renderQueue + 1;   // after the Earth, so a faded ring never hides it
+        SaveAsset(j.contextMat, GenDir + "/Context.mat");
+        j.atmosphereMat = new Material(Shader.Find("Ourea/Atmosphere"));
+        SaveAsset(j.atmosphereMat, GenDir + "/Atmosphere.mat");
+        j.starMat = new Material(Shader.Find("Ourea/Stars"));
+        SaveAsset(j.starMat, GenDir + "/Stars.mat");
+        j.skyMat = RenderSettings.skybox;
+        j.baseFogDensity = RenderSettings.fogDensity;
+        j.sites.Add(new GlobeJourney.Site { name = "Mekong Delta  ·  Đồng Tháp", lat = gm.site_lat, lon = gm.site_lon, ready = true });
+        j.sites.Add(new GlobeJourney.Site { name = "Ganges–Brahmaputra Delta", note = "next", lat = 22.3f, lon = 89.8f });
+        j.sites.Add(new GlobeJourney.Site { name = "Nile Delta", note = "next", lat = 31.0f, lon = 31.2f });
+        j.sites.Add(new GlobeJourney.Site { name = "Mississippi River Delta", note = "next", lat = 29.2f, lon = -89.6f });
+        return j;
+    }
+
+    static Texture2D ImportImage(string folder, string file, int maxSize)
+    {
+        string src = Path.Combine(Handoff, folder, file);
+        if (!File.Exists(src) || new FileInfo(src).Length < 1024) return null;
+        string dst = GenDir + "/" + folder + "_" + file;
+        File.Copy(src, Path.Combine(ProjectRoot, dst), true);
+        AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceUpdate);
+        var imp = (TextureImporter)AssetImporter.GetAtPath(dst);
+        imp.maxTextureSize = maxSize;
+        imp.npotScale = TextureImporterNPOTScale.None;
+        imp.wrapMode = TextureWrapMode.Clamp;
+        imp.mipmapEnabled = true;
+        imp.anisoLevel = 8;
+        imp.textureCompression = TextureImporterCompression.Compressed;
+        imp.crunchedCompression = true;
+        imp.compressionQuality = 70;
+        imp.SaveAndReimport();
+        return AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
+    }
+
     static Texture2D ImportBasemap()
     {
         string src = Path.Combine(Handoff, "basemap", "s2cloudless.jpg");

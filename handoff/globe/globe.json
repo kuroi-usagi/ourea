@@ -1,0 +1,12 @@
+{
+  "site_lat": 10.675,
+  "site_lon": 105.6,
+  "context_bounds_deg": [
+    101.6,
+    6.675000000000001,
+    109.6,
+    14.675
+  ],
+  "earth": "plate carree, lon -180..180 left to right, lat 90..-90 top to bottom",
+  "attribution": "Sentinel-2 cloudless 2024 by EOX IT Services GmbH (s2maps.eu), contains modified Copernicus Sentinel data 2024"
+}

@@ -226,7 +226,7 @@ public class OureaViewer : MonoBehaviour
         sPlay = OureaTheme.Box(Rounded(Accent, 20), 20, OureaTheme.OnAccent, 16);
         sPlay.hover.background = Rounded(OureaTheme.S(140, 230, 238), 20);
         sPlay.hover.textColor = OureaTheme.OnAccent;
-        sPill = OureaTheme.Box(OureaTheme.Rounded(OureaTheme.S(8, 14, 17, 0.7f), 6, Amber), 6, Amber, 10);
+        sPill = OureaTheme.Box(OureaTheme.Rounded(OureaTheme.S(8, 14, 17, 0.85f), 6, Amber), 6, Amber, 11);
         sPill.padding = new RectOffset(8, 8, 2, 2);
         sRow = Box(texRow, 8, Ink, 13, FontStyle.Normal, TextAnchor.MiddleLeft);
         sRow.hover.background = texRowHover;
@@ -264,6 +264,7 @@ public class OureaViewer : MonoBehaviour
     void OnGUI()
     {
         if (Event.current.type == EventType.Layout) uiRects.Clear();
+        if (GlobeJourney.HideHud) return;   // in space or in flight: the globe has its own labels
         if (uiFont != null) GUI.skin.font = uiFont;
         if (displayFont != null) OureaTheme.display = displayFont;
         MakeStyles();

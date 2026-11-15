@@ -8,12 +8,13 @@ public class StoryMode : MonoBehaviour
 {
     public OureaViewer viewer;
     public FloodLab lab;
+    public GlobeJourney journey;   // the globe and the fly-in; the opening screen sits over the globe
     public float childrenInTile = 81100f;
     public int schoolsNear = 18, schoolsInTile = 94;
     public string drowningFact = "Nearly 2,000 children drown in Vietnam every year";
     public string drowningSource = "Ministry of Health, via Tuoi Tre News, Jul 2025";
 
-    bool intro = true, running;
+    bool intro = true, running, storyAfterFlight;
     int chapter;
     float chapterStart, introFade = 1f;
     Vector2 introScroll;
@@ -30,7 +31,7 @@ public class StoryMode : MonoBehaviour
         sPanel = OureaTheme.Box(OureaTheme.PanelTex, 14, OureaTheme.Ink, 12, false);
         sHuge = OureaTheme.Text(64, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.UpperCenter);
         sLead = OureaTheme.Text(17, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperCenter, true);
-        sBody = OureaTheme.Text(14, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
+        sBody = OureaTheme.Text(13, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sSmall = OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sEyebrow = OureaTheme.Text(11, OureaTheme.Accent, true);
         sHeadKey = OureaTheme.Text(14, OureaTheme.Ink, true);
@@ -43,12 +44,18 @@ public class StoryMode : MonoBehaviour
         texRound = OureaTheme.Rounded(Color.white, 16);
         // dark from the bottom up, so the map still shows behind the opening screen
         texShade = new Texture2D(1, 256, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
-        for (int y = 0; y < 256; y++) texShade.SetPixel(0, y, new Color(0.002f, 0.005f, 0.008f, Mathf.Lerp(0.96f, 0.72f, Mathf.SmoothStep(0f, 1f, y / 255f))));
+        for (int y = 0; y < 256; y++) texShade.SetPixel(0, y, new Color(0.002f, 0.005f, 0.008f, Mathf.Lerp(0.95f, 0f, Mathf.SmoothStep(0f, 1f, y / 255f / 0.62f))));
         texShade.Apply();
+    }
+
+    void Start()
+    {
+        if (journey != null) journey.Arrived += () => { if (storyAfterFlight) { storyAfterFlight = false; running = true; Go(0); } };
     }
 
     void Update()
     {
+        if (journey != null) intro = journey.mode == GlobeJourney.Mode.Globe;
         introFade = Mathf.MoveTowards(introFade, intro ? 1f : 0f, Time.deltaTime * 2.5f);
         if (lab != null) lab.guided = intro || running;
     }
@@ -146,6 +153,7 @@ public class StoryMode : MonoBehaviour
         const float M = 16f;
 
         if (introFade > 0.01f) DrawIntro(W, H, s);
+        else if (journey != null && journey.mode == GlobeJourney.Mode.Flying) { }
         else if (running)
         {
             if (chapter == 5) DrawAct(W, H, s);
@@ -154,9 +162,15 @@ public class StoryMode : MonoBehaviour
         else
         {
             // the story is always one click away, under the title
-            var b = new Rect(M, M + 58f + 10f, 268f, 40f);
+            var b = new Rect(M, M + 58f + 10f, journey != null ? 184f : 268f, 40f);
             Block(b, s);
-            if (GUI.Button(b, "WHY THIS MAP?  ·  THE STORY", sButton)) { running = true; Go(0); }
+            if (GUI.Button(b, "WHY THIS MAP?  ·  STORY", sButton)) { running = true; Go(0); }
+            if (journey != null)
+            {
+                var g = new Rect(b.xMax + 8f, b.y, 268f - b.width - 8f, 40f);
+                Block(g, s);
+                if (GUI.Button(g, "GLOBE", sButton)) { lab.CloseCard(); lab.Drain(); journey.FlyOut(); }
+            }
         }
         GUI.matrix = Matrix4x4.identity;
     }
@@ -177,13 +191,14 @@ public class StoryMode : MonoBehaviour
         Block(new Rect(0, 0, W, H), s);
 
         float cw = Mathf.Min(860f, W - 48f), x = (W - cw) * 0.5f;
-        float y = Mathf.Max(40f, H * 0.5f - 300f);
+        // anchored to the bottom, so the globe stays visible above it
+        float y = Mathf.Max(24f, H - 24f - 392f);
         GUI.Label(new Rect(x, y, cw, 70), "O U R E A", sHuge); y += 78f;
         GUI.Label(new Rect(x, y, cw, 54), "Flood season in Vietnam's Mekong Delta. Where should someone check first for young children near flood water?", sLead);
-        y += 70f;
+        y += 62f;
 
         // three columns: the problem, what Ourea does, who uses it
-        float colGap = 16f, colW = (cw - 2 * colGap) / 3f, colH = 196f;
+        float colGap = 16f, colW = (cw - 2 * colGap) / 3f, colH = 150f;
         string[] heads = { "THE PROBLEM", "WHAT OUREA DOES", "WHO USES IT" };
         string[] bodies = {
             drowningFact + ". In the Delta, floods arrive under monsoon cloud, when ordinary satellites see nothing.",
@@ -198,13 +213,21 @@ public class StoryMode : MonoBehaviour
             GUI.Label(new Rect(r.x + 16, r.y + 14, r.width - 32, 16), heads[i], sEyebrow);
             GUI.Label(new Rect(r.x + 16, r.y + 36, r.width - 32, r.height - 44), bodies[i], sBody);
         }
-        y += narrow ? 3 * 112f + 6f : colH + 22f;
+        y += narrow ? 3 * 112f + 6f : colH + 18f;
 
         float bw = 230f, gap = 12f;
         var go = new Rect(W * 0.5f - bw - gap * 0.5f, y, bw, 48f);
         var explore = new Rect(W * 0.5f + gap * 0.5f, y, bw, 48f);
-        if (GUI.Button(go, "BEGIN THE STORY  >", sPrimary)) { intro = false; running = true; Go(0); }
-        if (GUI.Button(explore, "EXPLORE THE MAP", sButton)) { intro = false; running = false; }
+        if (GUI.Button(go, "BEGIN THE STORY  >", sPrimary))
+        {
+            if (journey != null) { storyAfterFlight = true; running = false; journey.FlyIn(); }
+            else { intro = false; running = true; Go(0); }
+        }
+        if (GUI.Button(explore, "EXPLORE THE MAP", sButton))
+        {
+            if (journey != null) { storyAfterFlight = false; running = false; journey.FlyIn(); }
+            else { intro = false; running = false; }
+        }
         y += 60f;
         GUI.Label(new Rect(x, y, cw, 30), "Source: " + drowningSource + ". NISAR data is provisional. Guide character is fictional; her numbers are real.",
                   OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperCenter, true));

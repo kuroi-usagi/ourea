@@ -35,6 +35,19 @@ public class OrbitCamera : MonoBehaviour
         goalPitch = homePitch = pitch;
     }
 
+    public Vector3 HomeTarget { get { return homeTarget; } }
+    public float HomeDistance { get { return homeDistance; } }
+    public float HomeYaw { get { return homeYaw; } }
+    public float HomePitch { get { return homePitch; } }
+
+    // jump straight to the home view (after the fly-in has already brought the camera there)
+    public void SnapHome()
+    {
+        ResetView();
+        target = goalTarget; distance = goalDistance; yaw = goalYaw; pitch = goalPitch;
+        idleTime = 0f;
+    }
+
     public void ResetView()
     {
         goalTarget = homeTarget;
