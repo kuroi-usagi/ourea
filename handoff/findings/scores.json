@@ -11,10 +11,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -29,10 +27,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -47,10 +43,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -65,10 +59,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -83,10 +75,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -101,10 +91,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -119,10 +107,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -137,10 +123,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -155,10 +139,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -173,10 +155,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -191,10 +171,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -209,10 +187,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -227,10 +203,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -245,10 +219,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -263,10 +235,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -281,10 +251,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -299,10 +267,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -317,10 +283,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -335,10 +299,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -353,10 +315,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -371,10 +331,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -389,10 +347,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -407,10 +363,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -425,10 +379,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -443,10 +395,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -461,10 +411,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -479,10 +427,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -497,10 +443,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -515,10 +459,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -533,10 +475,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -599,10 +539,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -617,10 +555,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -635,10 +571,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -685,10 +619,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -703,10 +635,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -721,10 +651,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -739,10 +667,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -757,10 +683,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -775,10 +699,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -793,10 +715,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -811,10 +731,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -829,10 +747,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -847,10 +763,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "medium"
  },
  {
@@ -865,10 +779,8 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
@@ -883,16 +795,14 @@
    "new_water": 0.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
-  "reasons": [
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
+  "gap_factor": 1.0,
+  "reasons": [],
   "confidence": "low"
  },
  {
   "place_id": "cell_30_35",
   "pass": "2026-08-28",
-  "score": 81.8,
+  "score": 62.9,
   "rank": 1,
   "rank_change": 206,
   "factors": {
@@ -901,19 +811,18 @@
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_38_23",
   "pass": "2026-08-28",
-  "score": 81.7,
+  "score": 62.8,
   "rank": 2,
   "rank_change": 283,
   "factors": {
@@ -922,19 +831,18 @@
    "new_water": 0.99,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "59% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "59% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_10_02",
   "pass": "2026-08-28",
-  "score": 81.5,
+  "score": 62.7,
   "rank": 3,
   "rank_change": 47,
   "factors": {
@@ -943,20 +851,19 @@
    "new_water": 0.723,
    "schools_routes": 0.5
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 18 children under 5 live within ~100 m of flood water",
    "88% of homes here have flood water within ~100 m",
    "43% of the square is flood water (land on 2026-07-11)",
-   "1 school(s) with flood water within ~100 m",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "1 school(s) with flood water within ~100 m"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_22_02",
   "pass": "2026-08-28",
-  "score": 80.1,
+  "score": 61.6,
   "rank": 4,
   "rank_change": 138,
   "factors": {
@@ -965,19 +872,18 @@
    "new_water": 0.856,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 29 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "51% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "51% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_37_19",
   "pass": "2026-08-28",
-  "score": 79.7,
+  "score": 61.3,
   "rank": 5,
   "rank_change": 273,
   "factors": {
@@ -986,19 +892,18 @@
    "new_water": 0.98,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "59% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "59% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_02_21",
   "pass": "2026-08-28",
-  "score": 78.8,
+  "score": 60.6,
   "rank": 6,
   "rank_change": 4,
   "factors": {
@@ -1007,19 +912,18 @@
    "new_water": 0.929,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 30 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "56% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "56% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_13",
   "pass": "2026-08-28",
-  "score": 78.8,
+  "score": 60.6,
   "rank": 7,
   "rank_change": 99,
   "factors": {
@@ -1028,19 +932,18 @@
    "new_water": 0.959,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 19 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "58% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "58% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_43_26",
   "pass": "2026-08-28",
-  "score": 77.8,
+  "score": 59.8,
   "rank": 8,
   "rank_change": 343,
   "factors": {
@@ -1049,19 +952,18 @@
    "new_water": 0.928,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "56% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "56% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_42_27",
   "pass": "2026-08-28",
-  "score": 76.3,
+  "score": 58.7,
   "rank": 9,
   "rank_change": 328,
   "factors": {
@@ -1070,19 +972,18 @@
    "new_water": 0.775,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "46% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "46% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_63_11",
   "pass": "2026-08-28",
-  "score": 76.2,
+  "score": 58.6,
   "rank": 10,
   "rank_change": 907,
   "factors": {
@@ -1091,19 +992,18 @@
    "new_water": 0.69,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 40 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "41% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "41% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_13_41",
   "pass": "2026-08-28",
-  "score": 75.9,
+  "score": 58.4,
   "rank": 11,
   "rank_change": 59,
   "factors": {
@@ -1112,19 +1012,18 @@
    "new_water": 0.939,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 19 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "56% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "56% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_23_17",
   "pass": "2026-08-28",
-  "score": 75.9,
+  "score": 58.4,
   "rank": 12,
   "rank_change": 141,
   "factors": {
@@ -1133,19 +1032,18 @@
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 17 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_63_01",
   "pass": "2026-08-28",
-  "score": 75.8,
+  "score": 58.3,
   "rank": 13,
   "rank_change": 901,
   "factors": {
@@ -1154,19 +1052,18 @@
    "new_water": 0.641,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 35 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "38% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "38% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_45_30",
   "pass": "2026-08-28",
-  "score": 75.3,
+  "score": 57.9,
   "rank": 14,
   "rank_change": 379,
   "factors": {
@@ -1175,19 +1072,18 @@
    "new_water": 0.986,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 17 children under 5 live within ~100 m of flood water",
    "88% of homes here have flood water within ~100 m",
-   "59% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "59% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_08",
   "pass": "2026-08-28",
-  "score": 74.6,
+  "score": 57.3,
   "rank": 15,
   "rank_change": 869,
   "factors": {
@@ -1196,19 +1092,18 @@
    "new_water": 0.721,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 27 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_10",
   "pass": "2026-08-28",
-  "score": 74.4,
+  "score": 57.3,
   "rank": 16,
   "rank_change": 869,
   "factors": {
@@ -1217,19 +1112,18 @@
    "new_water": 0.744,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "45% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "45% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_59_05",
   "pass": "2026-08-28",
-  "score": 73.6,
+  "score": 56.6,
   "rank": 17,
   "rank_change": 773,
   "factors": {
@@ -1238,19 +1132,18 @@
    "new_water": 0.781,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "47% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "47% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_22_03",
   "pass": "2026-08-28",
-  "score": 73.6,
+  "score": 56.6,
   "rank": 18,
   "rank_change": 125,
   "factors": {
@@ -1259,19 +1152,18 @@
    "new_water": 0.688,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "41% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "41% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_32_26",
   "pass": "2026-08-28",
-  "score": 73.0,
+  "score": 56.1,
   "rank": 19,
   "rank_change": 203,
   "factors": {
@@ -1280,20 +1172,19 @@
    "new_water": 0.535,
    "schools_routes": 1.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 34 children under 5 live within ~100 m of flood water",
    "43% of homes here have flood water within ~100 m",
    "32% of the square is flood water (land on 2026-07-11)",
-   "3 school(s) with flood water within ~100 m",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "3 school(s) with flood water within ~100 m"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_01_21",
   "pass": "2026-08-28",
-  "score": 72.9,
+  "score": 56.1,
   "rank": 20,
   "rank_change": -14,
   "factors": {
@@ -1302,19 +1193,18 @@
    "new_water": 0.692,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 29 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_03",
   "pass": "2026-08-28",
-  "score": 72.5,
+  "score": 55.8,
   "rank": 21,
   "rank_change": 860,
   "factors": {
@@ -1323,19 +1213,18 @@
    "new_water": 0.633,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 37 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "38% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "38% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_63_10",
   "pass": "2026-08-28",
-  "score": 72.1,
+  "score": 55.5,
   "rank": 22,
   "rank_change": 894,
   "factors": {
@@ -1344,19 +1233,18 @@
    "new_water": 0.615,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 35 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "37% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "37% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_15_62",
   "pass": "2026-08-28",
-  "score": 71.7,
+  "score": 55.2,
   "rank": 23,
   "rank_change": 69,
   "factors": {
@@ -1365,19 +1253,18 @@
    "new_water": 0.643,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "39% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "39% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_51_01",
   "pass": "2026-08-28",
-  "score": 71.7,
+  "score": 55.2,
   "rank": 24,
   "rank_change": 522,
   "factors": {
@@ -1386,19 +1273,18 @@
    "new_water": 0.597,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 38 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "36% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "36% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_52_01",
   "pass": "2026-08-28",
-  "score": 71.7,
+  "score": 55.1,
   "rank": 25,
   "rank_change": 543,
   "factors": {
@@ -1407,19 +1293,18 @@
    "new_water": 0.695,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "95% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_19_36",
   "pass": "2026-08-28",
-  "score": 71.6,
+  "score": 55.1,
   "rank": 26,
   "rank_change": 100,
   "factors": {
@@ -1428,19 +1313,18 @@
    "new_water": 0.697,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 23 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_44_26",
   "pass": "2026-08-28",
-  "score": 71.6,
+  "score": 55.0,
   "rank": 27,
   "rank_change": 345,
   "factors": {
@@ -1449,19 +1333,18 @@
    "new_water": 0.71,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_02",
   "pass": "2026-08-28",
-  "score": 71.1,
+  "score": 54.7,
   "rank": 28,
   "rank_change": 852,
   "factors": {
@@ -1470,19 +1353,18 @@
    "new_water": 0.589,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "97% of homes here have flood water within ~100 m",
-   "35% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "35% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_29_14",
   "pass": "2026-08-28",
-  "score": 71.0,
+  "score": 54.6,
   "rank": 29,
   "rank_change": 165,
   "factors": {
@@ -1491,19 +1373,18 @@
    "new_water": 0.615,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "37% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "37% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_00",
   "pass": "2026-08-28",
-  "score": 70.8,
+  "score": 54.5,
   "rank": 30,
   "rank_change": 849,
   "factors": {
@@ -1512,19 +1393,18 @@
    "new_water": 0.654,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "39% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "39% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_60_06",
   "pass": "2026-08-28",
-  "score": 70.8,
+  "score": 54.4,
   "rank": 31,
   "rank_change": 787,
   "factors": {
@@ -1533,19 +1413,18 @@
    "new_water": 0.755,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "87% of homes here have flood water within ~100 m",
-   "45% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "45% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_56_03",
   "pass": "2026-08-28",
-  "score": 70.7,
+  "score": 54.4,
   "rank": 32,
   "rank_change": 640,
   "factors": {
@@ -1554,19 +1433,18 @@
    "new_water": 0.462,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 54 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "28% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "28% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_03_22",
   "pass": "2026-08-28",
-  "score": 70.6,
+  "score": 54.3,
   "rank": 33,
   "rank_change": -19,
   "factors": {
@@ -1575,19 +1453,18 @@
    "new_water": 0.76,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "87% of homes here have flood water within ~100 m",
-   "46% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "46% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_18_20",
   "pass": "2026-08-28",
-  "score": 69.9,
+  "score": 53.7,
   "rank": 34,
   "rank_change": 86,
   "factors": {
@@ -1596,19 +1473,18 @@
    "new_water": 0.669,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 27 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "40% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "40% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_44_22",
   "pass": "2026-08-28",
-  "score": 69.5,
+  "score": 53.5,
   "rank": 35,
   "rank_change": 336,
   "factors": {
@@ -1617,19 +1493,18 @@
    "new_water": 0.666,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "40% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "40% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_22_27",
   "pass": "2026-08-28",
-  "score": 69.4,
+  "score": 53.4,
   "rank": 36,
   "rank_change": 112,
   "factors": {
@@ -1638,19 +1513,18 @@
    "new_water": 0.532,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "97% of homes here have flood water within ~100 m",
-   "32% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "32% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_42_00",
   "pass": "2026-08-28",
-  "score": 69.4,
+  "score": 53.4,
   "rank": 37,
   "rank_change": 289,
   "factors": {
@@ -1659,19 +1533,18 @@
    "new_water": 0.664,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 32 children under 5 live within ~100 m of flood water",
    "86% of homes here have flood water within ~100 m",
-   "40% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "40% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_13_40",
   "pass": "2026-08-28",
-  "score": 68.8,
+  "score": 52.9,
   "rank": 38,
   "rank_change": 31,
   "factors": {
@@ -1680,19 +1553,18 @@
    "new_water": 0.739,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "87% of homes here have flood water within ~100 m",
-   "44% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "44% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_43_00",
   "pass": "2026-08-28",
-  "score": 68.6,
+  "score": 52.7,
   "rank": 39,
   "rank_change": 300,
   "factors": {
@@ -1701,19 +1573,18 @@
    "new_water": 0.342,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 84 children under 5 live within ~100 m of flood water",
    "85% of homes here have flood water within ~100 m",
-   "21% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "21% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_61_05",
   "pass": "2026-08-28",
-  "score": 68.1,
+  "score": 52.4,
   "rank": 40,
   "rank_change": 808,
   "factors": {
@@ -1722,19 +1593,18 @@
    "new_water": 0.744,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 42 children under 5 live within ~100 m of flood water",
    "74% of homes here have flood water within ~100 m",
-   "45% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "45% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_52_02",
   "pass": "2026-08-28",
-  "score": 68.0,
+  "score": 52.3,
   "rank": 41,
   "rank_change": 528,
   "factors": {
@@ -1743,19 +1613,18 @@
    "new_water": 0.314,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 96 children under 5 live within ~100 m of flood water",
    "82% of homes here have flood water within ~100 m",
-   "19% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "19% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_31_35",
   "pass": "2026-08-28",
-  "score": 67.8,
+  "score": 52.2,
   "rank": 42,
   "rank_change": 175,
   "factors": {
@@ -1764,187 +1633,178 @@
    "new_water": 0.905,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "72% of homes here have flood water within ~100 m",
-   "54% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "54% of the square is flood water (land on 2026-07-11)"
+  ],
+  "confidence": "low"
+ },
+ {
+  "place_id": "cell_06_50",
+  "pass": "2026-08-28",
+  "score": 52.0,
+  "rank": 43,
+  "rank_change": -12,
+  "factors": {
+   "water_near_homes": 0.782,
+   "young_children": 0.328,
+   "new_water": 0.82,
+   "schools_routes": 0.0
+  },
+  "gap_factor": 1.0,
+  "reasons": [
+   "about 21 children under 5 live within ~100 m of flood water",
+   "78% of homes here have flood water within ~100 m",
+   "49% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_14",
   "pass": "2026-08-28",
-  "score": 67.4,
-  "rank": 43,
-  "rank_change": 64,
+  "score": 51.8,
+  "rank": 44,
+  "rank_change": 63,
   "factors": {
    "water_near_homes": 0.803,
    "young_children": 0.401,
    "new_water": 0.685,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 32 children under 5 live within ~100 m of flood water",
    "80% of homes here have flood water within ~100 m",
-   "41% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "41% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_15_63",
   "pass": "2026-08-28",
-  "score": 67.3,
-  "rank": 44,
-  "rank_change": 49,
+  "score": 51.8,
+  "rank": 45,
+  "rank_change": 48,
   "factors": {
    "water_near_homes": 0.891,
    "young_children": 0.322,
    "new_water": 0.628,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "38% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "38% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_25_24",
   "pass": "2026-08-28",
-  "score": 67.2,
-  "rank": 45,
-  "rank_change": 116,
+  "score": 51.7,
+  "rank": 46,
+  "rank_change": 115,
   "factors": {
    "water_near_homes": 0.92,
    "young_children": 0.361,
    "new_water": 0.526,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 26 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "32% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "32% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_23_34",
   "pass": "2026-08-28",
-  "score": 66.8,
-  "rank": 46,
-  "rank_change": 108,
+  "score": 51.4,
+  "rank": 47,
+  "rank_change": 107,
   "factors": {
    "water_near_homes": 0.895,
    "young_children": 0.342,
    "new_water": 0.578,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 23 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "35% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "35% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_61_08",
   "pass": "2026-08-28",
-  "score": 66.8,
-  "rank": 47,
-  "rank_change": 804,
+  "score": 51.4,
+  "rank": 48,
+  "rank_change": 803,
   "factors": {
    "water_near_homes": 0.78,
    "young_children": 0.479,
    "new_water": 0.607,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 46 children under 5 live within ~100 m of flood water",
    "78% of homes here have flood water within ~100 m",
-   "36% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "36% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_16_12",
   "pass": "2026-08-28",
-  "score": 66.3,
-  "rank": 48,
-  "rank_change": 57,
+  "score": 51.0,
+  "rank": 49,
+  "rank_change": 56,
   "factors": {
    "water_near_homes": 0.812,
    "young_children": 0.325,
    "new_water": 0.724,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "81% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_39_04",
   "pass": "2026-08-28",
-  "score": 66.3,
-  "rank": 49,
-  "rank_change": 239,
+  "score": 51.0,
+  "rank": 50,
+  "rank_change": 238,
   "factors": {
    "water_near_homes": 0.895,
    "young_children": 0.394,
    "new_water": 0.492,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 31 children under 5 live within ~100 m of flood water",
    "90% of homes here have flood water within ~100 m",
-   "29% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
-  "confidence": "low"
- },
- {
-  "place_id": "cell_00_53",
-  "pass": "2026-08-28",
-  "score": 65.9,
-  "rank": 50,
-  "rank_change": -47,
-  "factors": {
-   "water_near_homes": 0.913,
-   "young_children": 0.329,
-   "new_water": 0.527,
-   "schools_routes": 0.0
-  },
-  "gap_factor": 1.3,
-  "reasons": [
-   "about 22 children under 5 live within ~100 m of flood water",
-   "91% of homes here have flood water within ~100 m",
-   "32% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "29% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_10_02",
   "pass": "2026-10-03",
-  "score": 85.8,
+  "score": 66.0,
   "rank": 1,
   "rank_change": 2,
   "factors": {
@@ -1953,20 +1813,19 @@
    "new_water": 0.824,
    "schools_routes": 0.5
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 18 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
    "49% of the square is flood water (land on 2026-07-11)",
-   "1 school(s) with flood water within ~100 m",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "1 school(s) with flood water within ~100 m"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_30_35",
   "pass": "2026-10-03",
-  "score": 83.0,
+  "score": 63.9,
   "rank": 2,
   "rank_change": -1,
   "factors": {
@@ -1975,19 +1834,18 @@
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_38_23",
   "pass": "2026-10-03",
-  "score": 81.9,
+  "score": 63.0,
   "rank": 3,
   "rank_change": -1,
   "factors": {
@@ -1996,19 +1854,18 @@
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_43_26",
   "pass": "2026-10-03",
-  "score": 80.5,
+  "score": 62.0,
   "rank": 4,
   "rank_change": 4,
   "factors": {
@@ -2017,19 +1874,18 @@
    "new_water": 0.952,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "97% of homes here have flood water within ~100 m",
-   "57% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "57% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_22_02",
   "pass": "2026-10-03",
-  "score": 80.2,
+  "score": 61.7,
   "rank": 5,
   "rank_change": -1,
   "factors": {
@@ -2038,19 +1894,18 @@
    "new_water": 0.859,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 29 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "52% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "52% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_37_19",
   "pass": "2026-10-03",
-  "score": 80.0,
+  "score": 61.6,
   "rank": 6,
   "rank_change": -1,
   "factors": {
@@ -2059,19 +1914,18 @@
    "new_water": 0.993,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_02_21",
   "pass": "2026-10-03",
-  "score": 79.3,
+  "score": 61.0,
   "rank": 7,
   "rank_change": -1,
   "factors": {
@@ -2080,40 +1934,38 @@
    "new_water": 0.968,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 30 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "58% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "58% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_09_01",
   "pass": "2026-10-03",
-  "score": 78.7,
+  "score": 60.5,
   "rank": 8,
-  "rank_change": 78,
+  "rank_change": 79,
   "factors": {
    "water_near_homes": 1.0,
    "young_children": 0.358,
    "new_water": 0.828,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 26 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "50% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "50% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_15_62",
   "pass": "2026-10-03",
-  "score": 78.3,
+  "score": 60.3,
   "rank": 9,
   "rank_change": 14,
   "factors": {
@@ -2122,61 +1974,58 @@
    "new_water": 0.868,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "52% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "52% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_35_02",
   "pass": "2026-10-03",
-  "score": 77.9,
+  "score": 59.9,
   "rank": 10,
-  "rank_change": 135,
+  "rank_change": 136,
   "factors": {
    "water_near_homes": 1.0,
    "young_children": 0.317,
    "new_water": 0.848,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "51% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "51% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_15_63",
   "pass": "2026-10-03",
-  "score": 77.7,
+  "score": 59.8,
   "rank": 11,
-  "rank_change": 33,
+  "rank_change": 34,
   "factors": {
    "water_near_homes": 0.984,
    "young_children": 0.335,
    "new_water": 0.85,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "51% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "51% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_42_00",
   "pass": "2026-10-03",
-  "score": 77.4,
+  "score": 59.5,
   "rank": 12,
   "rank_change": 25,
   "factors": {
@@ -2185,19 +2034,18 @@
    "new_water": 0.908,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 34 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "54% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "54% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_63_11",
   "pass": "2026-10-03",
-  "score": 77.2,
+  "score": 59.4,
   "rank": 13,
   "rank_change": -3,
   "factors": {
@@ -2206,19 +2054,18 @@
    "new_water": 0.68,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 42 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "41% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "41% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_13_41",
   "pass": "2026-10-03",
-  "score": 77.0,
+  "score": 59.2,
   "rank": 14,
   "rank_change": -3,
   "factors": {
@@ -2227,19 +2074,18 @@
    "new_water": 0.951,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 19 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "57% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "57% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_42_27",
   "pass": "2026-10-03",
-  "score": 76.7,
+  "score": 59.0,
   "rank": 15,
   "rank_change": -6,
   "factors": {
@@ -2248,40 +2094,38 @@
    "new_water": 0.788,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "47% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "47% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_08_54",
   "pass": "2026-10-03",
-  "score": 76.3,
+  "score": 58.7,
   "rank": 16,
-  "rank_change": 107,
+  "rank_change": 108,
   "factors": {
    "water_near_homes": 0.863,
    "young_children": 0.342,
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 23 children under 5 live within ~100 m of flood water",
    "86% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_13",
   "pass": "2026-10-03",
-  "score": 75.8,
+  "score": 58.3,
   "rank": 17,
   "rank_change": -10,
   "factors": {
@@ -2290,41 +2134,60 @@
    "new_water": 0.955,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 19 children under 5 live within ~100 m of flood water",
    "90% of homes here have flood water within ~100 m",
-   "57% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "57% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
+  "place_id": "cell_15_03",
+  "pass": "2026-10-03",
+  "score": 58.0,
+  "rank": 18,
+  "rank_change": 326,
+  "factors": {
+   "water_near_homes": 0.739,
+   "young_children": 0.584,
+   "new_water": 0.374,
+   "schools_routes": 0.5
+  },
+  "gap_factor": 1.0,
+  "reasons": [
+   "about 68 children under 5 live within ~100 m of flood water",
+   "74% of homes here have flood water within ~100 m",
+   "22% of the square is flood water (land on 2026-07-11)",
+   "1 school(s) with flood water within ~100 m"
+  ],
+  "confidence": "medium"
+ },
+ {
   "place_id": "cell_22_03",
   "pass": "2026-10-03",
-  "score": 74.7,
-  "rank": 18,
-  "rank_change": 0,
+  "score": 57.5,
+  "rank": 19,
+  "rank_change": -1,
   "factors": {
    "water_near_homes": 1.0,
    "young_children": 0.319,
    "new_water": 0.724,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "100% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_42_01",
   "pass": "2026-10-03",
-  "score": 74.7,
-  "rank": 19,
+  "score": 57.4,
+  "rank": 20,
   "rank_change": 60,
   "factors": {
    "water_near_homes": 0.888,
@@ -2332,104 +2195,99 @@
    "new_water": 0.89,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 23 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "53% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "53% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_01_21",
   "pass": "2026-10-03",
-  "score": 74.2,
-  "rank": 20,
-  "rank_change": 0,
+  "score": 57.1,
+  "rank": 21,
+  "rank_change": -1,
   "factors": {
    "water_near_homes": 0.955,
    "young_children": 0.381,
    "new_water": 0.706,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 29 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_56_03",
   "pass": "2026-10-03",
-  "score": 74.2,
-  "rank": 21,
-  "rank_change": 11,
+  "score": 57.1,
+  "rank": 22,
+  "rank_change": 10,
   "factors": {
    "water_near_homes": 0.943,
    "young_children": 0.534,
    "new_water": 0.537,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 57 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "32% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "32% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_62_10",
   "pass": "2026-10-03",
-  "score": 73.6,
-  "rank": 22,
-  "rank_change": -6,
+  "score": 56.6,
+  "rank": 23,
+  "rank_change": -7,
   "factors": {
    "water_near_homes": 0.98,
    "young_children": 0.322,
    "new_water": 0.713,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_03_22",
   "pass": "2026-10-03",
-  "score": 73.1,
-  "rank": 23,
-  "rank_change": 10,
+  "score": 56.2,
+  "rank": 24,
+  "rank_change": 9,
   "factors": {
    "water_near_homes": 0.912,
    "young_children": 0.35,
    "new_water": 0.778,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "47% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "47% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_00_53",
   "pass": "2026-10-03",
-  "score": 73.0,
-  "rank": 24,
+  "score": 56.1,
+  "rank": 25,
   "rank_change": 26,
   "factors": {
    "water_near_homes": 0.988,
@@ -2437,558 +2295,511 @@
    "new_water": 0.646,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "99% of homes here have flood water within ~100 m",
-   "39% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "39% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_63_10",
   "pass": "2026-10-03",
-  "score": 72.9,
-  "rank": 25,
-  "rank_change": -3,
+  "score": 56.1,
+  "rank": 26,
+  "rank_change": -4,
   "factors": {
    "water_near_homes": 0.953,
    "young_children": 0.426,
    "new_water": 0.604,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 36 children under 5 live within ~100 m of flood water",
    "95% of homes here have flood water within ~100 m",
-   "36% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "36% of the square is flood water (land on 2026-07-11)"
+  ],
+  "confidence": "low"
+ },
+ {
+  "place_id": "cell_06_50",
+  "pass": "2026-10-03",
+  "score": 55.9,
+  "rank": 27,
+  "rank_change": 16,
+  "factors": {
+   "water_near_homes": 0.857,
+   "young_children": 0.352,
+   "new_water": 0.856,
+   "schools_routes": 0.0
+  },
+  "gap_factor": 1.0,
+  "reasons": [
+   "about 25 children under 5 live within ~100 m of flood water",
+   "86% of homes here have flood water within ~100 m",
+   "51% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_52_01",
   "pass": "2026-10-03",
-  "score": 72.6,
-  "rank": 26,
-  "rank_change": -1,
+  "score": 55.9,
+  "rank": 28,
+  "rank_change": -3,
   "factors": {
    "water_near_homes": 0.964,
    "young_children": 0.322,
    "new_water": 0.703,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_45_30",
   "pass": "2026-10-03",
-  "score": 72.6,
-  "rank": 27,
-  "rank_change": -13,
+  "score": 55.9,
+  "rank": 29,
+  "rank_change": -15,
   "factors": {
    "water_near_homes": 0.832,
    "young_children": 0.269,
    "new_water": 1.0,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 14 children under 5 live within ~100 m of flood water",
    "83% of homes here have flood water within ~100 m",
-   "60% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "60% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_62_08",
   "pass": "2026-10-03",
-  "score": 72.4,
-  "rank": 28,
-  "rank_change": -13,
+  "score": 55.7,
+  "rank": 30,
+  "rank_change": -15,
   "factors": {
    "water_near_homes": 0.933,
    "young_children": 0.362,
    "new_water": 0.698,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 26 children under 5 live within ~100 m of flood water",
    "93% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_40_02",
   "pass": "2026-10-03",
-  "score": 72.2,
-  "rank": 29,
-  "rank_change": 227,
+  "score": 55.5,
+  "rank": 31,
+  "rank_change": 229,
   "factors": {
    "water_near_homes": 0.983,
    "young_children": 0.356,
    "new_water": 0.61,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "98% of homes here have flood water within ~100 m",
-   "37% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "37% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_23_17",
   "pass": "2026-10-03",
-  "score": 71.9,
-  "rank": 30,
-  "rank_change": -18,
+  "score": 55.3,
+  "rank": 32,
+  "rank_change": -20,
   "factors": {
    "water_near_homes": 0.866,
    "young_children": 0.279,
    "new_water": 0.903,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 16 children under 5 live within ~100 m of flood water",
    "87% of homes here have flood water within ~100 m",
-   "54% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "54% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_31_35",
   "pass": "2026-10-03",
-  "score": 71.6,
-  "rank": 31,
-  "rank_change": 11,
+  "score": 55.1,
+  "rank": 33,
+  "rank_change": 9,
   "factors": {
    "water_near_homes": 0.783,
    "young_children": 0.37,
    "new_water": 0.92,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 27 children under 5 live within ~100 m of flood water",
    "78% of homes here have flood water within ~100 m",
-   "55% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "55% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_18_20",
   "pass": "2026-10-03",
-  "score": 71.5,
-  "rank": 32,
-  "rank_change": 2,
+  "score": 55.0,
+  "rank": 34,
+  "rank_change": 0,
   "factors": {
    "water_near_homes": 0.859,
    "young_children": 0.365,
    "new_water": 0.791,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 27 children under 5 live within ~100 m of flood water",
    "86% of homes here have flood water within ~100 m",
-   "47% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "47% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_19_20",
   "pass": "2026-10-03",
-  "score": 71.1,
-  "rank": 33,
-  "rank_change": 30,
+  "score": 54.7,
+  "rank": 35,
+  "rank_change": 29,
   "factors": {
    "water_near_homes": 0.918,
    "young_children": 0.4,
    "new_water": 0.627,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 32 children under 5 live within ~100 m of flood water",
    "92% of homes here have flood water within ~100 m",
-   "38% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "38% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_09_27",
   "pass": "2026-10-03",
-  "score": 71.0,
-  "rank": 34,
-  "rank_change": 32,
+  "score": 54.6,
+  "rank": 36,
+  "rank_change": 31,
   "factors": {
    "water_near_homes": 0.905,
    "young_children": 0.344,
    "new_water": 0.716,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_05_24",
   "pass": "2026-10-03",
-  "score": 70.9,
-  "rank": 35,
-  "rank_change": 19,
+  "score": 54.6,
+  "rank": 37,
+  "rank_change": 18,
   "factors": {
    "water_near_homes": 0.906,
    "young_children": 0.354,
    "new_water": 0.7,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_29_14",
   "pass": "2026-10-03",
-  "score": 70.8,
-  "rank": 36,
-  "rank_change": -7,
+  "score": 54.5,
+  "rank": 38,
+  "rank_change": -9,
   "factors": {
    "water_near_homes": 0.956,
    "young_children": 0.344,
    "new_water": 0.62,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "96% of homes here have flood water within ~100 m",
-   "37% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "37% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_14",
   "pass": "2026-10-03",
-  "score": 70.6,
-  "rank": 37,
-  "rank_change": 6,
+  "score": 54.3,
+  "rank": 39,
+  "rank_change": 5,
   "factors": {
    "water_near_homes": 0.852,
    "young_children": 0.41,
    "new_water": 0.711,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 34 children under 5 live within ~100 m of flood water",
    "85% of homes here have flood water within ~100 m",
-   "43% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "43% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_12",
   "pass": "2026-10-03",
-  "score": 70.5,
-  "rank": 38,
-  "rank_change": 10,
+  "score": 54.2,
+  "rank": 40,
+  "rank_change": 9,
   "factors": {
    "water_near_homes": 0.891,
    "young_children": 0.334,
    "new_water": 0.736,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 22 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "44% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "44% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_43_00",
   "pass": "2026-10-03",
-  "score": 70.5,
-  "rank": 39,
-  "rank_change": 0,
+  "score": 54.2,
+  "rank": 41,
+  "rank_change": -2,
   "factors": {
    "water_near_homes": 0.848,
    "young_children": 0.661,
    "new_water": 0.402,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 87 children under 5 live within ~100 m of flood water",
    "85% of homes here have flood water within ~100 m",
-   "24% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "24% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "medium"
  },
  {
   "place_id": "cell_39_29",
   "pass": "2026-10-03",
-  "score": 70.4,
-  "rank": 40,
-  "rank_change": 49,
+  "score": 54.2,
+  "rank": 42,
+  "rank_change": 48,
   "factors": {
    "water_near_homes": 0.823,
    "young_children": 0.394,
    "new_water": 0.776,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 31 children under 5 live within ~100 m of flood water",
    "82% of homes here have flood water within ~100 m",
-   "47% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "47% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_60_06",
   "pass": "2026-10-03",
-  "score": 70.2,
-  "rank": 41,
-  "rank_change": -10,
+  "score": 54.0,
+  "rank": 43,
+  "rank_change": -12,
   "factors": {
    "water_near_homes": 0.857,
    "young_children": 0.349,
    "new_water": 0.763,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "86% of homes here have flood water within ~100 m",
-   "46% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "46% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_44_22",
   "pass": "2026-10-03",
-  "score": 69.7,
-  "rank": 42,
-  "rank_change": -7,
+  "score": 53.6,
+  "rank": 44,
+  "rank_change": -9,
   "factors": {
    "water_near_homes": 0.943,
    "young_children": 0.321,
    "new_water": 0.632,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "38% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "38% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_48_50",
   "pass": "2026-10-03",
-  "score": 69.7,
-  "rank": 43,
-  "rank_change": 792,
+  "score": 53.6,
+  "rank": 45,
+  "rank_change": 790,
   "factors": {
    "water_near_homes": 0.913,
    "young_children": 0.307,
    "new_water": 0.698,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 19 children under 5 live within ~100 m of flood water",
    "91% of homes here have flood water within ~100 m",
-   "42% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "42% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_40_04",
   "pass": "2026-10-03",
-  "score": 69.5,
-  "rank": 44,
-  "rank_change": 21,
+  "score": 53.5,
+  "rank": 46,
+  "rank_change": 20,
   "factors": {
    "water_near_homes": 0.904,
    "young_children": 0.324,
    "new_water": 0.685,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "90% of homes here have flood water within ~100 m",
-   "41% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "41% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_08_26",
   "pass": "2026-10-03",
-  "score": 69.4,
-  "rank": 45,
-  "rank_change": 26,
+  "score": 53.4,
+  "rank": 47,
+  "rank_change": 25,
   "factors": {
    "water_near_homes": 0.887,
    "young_children": 0.354,
    "new_water": 0.674,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 25 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "40% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "40% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_16_63",
   "pass": "2026-10-03",
-  "score": 69.4,
-  "rank": 46,
-  "rank_change": 65,
+  "score": 53.4,
+  "rank": 48,
+  "rank_change": 64,
   "factors": {
    "water_near_homes": 0.94,
    "young_children": 0.327,
    "new_water": 0.614,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 21 children under 5 live within ~100 m of flood water",
    "94% of homes here have flood water within ~100 m",
-   "37% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "37% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_61_18",
   "pass": "2026-10-03",
-  "score": 69.1,
-  "rank": 47,
-  "rank_change": 206,
+  "score": 53.1,
+  "rank": 49,
+  "rank_change": 208,
   "factors": {
    "water_near_homes": 0.887,
    "young_children": 0.345,
    "new_water": 0.674,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 24 children under 5 live within ~100 m of flood water",
    "89% of homes here have flood water within ~100 m",
-   "40% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "40% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  },
  {
   "place_id": "cell_59_05",
   "pass": "2026-10-03",
-  "score": 69.0,
-  "rank": 48,
-  "rank_change": -31,
+  "score": 53.1,
+  "rank": 50,
+  "rank_change": -33,
   "factors": {
    "water_near_homes": 0.861,
    "young_children": 0.318,
    "new_water": 0.75,
    "schools_routes": 0.0
   },
-  "gap_factor": 1.3,
+  "gap_factor": 1.0,
   "reasons": [
    "about 20 children under 5 live within ~100 m of flood water",
    "86% of homes here have flood water within ~100 m",
-   "45% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
-  "confidence": "low"
- },
- {
-  "place_id": "cell_51_01",
-  "pass": "2026-10-03",
-  "score": 69.0,
-  "rank": 49,
-  "rank_change": -25,
-  "factors": {
-   "water_near_homes": 0.922,
-   "young_children": 0.439,
-   "new_water": 0.493,
-   "schools_routes": 0.0
-  },
-  "gap_factor": 1.3,
-  "reasons": [
-   "about 39 children under 5 live within ~100 m of flood water",
-   "92% of homes here have flood water within ~100 m",
-   "30% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
-  ],
-  "confidence": "low"
- },
- {
-  "place_id": "cell_11_28",
-  "pass": "2026-10-03",
-  "score": 68.6,
-  "rank": 50,
-  "rank_change": 26,
-  "factors": {
-   "water_near_homes": 0.943,
-   "young_children": 0.342,
-   "new_water": 0.563,
-   "schools_routes": 0.0
-  },
-  "gap_factor": 1.3,
-  "reasons": [
-   "about 23 children under 5 live within ~100 m of flood water",
-   "94% of homes here have flood water within ~100 m",
-   "34% of the square is flood water (land on 2026-07-11)",
-   "no preschool or kindergarten on OpenStreetMap within 2 km"
+   "45% of the square is flood water (land on 2026-07-11)"
   ],
   "confidence": "low"
  }

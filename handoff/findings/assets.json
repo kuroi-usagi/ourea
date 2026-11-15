@@ -1440,6 +1440,21 @@
   }
  },
  {
+  "id": "cell_15_03",
+  "name": "near Thường Lạc",
+  "type": "hamlet",
+  "lon": 105.33276,
+  "lat": 10.81766,
+  "u": 0.0547,
+  "v": 0.2422,
+  "under5_estimate": 109.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
   "id": "cell_42_01",
   "name": "near Phú Tân",
   "type": "hamlet",
@@ -1556,21 +1571,6 @@
   "status": {
    "2026-07-11": "clear",
    "2026-08-28": "clear",
-   "2026-10-03": "water_near"
-  }
- },
- {
-  "id": "cell_11_28",
-  "name": "near Ngã Tư",
-  "type": "hamlet",
-  "lon": 105.56773,
-  "lat": 10.85176,
-  "u": 0.4453,
-  "v": 0.1797,
-  "under5_estimate": 25.0,
-  "status": {
-   "2026-07-11": "water_near",
-   "2026-08-28": "water_near",
    "2026-10-03": "water_near"
   }
  },
