@@ -16,7 +16,7 @@ Over a 4,006 km² tile of the upper delta (105.30–105.90°E, 10.40–10.95°N,
 | New water since July | **≈1,335 km²** |
 | Children under 5 living within ~100 m of new flood water | **≈28,100** (of ≈81,100 on the tile) |
 | Schools near flood water | **18 of 94** mapped |
-| Communes ranked every pass | **192** (#1 on Oct 3: Xã Vĩnh Châu, 488 of 538 under-5s near flood water) |
+| Communes ranked every pass | **64** (#1 on Oct 3: Xã Vĩnh Châu, 488 of 538 under-5s near flood water) |
 | Ranking robustness | every weight ±50% keeps 3–5 of the top 5 and 7–10 of the top 10 |
 
 ![The flood spreading across the tile, Jul 11 → Aug 28 → Oct 3, rendered in Unity from NISAR water maps](docs/readme/flood_sequence.webp)
@@ -56,7 +56,10 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
 ## Try it
 
 - **Playable build:** `web/public/unity` (Unity WebGL). Locally: `cd web/public/unity && python3 -m http.server 8000`, then open http://localhost:8000
-- **In the app:** scrub the timeline to watch the flood spread; open **Compare** to wipe between the cloudy camera photo and the radar; open **Communes** for the ranked list and the reasons behind each rank.
+- **In the app:** it opens on the globe. **Begin the story** flies you down to Đồng Tháp and walks through the three passes with a guide; **Explore the map** lands you on the map.
+  - Scrub the **timeline** to watch the flood spread; **Watch a village flood** plays the real passes over one town, houses turning red as new water comes within 100 m.
+  - In the dock: **PHOTO** wipes between the cloudy camera photo and the radar, **RADAR** shows the raw NISAR backscatter, **WATER** is the modeled "what if" level, **TOP 10 → Communes** has the ranked list and the reasons behind each rank, **ALERTS** signs a phone up for flood texts (Twilio, via the API), **KEY** explains every colour.
+  - **GLOBE** (top left) flies back out.
 - **Rebuild the data:** `pipeline/run_pipeline.py` (NISAR), `pipeline/make_heightmap.py` (terrain), `pipeline/make_optical.py` (Sentinel-2), then `science/score.py` and `science/commune_score.py`.
 
 ## What's real, what's modeled
