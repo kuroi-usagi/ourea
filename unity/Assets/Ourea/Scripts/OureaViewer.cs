@@ -132,7 +132,7 @@ public class OureaViewer : MonoBehaviour
             mpb.SetColor("_Color", c);
             var r = p.pin.GetComponent<Renderer>();
             if (r != null) r.SetPropertyBlock(mpb);
-            var baseScale = p.type == "school" ? 4f : (hasRank && rank <= 10 ? 5.5f : 3.5f);
+            var baseScale = p.type == "school" ? 2.2f : (hasRank && rank <= 10 ? 2.4f : 1.8f);   // ~200 m: reads as a marker, even zoomed in
             p.pin.localScale = Vector3.one * baseScale * size;
         }
     }
@@ -257,47 +257,19 @@ public class OureaViewer : MonoBehaviour
 
         DrawMapLabels();
 
-        // ---- Header (top-left)
-        float headerH = simulated ? 96f : 70f;
-        var head = Panel(new Rect(M, M, 340, headerH));
-        GUI.Label(new Rect(head.x + 16, head.y + 12, 300, 14), "OUREA  ·  NISAR FLOOD WATCH", sEyebrow);
-        GUI.Label(new Rect(head.x + 16, head.y + 28, 310, 26), "Mekong Delta, Vietnam", sTitle);
-        if (simulated)
-        {
-            var pill = new Rect(head.x + 16, head.y + 62, 300, 20);
-            GUI.Label(pill, "●  Water: real NISAR  ·  hamlets & scores simulated", sPill);
-        }
+        // Quiet map: a small title, a small data note, the timeline pill. Everything else lives
+        // behind the tool dock on the right (Scripts/FloodLab.cs).
+        var head = Panel(new Rect(M, M, 268, 58));
+        GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "OUREA  ·  NISAR FLOOD WATCH", sEyebrow);
+        GUI.Label(new Rect(head.x + 14, head.y + 26, 240, 24), "Mekong Delta, Vietnam", sTitle);
 
-        // ---- Timeline (bottom)
-        float tlH = 104f;
-        var tl = Panel(new Rect(M, H - M - tlH, W - 2 * M, tlH));
+        string note = simulated ? "Water: real NISAR  ·  ranks simulated" : "Water and ranks: real data";
+        var noteSize = sPill.CalcSize(new GUIContent(note));
+        GUI.Label(new Rect(W - M - noteSize.x - 16, M + 6, noteSize.x + 16, 24), note, sPill);
+
+        float pw = Mathf.Min(760f, W - 2 * M - 120f);
+        var tl = Panel(new Rect((W - pw) * 0.5f, H - M - 72f, pw, 72f));
         DrawTimeline(tl);
-
-        // ---- Check-first list (left)
-        float listTop = head.yMax + 12f;
-        var list = Panel(new Rect(M, listTop, 340, Mathf.Max(120f, tl.y - 12f - listTop)));
-        DrawList(list);
-
-        // ---- Legend (top-right)
-        var leg = Panel(new Rect(W - M - 220, M, 220, 168));
-        GUI.Label(new Rect(leg.x + 16, leg.y + 12, 190, 14), "LEGEND", sEyebrow);
-        float ly = leg.y + 32;
-        Swatch(leg.x + 16, ly, new Color(0.16f, 0.43f, 0.75f), "Water on this pass"); ly += 22;
-        Swatch(leg.x + 16, ly, new Color(0.45f, 0.80f, 1f), "New since first pass"); ly += 22;
-        Swatch(leg.x + 16, ly, new Color(0.27f, 0.67f, 0.67f), "Rice flooded on purpose"); ly += 22;
-        Swatch(leg.x + 16, ly, Top1, "Check first (top 10)"); ly += 22;
-        Swatch(leg.x + 16, ly, SchoolBlue, "School");
-        if (GUI.Button(new Rect(leg.x + 16, leg.yMax - 34, 188, 24), "Reset view", sBtn) && orbit != null)
-        {
-            selectedId = null;
-            orbit.ResetView();
-        }
-        var hint = new Rect(W - M - 220, leg.yMax + 8, 220, 18);
-        GUI.Label(hint, "Drag to rotate  ·  scroll to zoom  ·  WASD to move", Text(11, new Color(0.01f, 0.013f, 0.017f, 0.6f), FontStyle.Normal, TextAnchor.UpperRight));
-        // Required by the basemap licence (CC BY-NC-SA 4.0, handoff/basemap/basemap.json)
-        GUI.Label(new Rect(W - M - 520, hint.yMax + 2, 520, 16),
-            "Water: NISAR (NASA/ISRO, provisional)  ·  Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu",
-            Text(10, new Color(0.01f, 0.013f, 0.017f, 0.55f), FontStyle.Normal, TextAnchor.UpperRight));
 
         GUI.matrix = Matrix4x4.identity;
     }
@@ -330,8 +302,8 @@ public class OureaViewer : MonoBehaviour
 
     void DrawList(Rect list)
     {
-        GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), simulated ? "CHECK FIRST  ·  PLACEHOLDER RANKING" : "CHECK FIRST", simulated ? Text(11, Amber, FontStyle.Bold) : sEyebrow);
-        GUI.Label(new Rect(list.x + 16, list.y + 30, 300, 24), "Top 10 hamlets this pass", sTitle);
+        GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), simulated ? "CHECK FIRST  ·  SIMULATED" : "CHECK FIRST", simulated ? Text(11, Amber, FontStyle.Bold) : sEyebrow);
+        GUI.Label(new Rect(list.x + 16, list.y + 30, list.width - 60, 24), "Top 10 hamlets this pass", sTitle);
         GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), simulated ? "Simulated until Mitch's scores land." : "Ranked by water near homes. Low rank is not \"safe\".", sSub);
 
         var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
@@ -372,31 +344,22 @@ public class OureaViewer : MonoBehaviour
     {
         if (passes.Count == 0 || timeline == null)
         {
-            GUI.Label(new Rect(tl.x + 20, tl.y + 40, 400, 20), "No radar passes loaded.", sBody);
+            GUI.Label(new Rect(tl.x + 20, tl.y + 26, 400, 20), "No radar passes loaded.", sBody);
             return;
         }
         var p = passes[currentPass];
 
-        // Headline number
-        GUI.Label(new Rect(tl.x + 20, tl.y + 14, 220, 14), "NEW WATER", sEyebrow);
-        GUI.Label(new Rect(tl.x + 20, tl.y + 30, 230, 38), "+" + p.newWaterKm2.ToString("0") + " km²", sBig);
-        string sub = "since " + ShortDate(passes[0].date);
-        if (p.childrenNearWater > 0) sub += "  ·  " + p.childrenNearWater + " kids under 5 near water";
-        else if (p.homesNearWater > 0) sub += "  ·  " + p.homesNearWater + " homes near water";
-        GUI.Label(new Rect(tl.x + 20, tl.y + 70, 260, 16), sub, sSub);
+        // play
+        if (GUI.Button(new Rect(tl.x + 14, tl.y + 14, 44, 44), timeline.Playing ? "||" : ">", sPlay)) timeline.TogglePlay();
 
-        // Play / step buttons
-        float bx = tl.x + 270;
-        if (GUI.Button(new Rect(bx, tl.y + 38, 30, 30), "<", sBtn)) timeline.Step(-1);
-        if (GUI.Button(new Rect(bx + 38, tl.y + 31, 44, 44), timeline.Playing ? "||" : ">", sPlay)) timeline.TogglePlay();
-        if (GUI.Button(new Rect(bx + 90, tl.y + 38, 30, 30), ">", sBtn)) timeline.Step(1);
+        // headline number on the right
+        float nx = tl.xMax - 186;
+        GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", Text(22, Ink, FontStyle.Bold, TextAnchor.UpperRight));
+        GUI.Label(new Rect(nx, tl.y + 42, 172, 16), "new water since " + ShortDate(passes[0].date), Text(11, Muted, FontStyle.Normal, TextAnchor.UpperRight));
 
-        // Track
-        float tx0 = bx + 150, tx1 = tl.xMax - 40;
-        float trackY = tl.y + 52;
-        GUI.Label(new Rect(tx0, tl.y + 14, tx1 - tx0, 18),
-            "<b>" + ShortDate(p.date, true) + "</b>   <color=#" + Hex(Muted) + ">NISAR pass " + (currentPass + 1) + " of " + passes.Count + "  ·  Space to play</color>", sBody);
-
+        // track with the passes
+        float tx0 = tl.x + 84, tx1 = nx - 28;
+        float trackY = tl.y + 30;
         var trackRect = new Rect(tx0, trackY - 3, tx1 - tx0, 6);
         int max = Mathf.Max(1, passes.Count - 1);
         float frac = passes.Count > 1 ? timeline.Position / max : 1f;
@@ -405,22 +368,20 @@ public class OureaViewer : MonoBehaviour
         GUI.DrawTexture(trackRect, Texture2D.whiteTexture);
         GUI.color = Accent;
         GUI.DrawTexture(new Rect(trackRect.x, trackRect.y, trackRect.width * frac, trackRect.height), Texture2D.whiteTexture);
-
         for (int i = 0; i < passes.Count; i++)
         {
             float x = passes.Count > 1 ? Mathf.Lerp(tx0, tx1, i / (float)max) : tx1;
             bool on = i == currentPass;
             float d = on ? 18f : 12f;
             GUI.color = i <= timeline.Position + 0.001f ? Accent : new Color(0.74f, 0.76f, 0.78f);
-            if (on) GUI.color = Accent;
             GUI.DrawTexture(new Rect(x - d / 2f, trackY - d / 2f, d, d), texRound);
             GUI.color = oldC;
-            if (GUI.Button(new Rect(x - 30, trackY + 12, 60, 18), ShortDate(passes[i].date), on ? sTickOn : sTick))
+            if (GUI.Button(new Rect(x - 34, trackY + 12, 68, 18), ShortDate(passes[i].date), on ? sTickOn : sTick))
                 timeline.Step(i - timeline.Index);
         }
         GUI.color = oldC;
 
-        // Drag along the track to scrub (blends between passes)
+        // drag along the track to scrub (blends between passes)
         var hit = new Rect(tx0 - 10, trackY - 14, (tx1 - tx0) + 20, 24);
         var e = Event.current;
         if (e.type == EventType.MouseDown && hit.Contains(e.mousePosition)) { draggingTrack = true; e.Use(); }
@@ -431,6 +392,13 @@ public class OureaViewer : MonoBehaviour
             timeline.SetPosition(t * max);
             e.Use();
         }
+    }
+
+    // The full top-10 list, drawn inside the dock's "Top 10" card (FloodLab).
+    public void DrawRanking(Rect card)
+    {
+        MakeStyles();
+        DrawList(new Rect(card.x, card.y + 2, card.width, card.height - 4));
     }
 
     void Swatch(float x, float y, Color c, string text)

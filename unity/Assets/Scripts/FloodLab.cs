@@ -97,7 +97,7 @@ public class FloodLab : MonoBehaviour
     {
         if (compareOn < 0.01f || viewer == null) return;
         const float M = 16f;
-        float top = M, bottom = H - M - 104f - 8f;
+        float top = M, bottom = H - M - 72f - 10f;   // stops above the timeline pill
         float lx = wipe * W;
         var old = GUI.color;
         GUI.color = new Color(1f, 1f, 1f, compareOn);
@@ -116,8 +116,8 @@ public class FloodLab : MonoBehaviour
         // labels hug the line; each hides when it would run under the side panels
         float ly = bottom - 34f;
         float pw = sChip.CalcSize(new GUIContent(photo)).x, rw = sChip.CalcSize(new GUIContent(radarLbl)).x;
-        if (lx - pw - 10f > 360f) GUI.Label(new Rect(lx - pw - 10f, ly, pw, 24f), photo, sChip);
-        if (lx + 10f + rw < W - 270f) GUI.Label(new Rect(lx + 10f, ly, rw, 24f), radarLbl, sChip);
+        if (lx - pw - 10f > M) GUI.Label(new Rect(lx - pw - 10f, ly, pw, 24f), photo, sChip);
+        if (lx + 10f + rw < W - 120f) GUI.Label(new Rect(lx + 10f, ly, rw, 24f), radarLbl, sChip);
         GUI.color = old;
 
         // drag anywhere on the line
@@ -155,7 +155,11 @@ public class FloodLab : MonoBehaviour
         return maxM;
     }
 
-    // ---------- UI ----------
+    // ---------- UI: quiet map ----------
+    // A tool dock on the right; one card open at a time beside it. Nothing else covers the map.
+    enum Card { None, Water, Photo, Radar, Ranking, Key }
+    Card card = Card.None;
+
     static Texture2D Rounded(Color col, int radius)
     {
         int size = radius * 2 + 4;
@@ -171,15 +175,24 @@ public class FloodLab : MonoBehaviour
         return t;
     }
 
-    // Linear-space colours (the project renders in linear; these display like the viewer's UI).
-    static readonly Color Ink = new Color(0.010f, 0.013f, 0.017f);
-    static readonly Color Muted = new Color(0.10f, 0.12f, 0.14f);
-    static readonly Color Accent = new Color(0.03f, 0.13f, 0.16f);
-    static readonly Color Water = new Color(0.05f, 0.25f, 0.55f);
-    static readonly Color Modeled = new Color(0.45f, 0.20f, 0.01f);
+    // The project renders in linear space: IMGUI colours are given linear and show up gamma-encoded.
+    // Lin() takes the colour you want to SEE (sRGB 0..255) so swatches match the map.
+    static Color Lin(int r, int g, int b) { return new Color(Mathf.Pow(r / 255f, 2.2f), Mathf.Pow(g / 255f, 2.2f), Mathf.Pow(b / 255f, 2.2f)); }
+    static readonly Color Ink = Lin(28, 32, 36);
+    static readonly Color Muted = Lin(90, 97, 104);
+    static readonly Color Accent = Lin(49, 100, 110);
+    static readonly Color Water = Lin(58, 111, 176);
+    static readonly Color Modeled = Lin(115, 66, 10);
+    // what the map actually shows (Shaders/OureaWater.shader, OureaFloodPlane.shader, BeaconField)
+    static readonly Color KeyRiver = Lin(52, 78, 92);
+    static readonly Color KeyFlood = Lin(118, 172, 222);
+    static readonly Color KeySheet = Lin(150, 165, 160);
+    static readonly Color KeyTop1 = Lin(219, 64, 52);
+    static readonly Color KeyTop10 = Lin(255, 170, 60);
+    static readonly Color KeySchool = Lin(64, 120, 245);
 
-    GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn, sKnob, sChip;
-    Texture2D texTrack, texFill, texKnob;
+    GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn, sKnob, sChip, sDock, sDockOn, sClose;
+    Texture2D texTrack, texFill, texKnob, texDot;
 
     static GUIStyle Text(int size, Color c, FontStyle fs = FontStyle.Normal, bool wrap = false)
     {
@@ -200,121 +213,233 @@ public class FloodLab : MonoBehaviour
     void Styles()
     {
         if (sPanel != null) return;
-        sPanel = Box(Rounded(new Color(0.97f, 0.97f, 0.955f, 0.90f), 12), 12, Ink, 12, FontStyle.Normal);
+        sPanel = Box(Rounded(new Color(0.97f, 0.97f, 0.955f, 0.94f), 14), 14, Ink, 12, FontStyle.Normal);
         sEyebrow = Text(11, Accent, FontStyle.Bold);
         sTag = Box(Rounded(new Color(0.95f, 0.78f, 0.35f, 0.35f), 7), 7, Modeled, 10, FontStyle.Bold);
-        sTitle = Text(17, Ink, FontStyle.Bold);
-        sBig = Text(24, Ink, FontStyle.Bold);
+        sTitle = Text(16, Ink, FontStyle.Bold);
+        sBig = Text(26, Ink, FontStyle.Bold);
         sBody = Text(12, Ink, FontStyle.Normal, true);
-        sSmall = Text(10, Muted, FontStyle.Normal, true);
+        sSmall = Text(11, Muted, FontStyle.Normal, true);
         sBtn = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 8), 8, Ink, 12, FontStyle.Bold);
         sBtn.hover.background = Rounded(new Color(0f, 0f, 0f, 0.12f), 8); sBtn.hover.textColor = Ink;
         sBtnOn = Box(Rounded(Accent, 8), 8, Color.white, 12, FontStyle.Bold);
+        sDock = Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Ink, 11, FontStyle.Bold);
+        sDock.hover.background = Rounded(new Color(0f, 0f, 0f, 0.07f), 10); sDock.hover.textColor = Ink;
+        sDockOn = Box(Rounded(Accent, 10), 10, Color.white, 11, FontStyle.Bold);
+        sClose = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 12), 12, Muted, 13, FontStyle.Bold);
         texTrack = Rounded(new Color(0f, 0f, 0f, 0.16f), 10);
+        texFill = Rounded(Water, 10);
+        texKnob = Rounded(Color.white, 13);
+        texDot = Rounded(Color.white, 8);
         sKnob = Text(12, Accent, FontStyle.Bold);
         sKnob.alignment = TextAnchor.MiddleCenter;
         sChip = Box(Rounded(new Color(0.06f, 0.08f, 0.10f, 0.78f), 8), 8, Color.white, 11, FontStyle.Bold);
         sChip.padding = new RectOffset(10, 10, 4, 4);
-        texFill = Rounded(Water, 10);
-        texKnob = Rounded(Color.white, 13);
+    }
+
+    void Toggle(Card c)
+    {
+        bool closing = card == c;
+        // leaving a mode card turns its mode off, so what's on the map always matches the open card
+        if (card == Card.Photo && (closing || c != Card.Key)) compareWanted = false;
+        if (card == Card.Radar && (closing || c != Card.Key)) radarWanted = false;
+        card = closing ? Card.None : c;
+        if (card == Card.Photo && !compareWanted) { compareWanted = true; wipeTarget = 0.5f; wipe = 0.08f; wipeVel = 0f; }
+        if (card == Card.Radar) radarWanted = true;
     }
 
     void OnGUI()
     {
+        GUI.depth = -10;   // dock and cards above the viewer's map labels
         if (Event.current.type == EventType.Layout) uiRects.Clear();
         Styles();
         float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float W = Screen.width / s, H = Screen.height / s;
-        const float M = 16f, PW = 240f;
+        const float M = 16f;
 
-        // Right column, between the legend/credit (top ~236) and the timeline (bottom 120 from edge)
-        float top = 244f, bottom = H - M - 104f - 12f;
         DrawWipe(W, H, s);
-        float ph = Mathf.Min(440f, bottom - top);
-        if (ph < 300f) { GUI.matrix = Matrix4x4.identity; return; }   // window too short: leave the map clear
-        var p = new Rect(W - M - PW, bottom - ph, PW, ph);
-        GUI.Box(p, GUIContent.none, sPanel);
-        uiRects.Add(new Rect(p.x * s, p.y * s, p.width * s, p.height * s));
 
-        float x = p.x + 16, y = p.y + 14, w = PW - 32;
-        GUI.Label(new Rect(x, y, 120, 14), "WHAT IF", sEyebrow);
-        GUI.Label(new Rect(p.xMax - 16 - 64, y - 2, 64, 16), "MODELED", sTag);
-        y += 18;
-        GUI.Label(new Rect(x, y, w, 22), "Raise the water", sTitle);
-        y += 28;
+        // --- dock
+        string[] labels = { "Water", "Photo", "Radar", "Top 10", "Key" };
+        Card[] cards = { Card.Water, Card.Photo, Card.Radar, Card.Ranking, Card.Key };
+        const float bw = 64f, bh = 46f, gap = 6f, pad = 8f;
+        float dh = pad * 2 + cards.Length * bh + (cards.Length - 1) * gap;
+        var dock = new Rect(W - M - bw - pad * 2, Mathf.Max(70f, H * 0.5f - dh * 0.5f - 30f), bw + pad * 2, dh);
+        GUI.Box(dock, GUIContent.none, sPanel);
+        Block(dock, s);
+        for (int i = 0; i < cards.Length; i++)
+        {
+            var r = new Rect(dock.x + pad, dock.y + pad + i * (bh + gap), bw, bh);
+            if (GUI.Button(r, labels[i], card == cards[i] ? sDockOn : sDock)) Toggle(cards[i]);
+            // a small dot when a mode stays on behind another card (e.g. water raised while reading the key)
+            bool live = (cards[i] == Card.Water && level > minM + 0.02f) || (cards[i] == Card.Photo && compareWanted) || (cards[i] == Card.Radar && radarWanted);
+            if (live && card != cards[i])
+            {
+                var old = GUI.color; GUI.color = KeyFlood;
+                GUI.DrawTexture(new Rect(r.xMax - 10, r.y + 6, 7, 7), texDot);
+                GUI.color = old;
+            }
+        }
 
-        // --- vertical water handle: drag up to flood the DEM
-        var track = new Rect(x, y, 26, Mathf.Clamp(ph - 252f, 110f, 160f));
+        // --- the open card, beside the dock
+        if (card != Card.None)
+        {
+            const float cw = 300f;
+            float maxH = H - M - 96f - 12f - M;   // above the timeline pill
+            float ch = CardHeight(card, maxH);
+            float cy = Mathf.Clamp(dock.y, M, H - M - 96f - 12f - ch);
+            var c = new Rect(dock.x - 12f - cw, cy, cw, ch);
+            GUI.Box(c, GUIContent.none, sPanel);
+            Block(c, s);
+            if (GUI.Button(new Rect(c.xMax - 36, c.y + 10, 24, 24), "x", sClose)) Toggle(card);
+            switch (card)
+            {
+                case Card.Water: DrawWaterCard(c); break;
+                case Card.Photo: DrawPhotoCard(c); break;
+                case Card.Radar: DrawRadarCard(c); break;
+                case Card.Ranking: if (viewer != null) viewer.DrawRanking(c); break;
+                case Card.Key: DrawKeyCard(c); break;
+            }
+        }
+        GUI.matrix = Matrix4x4.identity;
+    }
+
+    void Block(Rect r, float s) { uiRects.Add(new Rect(r.x * s, r.y * s, r.width * s, r.height * s)); }
+
+    float CardHeight(Card c, float maxH)
+    {
+        switch (c)
+        {
+            case Card.Water: return Mathf.Min(maxH, 330f);
+            case Card.Photo: return 170f;
+            case Card.Radar: return 224f;
+            case Card.Ranking: return Mathf.Min(maxH, 640f);
+            default: return Mathf.Min(maxH, 352f);
+        }
+    }
+
+    void DrawWaterCard(Rect p)
+    {
+        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
+        GUI.Label(new Rect(x, y + 2, 160, 20), "Raise the water", sTitle);
+        GUI.Label(new Rect(p.xMax - 112, y + 4, 64, 16), "MODELED", sTag);
+        y += 38;
+
+        var track = new Rect(x + 6, y + 8, 12, 150);
         float lo = minM, hi = maxM;
         float tLevel = Mathf.InverseLerp(lo, hi, Mathf.Clamp(level, lo, hi));
         GUI.DrawTexture(track, texTrack);
         var fill = new Rect(track.x, track.yMax - track.height * tLevel, track.width, track.height * tLevel);
         if (fill.height > 1f) GUI.DrawTexture(fill, texFill);
         float squash = 1f + Mathf.Clamp(velocity * 0.08f, -0.25f, 0.25f);   // the knob squishes with speed
-        var knob = new Rect(track.center.x - 15f * squash, track.yMax - track.height * tLevel - 15f / squash, 30f * squash, 30f / squash);
-        GUI.DrawTexture(new Rect(knob.x - 1, knob.y - 1, knob.width + 2, knob.height + 2), texTrack);   // soft outline
+        var knob = new Rect(track.center.x - 14f * squash, track.yMax - track.height * tLevel - 14f / squash, 28f * squash, 28f / squash);
+        GUI.DrawTexture(new Rect(knob.x - 1, knob.y - 1, knob.width + 2, knob.height + 2), texTrack);
         GUI.DrawTexture(knob, texKnob);
 
         var e = Event.current;
-        var hit = new Rect(track.x - 12, track.y - 16, track.width + 24, track.height + 32);
+        var hit = new Rect(track.x - 18, track.y - 16, track.width + 36, track.height + 32);
         if (e.type == EventType.MouseDown && hit.Contains(e.mousePosition)) { dragging = true; e.Use(); }
-        if (dragging && (e.type == EventType.MouseDrag || e.type == EventType.MouseDown))
+        if (dragging && (e.type == EventType.MouseDrag || e.type == EventType.MouseDown || e.type == EventType.MouseUp))
         {
             target = Mathf.Lerp(lo, hi, Mathf.Clamp01(Mathf.InverseLerp(track.yMax, track.y, e.mousePosition.y)));
-            e.Use();
-        }
-        if (e.type == EventType.MouseUp && dragging)
-        {
-            target = Mathf.Lerp(lo, hi, Mathf.Clamp01(Mathf.InverseLerp(track.yMax, track.y, e.mousePosition.y)));
-            dragging = false;
+            if (e.type == EventType.MouseUp) dragging = false;
             e.Use();
         }
 
-        // --- readouts (all from the DEM curve and nisar.json)
-        float rx = track.xMax + 14, rw = p.xMax - 16 - rx;
+        float rx = track.xMax + 26, rw = p.xMax - 18 - rx;
         bool any = level > minM + 0.02f;
         float frac = any ? FractionBelow(level) : 0f;
-        GUI.Label(new Rect(rx, y - 2, rw, 30), (any ? level : 0f).ToString("0.0") + " m", sBig);
-        GUI.Label(new Rect(rx, y + 28, rw, 28), "water level above sea level", sSmall);
-        GUI.Label(new Rect(rx, y + 58, rw, 30), any ? (frac * tileAreaKm2).ToString("#,0") + " km²" : "0 km²", sBig);
-        GUI.Label(new Rect(rx, y + 88, rw, 28), any ? (frac * 100f).ToString("0") + "% of the tile is below it" : "Drag the handle up", sSmall);
+        GUI.Label(new Rect(rx, y, rw, 32), (any ? level : 0f).ToString("0.0") + " m", sBig);
+        GUI.Label(new Rect(rx, y + 32, rw, 18), "water level above sea level", sSmall);
+        GUI.Label(new Rect(rx, y + 66, rw, 32), any ? (frac * tileAreaKm2).ToString("#,0") + " km²" : "0 km²", sBig);
+        GUI.Label(new Rect(rx, y + 98, rw, 30), any ? (frac * 100f).ToString("0") + "% of the map is below it" : "Drag the handle up", sSmall);
 
-        y = track.yMax + 14;
-        // --- model vs radar for the current pass
+        y = track.yMax + 22;
         if (viewer != null && observedWaterPct != null && observedWaterPct.Length > viewer.currentPass && viewer.passes.Count > viewer.currentPass)
         {
             float pct = observedWaterPct[viewer.currentPass];
             float match = LevelForFraction(pct / 100f);
-            string date = viewer.passes[viewer.currentPass].date;
-            GUI.Label(new Rect(x, y, w, 46),
-                "NISAR saw <b>" + pct.ToString("0") + "%</b> of the tile as water on " + date +
-                ". Flat water would need <b>" + match.ToString("0.0") + " m</b> to cover that much.", sBody);
-            if (GUI.Button(new Rect(x, y + 48, w, 26), "Set water to " + match.ToString("0.0") + " m", sBtn)) target = match;
-            y += 82;
+            if (GUI.Button(new Rect(x, y, w * 0.62f, 30), "Match NISAR: " + match.ToString("0.0") + " m", sBtn)) target = match;
+            if (GUI.Button(new Rect(x + w * 0.62f + 8, y, w * 0.38f - 8, 30), "Drain", sBtn)) target = minM - 0.5f;
+            y += 38;
+            GUI.Label(new Rect(x, y, w, 34), "NISAR saw " + pct.ToString("0") + "% of the map as water on " + viewer.passes[viewer.currentPass].date + ".", sSmall);
+            y += 30;
         }
+        GUI.Label(new Rect(x, y, w, 40), "A flat water level over the elevation map. Ignores dikes and flow. Not a forecast.", sSmall);
+    }
 
-        // --- compare wipe (real Sentinel-2 photo vs NISAR)
-        bool hasPhoto = viewer != null && optical != null && optical.Length > viewer.currentPass && optical[viewer.currentPass] != null;
-        GUI.enabled = hasPhoto;
-        if (GUI.Button(new Rect(x, y, w, 30), compareWanted ? "Comparing: drag the line" : "Compare with the camera photo", compareWanted ? sBtnOn : sBtn))
+    void DrawPhotoCard(Rect p)
+    {
+        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
+        GUI.Label(new Rect(x, y + 2, w - 40, 20), "Camera vs radar", sTitle);
+        y += 34;
+        int pi = viewer != null ? viewer.currentPass : 0;
+        string d = opticalDate != null && opticalDate.Length > pi ? opticalDate[pi] : "";
+        string c = opticalCloud != null && opticalCloud.Length > pi ? opticalCloud[pi].ToString("0") + "% cloud" : "";
+        GUI.Label(new Rect(x, y, w, 36), "Drag the white line. Left: Sentinel-2 photo from " + d + " (" + c + "). Right: NISAR radar water.", sBody);
+        y += 50;
+        GUI.Label(new Rect(x, y, w, 50), "Monsoon cloud hides the ground from cameras. Radar sees through it. Step back to 11 Jul to see the cloudiest day.", sSmall);
+    }
+
+    void DrawRadarCard(Rect p)
+    {
+        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
+        GUI.Label(new Rect(x, y + 2, w - 40, 20), "What the radar saw", sTitle);
+        y += 34;
+        GUI.Label(new Rect(x, y, w, 36), "The real NISAR image for this pass (HV backscatter). Smooth water bounces the signal away; plants and rough ground send it back.", sBody);
+        y += 60;
+        Swatch(x, y, Lin(14, 20, 30), "Dark: smooth open water"); y += 24;
+        Swatch(x, y, Lin(205, 230, 222), "Bright: plants, rough ground"); y += 30;
+        GUI.Label(new Rect(x, y, w, 30), "NISAR data is provisional.", sSmall);
+    }
+
+    void DrawKeyCard(Rect p)
+    {
+        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
+        GUI.Label(new Rect(x, y + 2, w - 40, 20), "Key", sTitle);
+        y += 34;
+        GUI.Label(new Rect(x, y, w, 14), "ON THE MAP NOW", sEyebrow); y += 20;
+        if (radarWanted && radarOn > 0.5f)
         {
-            compareWanted = !compareWanted;
-            if (compareWanted) { wipeTarget = 0.5f; wipe = 0.08f; wipeVel = 0f; }   // the line swings in from the left
+            Swatch(x, y, Lin(14, 20, 30), "Radar: dark = open water"); y += 22;
+            Swatch(x, y, Lin(205, 230, 222), "Radar: bright = plants, rough ground"); y += 22;
         }
-        GUI.enabled = true;
-        y += 34;
+        else
+        {
+            Swatch(x, y, KeyRiver, "River and canals (water on 11 Jul)"); y += 22;
+            Swatch(x, y, KeyFlood, "Flood water, new since 11 Jul"); y += 22;
+        }
+        if (compareWanted) { Swatch(x, y, Color.white, "Left of the line: camera photo"); y += 22; }
+        if (level > minM + 0.02f) { Swatch(x, y, KeySheet, "Modeled flat water level"); y += 22; }
+        GradientSwatch(x, y, "Hamlets ranked 1 to 10 (simulated)"); y += 22;
+        Swatch(x, y, KeySchool, "School (simulated)"); y += 30;
 
-        // --- radar view (real NISAR backscatter)
-        if (GUI.Button(new Rect(x, y, w, 30), radarWanted ? "Radar view: on" : "Show what the radar saw", radarWanted ? sBtnOn : sBtn))
-            radarWanted = !radarWanted;
-        y += 34;
-        GUI.Label(new Rect(x, y, w, 40), compareWanted
-            ? "Left: Sentinel-2 photo. Monsoon cloud hides the ground from cameras. Right: NISAR radar water, which sees through cloud."
-            : radarWanted
-            ? "Real NISAR HV backscatter. Smooth open water bounces the signal away (dark); plants and rough ground send it back (bright)."
-            : "Bathtub model over the Copernicus DEM, a surface model with trees and buildings. Ignores dikes and flow. Not a forecast.", sSmall);
+        GUI.Label(new Rect(x, y, w, 14), "CONTROLS", sEyebrow); y += 20;
+        GUI.Label(new Rect(x, y, w, 52), "Drag to rotate · scroll to zoom · WASD to move\n[ and ] step passes · Space plays them", sSmall); y += 46;
+        if (GUI.Button(new Rect(x, y, w, 28), "Reset the view", sBtn) && viewer != null && viewer.orbit != null) viewer.orbit.ResetView();
+        y += 40;
+        GUI.Label(new Rect(x, y, w, 14), "SOURCES", sEyebrow); y += 20;
+        GUI.Label(new Rect(x, y, w, 60), "Water and radar: NISAR (NASA/ISRO), provisional. Elevation: Copernicus GLO-30. Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu.", sSmall);
+    }
 
-        GUI.matrix = Matrix4x4.identity;
+    void Swatch(float x, float y, Color c, string text)
+    {
+        var old = GUI.color;
+        GUI.color = new Color(0f, 0f, 0f, 0.25f);
+        GUI.DrawTexture(new Rect(x - 1, y + 1, 16, 16), texDot);
+        GUI.color = c;
+        GUI.DrawTexture(new Rect(x, y + 2, 14, 14), texDot);
+        GUI.color = old;
+        GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
+    }
+
+    void GradientSwatch(float x, float y, string text)
+    {
+        var old = GUI.color;
+        GUI.color = KeyTop1;  GUI.DrawTexture(new Rect(x, y + 2, 9, 14), texDot);
+        GUI.color = KeyTop10; GUI.DrawTexture(new Rect(x + 6, y + 2, 9, 14), texDot);
+        GUI.color = old;
+        GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
     }
 }
