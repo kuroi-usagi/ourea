@@ -242,6 +242,8 @@ public class GlobeJourney : MonoBehaviour
             }
         }
         Atmosphere();
+        // panels: out at once when leaving, in gently after landing
+        OureaTheme.HudAlpha = HideHud ? 0f : Mathf.MoveTowards(OureaTheme.HudAlpha, 1f, Time.deltaTime / 1.1f);
     }
 
     float HomeDistance() { return orbit != null ? orbit.HomeDistance : 500f; }

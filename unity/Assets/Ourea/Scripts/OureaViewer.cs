@@ -268,6 +268,7 @@ public class OureaViewer : MonoBehaviour
         if (uiFont != null) GUI.skin.font = uiFont;
         if (displayFont != null) OureaTheme.display = displayFont;
         MakeStyles();
+        GUI.color = OureaTheme.A(Color.white);
         uiScale = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(uiScale, uiScale, 1f));
         float W = Screen.width / uiScale, H = Screen.height / uiScale;
@@ -304,7 +305,7 @@ public class OureaViewer : MonoBehaviour
             if (sp.z < 0) continue;
             float x = sp.x / uiScale, y = (Screen.height - sp.y) / uiScale;
             var old = GUI.color;
-            GUI.color = RankColor(s.rank);
+            GUI.color = OureaTheme.A(RankColor(s.rank));
             GUI.DrawTexture(new Rect(x - 11, y - 22, 22, 22), texRound);
             GUI.color = old;
             if (GUI.Button(new Rect(x - 11, y - 22, 22, 22), GUIContent.none, GUIStyle.none)) Select(pl);
@@ -339,7 +340,7 @@ public class OureaViewer : MonoBehaviour
             if (GUI.Button(row, GUIContent.none, sel ? sRowSel : sRow)) Select(pl);
 
             var old = GUI.color;
-            GUI.color = RankColor(s.rank);
+            GUI.color = OureaTheme.A(RankColor(s.rank));
             GUI.DrawTexture(new Rect(row.x + 10, row.y + 12, 26, 26), texRound);
             GUI.color = old;
             GUI.Label(new Rect(row.x + 10, row.y + 12, 26, 26), s.rank.ToString(), Text(13, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
@@ -387,16 +388,16 @@ public class OureaViewer : MonoBehaviour
         int max = Mathf.Max(1, passes.Count - 1);
         float frac = passes.Count > 1 ? timeline.Position / max : 1f;
         var oldC = GUI.color;
-        GUI.color = new Color(1f, 1f, 1f, 0.12f);
+        GUI.color = OureaTheme.A(new Color(1f, 1f, 1f, 0.12f));
         GUI.DrawTexture(trackRect, Texture2D.whiteTexture);
-        GUI.color = Accent;
+        GUI.color = OureaTheme.A(Accent);
         GUI.DrawTexture(new Rect(trackRect.x, trackRect.y, trackRect.width * frac, trackRect.height), Texture2D.whiteTexture);
         for (int i = 0; i < passes.Count; i++)
         {
             float x = passes.Count > 1 ? Mathf.Lerp(tx0, tx1, i / (float)max) : tx1;
             bool on = i == currentPass;
             float d = on ? 18f : 12f;
-            GUI.color = i <= timeline.Position + 0.001f ? Accent : OureaTheme.S(70, 84, 88);
+            GUI.color = OureaTheme.A(i <= timeline.Position + 0.001f ? Accent : OureaTheme.S(70, 84, 88));
             GUI.DrawTexture(new Rect(x - d / 2f, trackY - d / 2f, d, d), texRound);
             GUI.color = oldC;
             if (GUI.Button(new Rect(x - 34, trackY + 12, 68, 18), ShortDate(passes[i].date), on ? sTickOn : sTick))
@@ -427,7 +428,7 @@ public class OureaViewer : MonoBehaviour
     void Swatch(float x, float y, Color c, string text)
     {
         var old = GUI.color;
-        GUI.color = c;
+        GUI.color = OureaTheme.A(c);
         GUI.DrawTexture(new Rect(x, y + 2, 14, 14), texRound);
         GUI.color = old;
         GUI.Label(new Rect(x + 24, y + 1, 170, 18), text, sBody);

@@ -18,7 +18,11 @@ public static class OureaTheme
     public static readonly Color Bad = S(255, 107, 87);
     public static readonly Color Good = S(111, 211, 143);
 
-    public static Font display;   // Chakra Petch SemiBold, set by OureaViewer
+    public static Font display;
+
+    // the map's panels fade in after the fly-in lands instead of popping in (GlobeJourney sets it)
+    public static float HudAlpha = 1f;
+    public static Color A(Color c) { c.a *= HudAlpha; return c; }   // Chakra Petch SemiBold, set by OureaViewer
 
     // rounded rectangle with an optional 1 px border, drawn 9-sliced
     public static Texture2D Rounded(Color fill, int radius, Color border = default(Color))

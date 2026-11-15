@@ -147,6 +147,7 @@ public class StoryMode : MonoBehaviour
         if (viewer.uiFont != null) GUI.skin.font = viewer.uiFont;
         if (viewer.displayFont != null) OureaTheme.display = viewer.displayFont;
         Styles();
+        if (introFade <= 0.01f) GUI.color = OureaTheme.A(Color.white);
         float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float W = Screen.width / s, H = Screen.height / s;
@@ -186,7 +187,7 @@ public class StoryMode : MonoBehaviour
     void DrawIntro(float W, float H, float s)
     {
         var old = GUI.color;
-        GUI.color = new Color(1f, 1f, 1f, introFade);
+        GUI.color = new Color(1f, 1f, 1f, introFade);   // the opening screen sits over the globe: not tied to the map panels
         GUI.DrawTexture(new Rect(0, 0, W, H), texShade);
         Block(new Rect(0, 0, W, H), s);
 
@@ -220,7 +221,12 @@ public class StoryMode : MonoBehaviour
         var explore = new Rect(W * 0.5f + gap * 0.5f, y, bw, 48f);
         if (GUI.Button(go, "BEGIN THE STORY  >", sPrimary))
         {
-            if (journey != null) { storyAfterFlight = true; running = false; journey.FlyIn(); }
+            if (journey != null)
+            {
+                storyAfterFlight = true; running = false;
+                lab.CloseCard(); lab.Drain(); Pass(0);   // chapter 1's date and view, set before landing
+                journey.FlyIn();
+            }
             else { intro = false; running = true; Go(0); }
         }
         if (GUI.Button(explore, "EXPLORE THE MAP", sButton))
@@ -251,9 +257,9 @@ public class StoryMode : MonoBehaviour
                 float x = sp.x / s, y = (Screen.height - sp.y) / s;
                 float pulse = 1f + 0.25f * Mathf.Sin(Time.time * 4f);
                 var old = GUI.color;
-                GUI.color = new Color(OureaTheme.Bad.r, OureaTheme.Bad.g, OureaTheme.Bad.b, 0.35f);
+                GUI.color = OureaTheme.A(new Color(OureaTheme.Bad.r, OureaTheme.Bad.g, OureaTheme.Bad.b, 0.35f));
                 GUI.DrawTexture(new Rect(x - 22 * pulse, y - 22 * pulse, 44 * pulse, 44 * pulse), texRound);
-                GUI.color = OureaTheme.Bad;
+                GUI.color = OureaTheme.A(OureaTheme.Bad);
                 GUI.DrawTexture(new Rect(x - 7, y - 7, 14, 14), texRound);
                 GUI.color = old;
                 string tag = "#1  " + name;
@@ -286,10 +292,10 @@ public class StoryMode : MonoBehaviour
             if (GUI.Button(row, GUIContent.none, sButton)) done[i] = !done[i];
             var box = new Rect(row.x + 10, row.y + 20, 18, 18);
             var old = GUI.color;
-            GUI.color = done[i] ? OureaTheme.Good : OureaTheme.S(70, 84, 88);
+            GUI.color = OureaTheme.A(done[i] ? OureaTheme.Good : OureaTheme.S(70, 84, 88));
             GUI.DrawTexture(box, texRound);
             GUI.color = old;
-            if (!done[i]) { GUI.color = OureaTheme.Glass; GUI.DrawTexture(new Rect(box.x + 3, box.y + 3, 12, 12), texRound); GUI.color = old; }   // hollow until ticked
+            if (!done[i]) { GUI.color = OureaTheme.A(OureaTheme.Glass); GUI.DrawTexture(new Rect(box.x + 3, box.y + 3, 12, 12), texRound); GUI.color = old; }   // hollow until ticked
             GUI.Label(new Rect(row.x + 38, row.y + 7, row.width - 46, 50), acts[i], OureaTheme.Text(12, done[i] ? OureaTheme.Muted : OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
             yy += 66;
         }
@@ -307,7 +313,7 @@ public class StoryMode : MonoBehaviour
         // avatar
         var av = new Rect(r.x + 16, r.y + 16, 52, 52);
         var old = GUI.color;
-        GUI.color = OureaTheme.S(27, 58, 64);
+        GUI.color = OureaTheme.A(OureaTheme.S(27, 58, 64));
         GUI.DrawTexture(av, texRound);
         GUI.color = old;
         GUI.Label(av, "L", sAva);
@@ -335,7 +341,7 @@ public class StoryMode : MonoBehaviour
         // progress dots
         for (int i = 0; i < Chapters; i++)
         {
-            GUI.color = i <= chapter ? OureaTheme.Accent : OureaTheme.S(70, 84, 88);
+            GUI.color = OureaTheme.A(i <= chapter ? OureaTheme.Accent : OureaTheme.S(70, 84, 88));
             GUI.DrawTexture(new Rect(r.x + 200 + i * 12, by + 12, 7, 7), texRound);
         }
         GUI.color = old;

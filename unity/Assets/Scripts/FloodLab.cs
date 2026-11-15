@@ -151,7 +151,7 @@ public class FloodLab : MonoBehaviour
         float top = M, bottom = H - M - 72f - 10f;   // stops above the timeline pill
         float lx = wipe * W;
         var old = GUI.color;
-        GUI.color = new Color(1f, 1f, 1f, compareOn);
+        GUI.color = OureaTheme.A(new Color(1f, 1f, 1f, compareOn));
         GUI.DrawTexture(new Rect(lx - 1f, top, 2f, bottom - top), Texture2D.whiteTexture);
         float squash = 1f + Mathf.Clamp(Mathf.Abs(wipeVel) * 0.15f, 0f, 0.3f);
         float ky = top + (bottom - top) * 0.52f;
@@ -403,6 +403,7 @@ public class FloodLab : MonoBehaviour
         if (Event.current.type == EventType.Layout) uiRects.Clear();
         if (GlobeJourney.HideHud) return;
         Styles();
+        GUI.color = OureaTheme.A(Color.white);
         float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float W = Screen.width / s, H = Screen.height / s;
@@ -428,7 +429,7 @@ public class FloodLab : MonoBehaviour
             bool live = (cards[i] == Card.Water && level > minM + 0.02f) || (cards[i] == Card.Photo && compareWanted) || (cards[i] == Card.Radar && radarWanted);
             if (live && card != cards[i])
             {
-                var old = GUI.color; GUI.color = KeyFlood;
+                var old = GUI.color; GUI.color = OureaTheme.A(KeyFlood);
                 GUI.DrawTexture(new Rect(r.xMax - 10, r.y + 6, 7, 7), texDot);
                 GUI.color = old;
             }
@@ -655,9 +656,9 @@ public class FloodLab : MonoBehaviour
     void Swatch(float x, float y, Color c, string text)
     {
         var old = GUI.color;
-        GUI.color = new Color(0f, 0f, 0f, 0.25f);
+        GUI.color = OureaTheme.A(new Color(0f, 0f, 0f, 0.25f));
         GUI.DrawTexture(new Rect(x - 1, y + 1, 16, 16), texDot);
-        GUI.color = c;
+        GUI.color = OureaTheme.A(c);
         GUI.DrawTexture(new Rect(x, y + 2, 14, 14), texDot);
         GUI.color = old;
         GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
@@ -666,8 +667,8 @@ public class FloodLab : MonoBehaviour
     void GradientSwatch(float x, float y, string text)
     {
         var old = GUI.color;
-        GUI.color = KeyTop1;  GUI.DrawTexture(new Rect(x, y + 2, 9, 14), texDot);
-        GUI.color = KeyTop10; GUI.DrawTexture(new Rect(x + 6, y + 2, 9, 14), texDot);
+        GUI.color = OureaTheme.A(KeyTop1);  GUI.DrawTexture(new Rect(x, y + 2, 9, 14), texDot);
+        GUI.color = OureaTheme.A(KeyTop10); GUI.DrawTexture(new Rect(x + 6, y + 2, 9, 14), texDot);
         GUI.color = old;
         GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
     }
