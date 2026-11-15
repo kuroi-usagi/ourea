@@ -25,6 +25,7 @@ from PIL import Image
 
 WEIGHTS = {"water_near_homes": 0.35, "young_children": 0.25, "new_water": 0.20, "schools_routes": 0.20}
 GAP_FACTOR, GAP_KM = 1.3, 2.0
+USE_GAP = False   # OSM has too few preschools here (9 for 65 communes); switch on when the official childcare list arrives
 CELL = 32                  # 32 px of ~31 m = ~1 km squares
 NEAR_PX = 3                # ~100 m on the ~31 m grid
 MIN_CHILDREN = 20          # only rank squares with at least this many under-5s
@@ -151,7 +152,7 @@ def main(handoff, kids_tif, schools_gj, places_gj, out_dir, vn_mask_tif=None):
         f_sch = np.clip(sch_near / 2, 0, 1)
         raw = (weights["water_near_homes"] * f_homes + weights["young_children"] * f_kids
                + weights["new_water"] * f_new + weights["schools_routes"] * f_sch)
-        mult = np.where(no_pre & gap, GAP_FACTOR, 1.0)
+        mult = np.where(no_pre & gap & USE_GAP, GAP_FACTOR, 1.0)
         sc = np.clip(100 * raw * mult, 0, 100)
         sc[kids_cell < MIN_CHILDREN] = np.nan
         return sc, dict(water_near_homes=f_homes, young_children=f_kids, new_water=f_new,
@@ -176,13 +177,13 @@ def main(handoff, kids_tif, schools_gj, places_gj, out_dir, vn_mask_tif=None):
                 reasons.append(f"{100 * min(F['new_water'][ix] * NEW_FULL, 1):.0f}% of the square is flood water (land on {base})")
             if F["sch_near"][ix] >= 1:
                 reasons.append(f"{int(F['sch_near'][ix])} school(s) with flood water within ~100 m")
-            if no_pre[ix]:
+            if no_pre[ix] and USE_GAP:
                 reasons.append("no preschool or kindergarten on OpenStreetMap within 2 km")
             conf = "medium" if kids_cell[ix] >= 50 else "low"
             all_scores.append({"place_id": pid, "pass": d, "score": round(float(sc[ix]), 1), "rank": ranks[ix],
                                "rank_change": (prev_rank.get(pid, None) - ranks[ix]) if pid in prev_rank else None,
                                "factors": {k: round(float(F[k][ix]), 3) for k in WEIGHTS},
-                               "gap_factor": GAP_FACTOR if no_pre[ix] else 1.0, "reasons": reasons,
+                               "gap_factor": GAP_FACTOR if (no_pre[ix] and USE_GAP) else 1.0, "reasons": reasons,
                                "confidence": conf})
             if pid not in assets:
                 lo, la = lonlat(r * CELL + CELL / 2, c * CELL + CELL / 2)
