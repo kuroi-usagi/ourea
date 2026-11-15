@@ -39,8 +39,27 @@ public static class OureaBuild
             target = BuildTarget.WebGL,
             options = BuildOptions.None
         });
+        if (report.summary.result == BuildResult.Succeeded) FillWindow(Path.Combine(OutDir, "index.html"));
         var s = report.summary;
         Debug.Log("Ourea: WebGL build " + s.result + " → " + OutDir + " (" + (s.totalSize / 1048576f).ToString("0.0") + " MB, " + s.totalErrors + " errors)");
         if (Application.isBatchMode) EditorApplication.Exit(s.result == BuildResult.Succeeded ? 0 : 1);
+    }
+
+    // Unity's default page draws a fixed 960x600 box. For a live demo the map should fill the
+    // window: stretch the canvas, drop the footer, and render at up to 2x pixel density.
+    static void FillWindow(string indexPath)
+    {
+        if (!File.Exists(indexPath)) return;
+        var html = File.ReadAllText(indexPath);
+        html = html.Replace("<title>Unity Web Player | Ourea</title>", "<title>Ourea · Mekong flood watch</title>");
+        html = html.Replace("</head>",
+            "<style>html,body{margin:0;height:100%;overflow:hidden;background:#e7e5e0}" +
+            "#unity-container{position:fixed!important;inset:0;left:0!important;top:0!important;transform:none!important;width:100%;height:100%}" +
+            "#unity-fullscreen-container,#unity-canvas{width:100%!important;height:100%!important;background:#e7e5e0}" +
+            "#unity-footer{display:none}</style>\n  </head>");
+        html = html.Replace("fullscreenContainer.style.width = \"960px\";", "");
+        html = html.Replace("fullscreenContainer.style.height = \"600px\";", "");
+        html = html.Replace("// config.devicePixelRatio = 1;", "config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);");
+        File.WriteAllText(indexPath, html);
     }
 }

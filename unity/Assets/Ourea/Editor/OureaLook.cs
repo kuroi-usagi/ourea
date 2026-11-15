@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-// The look layer on top of OureaSceneBuilder, styled after the Urban Sentinel atlas: a clean
-// pale map toned from the satellite basemap, DEM hillshade, a stone diorama base, a light studio
-// background, crisp neutral post-processing and solid score columns on every hamlet.
+// The "wow" layer on top of OureaSceneBuilder: satellite basemap, DEM normals, diorama base,
+// sky + haze + sun, URP post-processing and glowing check-first beacons.
 // Called once from OureaSceneBuilder.BuildScene; everything it makes lives in Generated/.
 public static class OureaLook
 {
@@ -31,33 +30,36 @@ public static class OureaLook
         var baseGo = new GameObject("Diorama base");
         baseGo.AddComponent<MeshFilter>().sharedMesh = SaveMesh(Skirt(h, n, sizeX, sizeZ, heightScale), GenDir + "/BaseMesh.asset");
         var baseRend = baseGo.AddComponent<MeshRenderer>();
-        baseRend.sharedMaterial = LitMaterial(GenDir + "/Base.mat", new Color(0.80f, 0.78f, 0.74f), 0.15f);
+        baseRend.sharedMaterial = LitMaterial(GenDir + "/Base.mat", new Color(0.13f, 0.10f, 0.08f), 0.1f);
 
-        // 3. Light studio: flat warm-grey backdrop, a whisper of distance fog, clean white sun
-        var backdrop = new Color(0.905f, 0.898f, 0.878f);
-        RenderSettings.skybox = null;
+        // 3. Sky, haze, sun
+        var sky = new Material(Shader.Find("Skybox/Procedural"));
+        sky.SetFloat("_SunSize", 0.035f);
+        sky.SetFloat("_AtmosphereThickness", 0.85f);
+        sky.SetColor("_SkyTint", new Color(0.52f, 0.56f, 0.62f));
+        sky.SetColor("_GroundColor", new Color(0.64f, 0.70f, 0.77f)); // below the horizon reads as haze
+        sky.SetFloat("_Exposure", 1.25f);
+        SaveAsset(sky, GenDir + "/Sky.mat");
+        RenderSettings.skybox = sky;
         RenderSettings.ambientMode = AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.86f, 0.88f, 0.90f);
-        RenderSettings.ambientEquatorColor = new Color(0.78f, 0.78f, 0.76f);
-        RenderSettings.ambientGroundColor = new Color(0.55f, 0.54f, 0.52f);
+        RenderSettings.ambientSkyColor = new Color(0.58f, 0.68f, 0.84f);
+        RenderSettings.ambientEquatorColor = new Color(0.50f, 0.52f, 0.50f);
+        RenderSettings.ambientGroundColor = new Color(0.22f, 0.20f, 0.18f);
         RenderSettings.fog = true;
-        RenderSettings.fogMode = FogMode.Linear;
-        RenderSettings.fogColor = backdrop;
-        RenderSettings.fogStartDistance = 1400f;
-        RenderSettings.fogEndDistance = 3200f;
+        RenderSettings.fogMode = FogMode.ExponentialSquared;
+        RenderSettings.fogColor = new Color(0.70f, 0.77f, 0.84f);
+        RenderSettings.fogDensity = 0.0006f;   // horizon haze without greying the map
 
         if (sun != null)
         {
-            sun.transform.rotation = Quaternion.Euler(52f, -32f, 0f);
-            sun.color = new Color(1f, 0.98f, 0.95f);
-            sun.intensity = 1.25f;
+            sun.transform.rotation = Quaternion.Euler(34f, -38f, 0f);
+            sun.color = new Color(1f, 0.92f, 0.80f);
+            sun.intensity = 2.1f;
             sun.shadows = LightShadows.Soft;
-            sun.shadowStrength = 0.55f;
             RenderSettings.sun = sun;
         }
 
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = backdrop;
+        cam.clearFlags = CameraClearFlags.Skybox;
         cam.allowHDR = true;
         cam.allowMSAA = true;
         cam.farClipPlane = 8000f;
@@ -75,13 +77,15 @@ public static class OureaLook
         vol.isGlobal = true;
         vol.sharedProfile = PostProfile();
 
-        // 5. Pins stay small and clean; every scored hamlet gets a solid score column
+        // 5. Pins glow; top 10 get light columns
         if (placesRoot != null && placesRoot.childCount > 0)
         {
             var pinMat = placesRoot.GetChild(0).GetComponent<Renderer>().sharedMaterial;
-            pinMat.shader = Shader.Find("Universal Render Pipeline/Lit");
-            pinMat.SetFloat("_Smoothness", 0.35f);
+            pinMat.shader = Shader.Find("Ourea/Beacon");
+            pinMat.SetFloat("_Glow", 1.3f);
             EditorUtility.SetDirty(pinMat);
+            foreach (Transform t in placesRoot)
+                t.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
         }
         // Re-bind the masks last: imports above can drop the references the builder set.
         if (app.passes.Count > 0)
@@ -94,12 +98,84 @@ public static class OureaLook
             AssetDatabase.SaveAssetIfDirty(mat);
         }
 
-        var field = new GameObject("Score columns").AddComponent<BeaconField>();
+        var field = new GameObject("Beacons").AddComponent<BeaconField>();
         field.viewer = app;
-        var colMat = LitMaterial(GenDir + "/Column.mat", Color.white, 0.25f);
-        colMat.SetFloat("_Cull", 0f);  // two-sided, so prism winding never shows holes
-        colMat.doubleSidedGI = true;
-        field.columnMaterial = colMat;
+        field.beamMaterial = BeamMaterial(GenDir + "/Beam.mat", false);
+        field.ringMaterial = BeamMaterial(GenDir + "/Ring.mat", true);
+
+        // 6. "What if" controls: modeled water surface + real radar view (Scripts/FloodLab.cs)
+        AddFloodLab(delta, h, n, sizeX, sizeZ, heightScale, app);
+    }
+
+    [System.Serializable] class TerrainMeta { public float min_m; public float max_m; }
+    [System.Serializable] class NisarPass { public string date; public float water_pct; }
+    [System.Serializable] class NisarWrap { public NisarPass[] items; }
+
+    static void AddFloodLab(GameObject delta, float[] h, int n, float sizeX, float sizeZ, float heightScale, OureaViewer app)
+    {
+        var lab = new GameObject("Flood lab").AddComponent<FloodLab>();
+        lab.viewer = app;
+        var meta = JsonUtility.FromJson<TerrainMeta>(File.ReadAllText(Path.Combine(Handoff, "terrain", "meta.json")));
+        lab.minM = meta.min_m; lab.maxM = meta.max_m;
+        lab.heightScale = heightScale;
+        lab.tileAreaKm2 = sizeX * sizeZ * 100f * 100f / 1e6f;   // 1 unit = 100 m
+
+        // DEM curve: fraction of the tile at or below each of 256 levels between min and max
+        const int Bins = 256;
+        var counts = new int[Bins];
+        foreach (var v in h) counts[Mathf.Clamp((int)(v * (Bins - 1) + 0.5f), 0, Bins - 1)]++;
+        var curve = new float[Bins];
+        long acc = 0;
+        for (int i = 0; i < Bins; i++) { acc += counts[i]; curve[i] = acc / (float)h.Length; }
+        lab.demCurve = curve;
+
+        // NISAR water % per pass, and the HV backscatter image per pass
+        var pct = new float[app.passes.Count];
+        string nj = Path.Combine(Handoff, "layers", "nisar.json");
+        if (File.Exists(nj))
+        {
+            var wrap = JsonUtility.FromJson<NisarWrap>("{\"items\":" + File.ReadAllText(nj) + "}");
+            for (int i = 0; i < app.passes.Count; i++)
+                foreach (var it in wrap.items) if (it.date == app.passes[i].date) pct[i] = it.water_pct;
+        }
+        lab.observedWaterPct = pct;
+        var radar = new Texture2D[app.passes.Count];
+        for (int i = 0; i < app.passes.Count; i++)
+        {
+            string src = Path.Combine(Handoff, "layers", "backscatter", app.passes[i].date + ".png");
+            if (!File.Exists(src) || new FileInfo(src).Length < 1024) continue;
+            string dst = GenDir + "/radar_" + app.passes[i].date + ".png";
+            File.Copy(src, Path.Combine(ProjectRoot, dst), true);
+            AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceUpdate);
+            var imp = (TextureImporter)AssetImporter.GetAtPath(dst);
+            imp.sRGBTexture = false;
+            imp.mipmapEnabled = true;
+            imp.wrapMode = TextureWrapMode.Clamp;
+            imp.maxTextureSize = 1024;   // plenty for a whole-tile view, keeps the WebGL build small
+            imp.textureCompression = TextureImporterCompression.Uncompressed;
+            var ps = imp.GetDefaultPlatformTextureSettings(); ps.format = TextureImporterFormat.R8; imp.SetPlatformTextureSettings(ps);
+            imp.SaveAndReimport();
+            radar[i] = AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
+        }
+        lab.radar = radar;
+
+        // the water sheet: a flat quad over the tile, a little larger than it
+        var plane = new GameObject("Modeled water surface", typeof(MeshFilter), typeof(MeshRenderer));
+        var m = new Mesh { name = "WaterSheet" };
+        float pad = 0f;
+        m.vertices = new[] { new Vector3(-pad, 0, -pad), new Vector3(sizeX + pad, 0, -pad), new Vector3(-pad, 0, sizeZ + pad), new Vector3(sizeX + pad, 0, sizeZ + pad) };
+        m.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) };
+        m.triangles = new[] { 0, 2, 1, 1, 2, 3 };
+        m.RecalculateNormals(); m.RecalculateBounds();
+        plane.GetComponent<MeshFilter>().sharedMesh = SaveMesh(m, GenDir + "/WaterSheet.asset");
+        var pm = new Material(Shader.Find("Ourea/FloodPlane"));
+        SaveAsset(pm, GenDir + "/FloodPlane.mat");
+        var pr = plane.GetComponent<MeshRenderer>();
+        pr.sharedMaterial = pm;
+        pr.shadowCastingMode = ShadowCastingMode.Off;
+        plane.SetActive(false);
+        lab.waterPlane = plane.transform;
+        lab.waterPlaneMaterial = pm;
     }
 
     static void UseQualityTierForWebGL(string tierName)
@@ -131,7 +207,9 @@ public static class OureaLook
         imp.wrapMode = TextureWrapMode.Clamp;
         imp.mipmapEnabled = true;
         imp.anisoLevel = 16;
-        imp.textureCompression = TextureImporterCompression.CompressedHQ;
+        imp.textureCompression = TextureImporterCompression.Compressed;
+        imp.crunchedCompression = true;   // keeps the WebGL download small
+        imp.compressionQuality = 80;
         imp.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
     }
@@ -162,7 +240,9 @@ public static class OureaLook
         imp.maxTextureSize = 2048;
         imp.wrapMode = TextureWrapMode.Clamp;
         imp.mipmapEnabled = true;
-        imp.textureCompression = TextureImporterCompression.CompressedHQ;
+        imp.textureCompression = TextureImporterCompression.Compressed;
+        imp.crunchedCompression = true;
+        imp.compressionQuality = 80;
         imp.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
     }
@@ -227,22 +307,41 @@ public static class OureaLook
         return m;
     }
 
+    static Material BeamMaterial(string path, bool ring)
+    {
+        var m = new Material(Shader.Find("Ourea/Beam"));
+        m.SetFloat("_Ring", ring ? 1f : 0f);
+        m.SetFloat("_Intensity", ring ? 2.2f : 1.4f);
+        SaveAsset(m, path);
+        return m;
+    }
+
     static VolumeProfile PostProfile()
     {
         var p = ScriptableObject.CreateInstance<VolumeProfile>();
         SaveAsset(p, GenDir + "/PostFX.asset");
 
         var tone = p.Add<Tonemapping>(true);
-        tone.mode.Override(TonemappingMode.Neutral);
+        tone.mode.Override(TonemappingMode.ACES);
 
         var bloom = p.Add<Bloom>(true);
-        bloom.threshold.Override(1.2f);
-        bloom.intensity.Override(0.15f);
+        bloom.threshold.Override(1.05f);
+        bloom.intensity.Override(0.5f);   // calm: highlights glow, the map does not
+        bloom.scatter.Override(0.72f);
+        bloom.highQualityFiltering.Override(true);
 
         var grade = p.Add<ColorAdjustments>(true);
-        grade.postExposure.Override(0.1f);
-        grade.contrast.Override(8f);
-        grade.saturation.Override(6f);
+        grade.postExposure.Override(0.35f);
+        grade.contrast.Override(16f);
+        grade.saturation.Override(14f);
+
+        var smh = p.Add<ShadowsMidtonesHighlights>(true);
+        smh.shadows.Override(new Vector4(0.92f, 0.98f, 1.08f, -0.02f));   // cool shadows
+        smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0.02f));  // warm highlights
+
+        var vig = p.Add<Vignette>(true);
+        vig.intensity.Override(0.18f);
+        vig.smoothness.Override(0.45f);
 
         foreach (var c in p.components) AssetDatabase.AddObjectToAsset(c, p);
         EditorUtility.SetDirty(p);

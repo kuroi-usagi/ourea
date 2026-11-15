@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 public static class OureaSceneBuilder
 {
     const float MetersPerUnit = 100f;   // 1 Unity unit = 100 m, so the 65 km tile is ~650 units wide
-    const float Exaggeration = 16f;     // the delta is ~9 m tall; higher reads as noisy tree-line ridges
+    const float Exaggeration = 24f;     // the delta is ~9 m tall; 40x read as noisy tree-line ridges
     const int MeshRes = 513;
     const string GenDir = "Assets/Ourea/Generated";
     const string ScenePath = "Assets/Scenes/Ourea.unity";

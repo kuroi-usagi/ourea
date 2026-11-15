@@ -1,30 +1,32 @@
-// Delta surface, drawn as a clean cartographic map (in the spirit of the Urban Sentinel atlas):
-// pale land toned from the satellite basemap (roads and towns come out white), soft hillshade
-// from the DEM, and water as crisp anti-aliased shapes from the handoff landwater masks.
+// Delta surface: satellite basemap + water from the handoff landwater masks.
 // Mask values (handoff/CONTRACT.md): 255 land · 0 water · 128 no data · 200 rice flooded on purpose.
 // _MaskA/_MaskB are two neighbouring passes, _Blend scrubs between them; _MaskBase is the first
-// pass, so water that wasn't there at the start is drawn as flood.
+// pass, so water that wasn't there at the start reads as flood (silty water + a glowing front).
 Shader "Ourea/Water"
 {
     Properties
     {
-        _BaseMap ("Satellite basemap", 2D) = "white" {}
+        _BaseMap ("Land colour (satellite)", 2D) = "white" {}
         _NormalMap ("World normals (RGB = xyz*0.5+0.5, from the DEM)", 2D) = "bump" {}
         _MaskA ("Landwater pass A", 2D) = "white" {}
         _MaskB ("Landwater pass B", 2D) = "white" {}
         _MaskBase ("Landwater first pass", 2D) = "white" {}
         _Blend ("Blend A to B", Range(0, 1)) = 0
-        _LandLow ("Land (fields)", Color) = (0.80, 0.82, 0.76, 1)
-        _LandHigh ("Land (trees, gardens)", Color) = (0.66, 0.72, 0.62, 1)
-        _Built ("Roads and towns", Color) = (0.98, 0.97, 0.95, 1)
-        _River ("River water", Color) = (0.62, 0.72, 0.80, 1)
-        _Flood ("New flood water", Color) = (0.36, 0.58, 0.82, 1)
-        _Rice ("Rice flooded on purpose", Color) = (0.50, 0.74, 0.70, 1)
-        _NoData ("No data", Color) = (0.78, 0.78, 0.78, 1)
-        _Outline ("Water outline", Color) = (0.30, 0.44, 0.56, 1)
-        _Hillshade ("Hillshade", Range(0, 1)) = 0.55
-        _Detail ("Satellite detail", Range(0, 1)) = 0.35
-        _GlowAmount ("Flood pulse", Range(0, 1)) = 1
+        _MaskTexel ("Mask texel size", Float) = 0.00048828125
+        _LandGain ("Land brightness", Range(0.5, 2)) = 1.15
+        _WaterColor ("River water", Color) = (0.17, 0.24, 0.22, 1)
+        _FloodColor ("Flood water", Color) = (0.30, 0.27, 0.19, 1)
+        [HDR] _FloodGlow ("Flood glow", Color) = (0.05, 0.45, 0.9, 1)
+        [HDR] _FrontGlow ("Flood front", Color) = (0.35, 1.3, 2.6, 1)
+        _RiceColor ("Rice flooded on purpose", Color) = (0.30, 0.62, 0.55, 1)
+        _NoDataColor ("No data", Color) = (0.40, 0.40, 0.42, 1)
+        _SkyHorizon ("Sky horizon", Color) = (0.55, 0.62, 0.70, 1)
+        _SkyZenith ("Sky zenith", Color) = (0.22, 0.34, 0.52, 1)
+        _Ripple ("Ripple strength", Range(0, 1)) = 0.5
+        _GlowAmount ("Data glow amount", Range(0, 1)) = 1
+        _RadarTex ("NISAR HV backscatter (current pass)", 2D) = "black" {}
+        _Radar ("Radar view", Range(0, 1)) = 0
+        _Sweep ("Radar sweep (0 = none, 1 = whole tile)", Range(0, 1)) = 0
     }
 
     SubShader
@@ -41,7 +43,6 @@ Shader "Ourea/Water"
             #pragma fragment frag
             #pragma multi_compile_fog
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile _ _SHADOWS_SOFT
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -50,12 +51,13 @@ Shader "Ourea/Water"
             TEXTURE2D(_MaskA);     SAMPLER(sampler_MaskA);
             TEXTURE2D(_MaskB);
             TEXTURE2D(_MaskBase);
+            TEXTURE2D(_RadarTex);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
-                float _Blend;
-                half _Hillshade, _Detail, _GlowAmount;
-                half4 _LandLow, _LandHigh, _Built, _River, _Flood, _Rice, _NoData, _Outline;
+                float _Blend, _MaskTexel;
+                half _LandGain, _Ripple, _GlowAmount, _Radar, _Sweep;
+                half4 _WaterColor, _FloodColor, _FloodGlow, _FrontGlow, _RiceColor, _NoDataColor, _SkyHorizon, _SkyZenith;
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; };
@@ -80,63 +82,95 @@ Shader "Ourea/Water"
                 return o;
             }
 
-            // Anti-aliased step: sharp at any zoom, one screen pixel of softness.
-            half Crisp(half value, half edge)
-            {
-                half w = max(fwidth(value), 1e-4);
-                return saturate((edge - value) / w + 0.5);
-            }
-
-            // x = water, y = rice, z = no data for one mask sample
+            // x = water, y = rice, z = no data (bilinear sample, so edges come out soft)
+            // Anti-aliased: sharp water edges at any zoom, one screen pixel of softness.
             half3 Classes(half m)
             {
                 half w = max(fwidth(m), 1e-4);
-                half water = Crisp(m, 0.25);
+                half water = saturate((0.25 - m) / w + 0.5);
                 half rice = 1 - saturate(abs(m - 200.0 / 255.0) / w - 0.5);
                 half nodata = 1 - saturate(abs(m - 128.0 / 255.0) / w - 0.5);
                 return half3(water, rice * (1 - water), nodata * (1 - water));
             }
 
+            half3 Mix(float2 uv)
+            {
+                half3 a = Classes(SAMPLE_TEXTURE2D(_MaskA, sampler_MaskA, uv).r);
+                half3 b = Classes(SAMPLE_TEXTURE2D(_MaskB, sampler_MaskA, uv).r);
+                return lerp(a, b, _Blend);
+            }
+
+            // Sum of travelling sine waves; returns the surface slope (dh/dx, dh/dz).
+            float2 RippleSlope(float2 p, float t)
+            {
+                float2 s = 0;
+                const float2 d0 = float2(0.8, 0.6), d1 = float2(-0.4, 0.9), d2 = float2(0.95, -0.3), d3 = float2(-0.7, -0.7);
+                s += d0 * cos(dot(p, d0) * 2.1 + t * 1.3) * 0.50;
+                s += d1 * cos(dot(p, d1) * 3.7 + t * 1.9) * 0.30;
+                s += d2 * cos(dot(p, d2) * 6.3 + t * 2.6) * 0.18;
+                s += d3 * cos(dot(p, d3) * 11.0 + t * 3.4) * 0.10;
+                return s;
+            }
+
             half4 frag(Varyings i) : SV_Target
             {
                 float t = _Time.y;
-
-                // ---- land: tone the satellite image into a pale map palette
-                half3 sat = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).rgb;
-                half lum = dot(sat, half3(0.299, 0.587, 0.114));
-                half green = saturate((sat.g - max(sat.r, sat.b)) * 6);
-                half3 land = lerp(_LandLow.rgb, _LandHigh.rgb, saturate(green * 0.8 + (0.18 - lum) * 3));
-                land *= lerp(1, 0.75 + lum * 1.4, _Detail);                    // keep field texture, softly
-                land = lerp(land, _Built.rgb, smoothstep(0.30, 0.48, lum));     // roads, towns, dikes
-
+                half3 land = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).rgb * _LandGain;
                 half3 nTex = SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv).rgb * 2 - 1;
-                half3 n = normalize(nTex.y > 0.01 ? nTex : i.normalWS);
+                half3 landN = normalize(nTex.y > 0.01 ? nTex : i.normalWS);
 
-                // ---- water from the masks (blend two passes; crisp edges)
-                half mA = SAMPLE_TEXTURE2D(_MaskA, sampler_MaskA, i.uv).r;
-                half mB = SAMPLE_TEXTURE2D(_MaskB, sampler_MaskA, i.uv).r;
-                half m = lerp(mA, mB, _Blend);
-                half3 c = Classes(m);
-                half base = Crisp(SAMPLE_TEXTURE2D(_MaskBase, sampler_MaskA, i.uv).r, 0.25);
-                half flood = c.x * (1 - base);
+                half3 c = Mix(i.uv);
+                half baseWater = Classes(SAMPLE_TEXTURE2D(_MaskBase, sampler_MaskA, i.uv).r).x;
+                half flood = saturate(c.x - baseWater);
 
-                // thin outline around all water: band around the 0.25 iso-line
-                half w = max(fwidth(m), 1e-4);
-                half outline = saturate(1 - abs(m - 0.25) / (w * 1.2));
+                // flood front: where the water amount changes over a few texels
+                float o = _MaskTexel * 4.0;
+                half wl = Mix(i.uv + float2(-o, 0)).x, wr = Mix(i.uv + float2(o, 0)).x;
+                half wd = Mix(i.uv + float2(0, -o)).x, wu = Mix(i.uv + float2(0, o)).x;
+                half edge = saturate((abs(wr - wl) + abs(wu - wd)) * 1.2);
+                half front = edge * edge * saturate(flood * 1.5);
 
-                half3 col = land;
-                col = lerp(col, _NoData.rgb, c.z);
-                col = lerp(col, _Rice.rgb, c.y);
-                half pulse = 0.88 + 0.12 * sin(t * 2.0);
-                half3 water = lerp(_River.rgb, _Flood.rgb * lerp(1, pulse, _GlowAmount), saturate(flood / max(c.x, 1e-3)));
+                float3 V = normalize(GetWorldSpaceViewDir(i.positionWS));
+                float4 shadowCoord = TransformWorldToShadowCoord(i.positionWS);
+                Light sun = GetMainLight(shadowCoord);
+                half shadow = sun.shadowAttenuation;
+
+                // ---- land: satellite colour, lit by the DEM normals
+                half ndl = saturate(dot(landN, sun.direction));
+                half3 ambient = SampleSH(landN);
+                half3 col = land * (sun.color * ndl * shadow * 0.85 + ambient * 0.55);
+                col = lerp(col, _NoDataColor.rgb * (ambient * 0.6 + 0.3), c.z * 0.8);
+                col = lerp(col, lerp(col, _RiceColor.rgb * (ambient * 0.5 + sun.color * ndl * 0.6), 0.55), c.y);
+
+                // ---- water: tinted by what's under it, sky reflection + sun glint on ripples
+                float2 sl = RippleSlope(i.positionWS.xz * 0.35, t) * 0.12 * _Ripple;
+                float3 wN = normalize(float3(-sl.x, 1, -sl.y));
+                float3 R = reflect(-V, wN);
+                half3 sky = lerp(_SkyHorizon.rgb, _SkyZenith.rgb, saturate(R.y * 1.6));
+                half fres = 0.04 + 0.96 * pow(1 - saturate(dot(wN, V)), 5);
+                float3 H = normalize(sun.direction + V);
+                half spec = pow(saturate(dot(wN, H)), 380) * 6 * shadow;
+                half3 body = lerp(_WaterColor.rgb, land * 0.55 + _WaterColor.rgb * 0.45, baseWater * 0.5);
+                body = lerp(body, _FloodColor.rgb, flood);
+                half3 water = body * (ambient * 0.6 + sun.color * 0.35) ;
+                water = lerp(water, sky, fres * 0.55) + sun.color * spec;
+
+                // data glow: new water breathes, the front shimmers (HDR so Bloom picks it up)
+                half pulse = 0.85 + 0.15 * sin(t * 1.6);   // slow and gentle
+                half3 glow = _FloodGlow.rgb * flood * 0.10 * pulse;
+                glow += _FrontGlow.rgb * front * 0.25 * (0.85 + 0.15 * sin(t * 3 + i.positionWS.x * 0.15));
+                water += glow * _GlowAmount;
+
                 col = lerp(col, water, c.x);
-                col = lerp(col, _Outline.rgb, outline * 0.5);
-
-                // ---- light: soft hillshade + main light shadows, bright ambient (studio look)
-                Light sun = GetMainLight(TransformWorldToShadowCoord(i.positionWS));
-                half ndl = saturate(dot(n, sun.direction));
-                half shade = lerp(1, 0.55 + 0.6 * ndl, _Hillshade * (1 - c.x));
-                col *= shade * lerp(0.82, 1, sun.shadowAttenuation);
+                col += _FrontGlow.rgb * front * (1 - c.x) * 0.06 * _GlowAmount;
+                // ---- radar view: NISAR HV backscatter revealed north → south like a descending pass
+                half rad = SAMPLE_TEXTURE2D(_RadarTex, sampler_BaseMap, i.uv).r;
+                half3 radCol = lerp(half3(0.010, 0.016, 0.030), half3(0.62, 0.80, 0.76), pow(saturate(rad), 0.8));
+                half edgeV = 1 - _Sweep;
+                half reveal = saturate((i.uv.y - edgeV) / max(fwidth(i.uv.y) * 2, 1e-4));
+                half scan = saturate(1 - abs(i.uv.y - edgeV) / max(fwidth(i.uv.y) * 6, 1e-4)) * step(0.002, _Sweep) * step(_Sweep, 0.998);
+                col = lerp(col, radCol * (ambient * 0.5 + 0.6), _Radar * reveal);
+                col += half3(0.45, 0.95, 0.85) * scan * _Radar * 1.5;
 
                 col = MixFog(col, i.fog);
                 return half4(col, 1);

@@ -51,7 +51,7 @@ public class OureaViewer : MonoBehaviour
     {
         for (int i = 0; i < uiRects.Count; i++)
             if (uiRects[i].Contains(guiPoint)) return true;
-        return false;
+        return FloodLab.PointerOver(guiPoint);
     }
 
     readonly Dictionary<string, Place> placeById = new Dictionary<string, Place>();
