@@ -103,6 +103,9 @@ public static class OureaLook
         field.beamMaterial = BeamMaterial(GenDir + "/Beam.mat", false);
         field.ringMaterial = BeamMaterial(GenDir + "/Ring.mat", true);
 
+        // UI font with Vietnamese letters (place names like Chợ Vàm, Gò Ớt); SIL OFL, see Fonts/OFL.txt
+        app.uiFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Ourea/Fonts/BeVietnamPro-Regular.ttf");
+
         // 6. "What if" controls: modeled water surface + real radar view (Scripts/FloodLab.cs)
         AddFloodLab(delta, h, n, sizeX, sizeZ, heightScale, app);
     }

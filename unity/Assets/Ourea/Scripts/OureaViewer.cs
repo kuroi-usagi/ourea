@@ -38,6 +38,7 @@ public class OureaViewer : MonoBehaviour
 
     public Renderer deltaRenderer;
     public TimelineController timeline;
+    public Font uiFont;   // Be Vietnam Pro: Unity's built-in web font has no Vietnamese letters (ợ, Ớ, ...)
     public OrbitCamera orbit;
     public bool simulated = true;
     public string dataNote = "";
@@ -112,7 +113,7 @@ public class OureaViewer : MonoBehaviour
         {
             if (s.pass != currentPass) continue;
             rankById[s.placeId] = s.rank;
-            if (s.rank >= 1 && s.rank <= 10) top.Add(s);
+            if (s.rank >= 1 && s.rank <= 10 && s.score > 0f) top.Add(s);   // the baseline pass scores 0 everywhere: no ranking
         }
         top.Sort((a, b) => a.rank.CompareTo(b.rank));
 
@@ -249,6 +250,7 @@ public class OureaViewer : MonoBehaviour
     void OnGUI()
     {
         if (Event.current.type == EventType.Layout) uiRects.Clear();
+        if (uiFont != null) GUI.skin.font = uiFont;
         MakeStyles();
         uiScale = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(uiScale, uiScale, 1f));
@@ -263,7 +265,7 @@ public class OureaViewer : MonoBehaviour
         GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "OUREA  ·  NISAR FLOOD WATCH", sEyebrow);
         GUI.Label(new Rect(head.x + 14, head.y + 26, 240, 24), "Mekong Delta, Vietnam", sTitle);
 
-        string note = simulated ? "Water: real NISAR  ·  ranks simulated" : "Water and ranks: real data";
+        string note = simulated ? "Water: real NISAR  ·  ranks simulated" : "NISAR water and scores  ·  provisional";
         var noteSize = sPill.CalcSize(new GUIContent(note));
         GUI.Label(new Rect(W - M - noteSize.x - 16, M + 6, noteSize.x + 16, 24), note, sPill);
 
@@ -303,7 +305,7 @@ public class OureaViewer : MonoBehaviour
     void DrawList(Rect list)
     {
         GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), simulated ? "CHECK FIRST  ·  SIMULATED" : "CHECK FIRST", simulated ? Text(11, Amber, FontStyle.Bold) : sEyebrow);
-        GUI.Label(new Rect(list.x + 16, list.y + 30, list.width - 60, 24), "Top 10 hamlets this pass", sTitle);
+        GUI.Label(new Rect(list.x + 16, list.y + 30, list.width - 60, 24), "Top 10 this pass", sTitle);
         GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), simulated ? "Simulated until Mitch's scores land." : "Ranked by water near homes. Low rank is not \"safe\".", sSub);
 
         var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
@@ -336,7 +338,9 @@ public class OureaViewer : MonoBehaviour
             }
             y += rowH;
         }
-        if (top.Count == 0) GUI.Label(new Rect(8, 8, view.width - 16, 40), "No rankings for this pass yet.", sBody);
+        if (top.Count == 0) GUI.Label(new Rect(8, 8, view.width - 16, 60), currentPass == 0
+            ? "No flood water yet. " + ShortDate(passes[0].date) + " is the baseline pass: flood water is water that was land on this date."
+            : "No rankings for this pass yet.", Text(13, Ink, FontStyle.Normal, TextAnchor.UpperLeft, true));
         GUI.EndScrollView();
     }
 
@@ -355,7 +359,10 @@ public class OureaViewer : MonoBehaviour
         // headline number on the right
         float nx = tl.xMax - 186;
         GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", Text(22, Ink, FontStyle.Bold, TextAnchor.UpperRight));
-        GUI.Label(new Rect(nx, tl.y + 42, 172, 16), "new water since " + ShortDate(passes[0].date), Text(11, Muted, FontStyle.Normal, TextAnchor.UpperRight));
+        string sub = p.childrenNearWater > 0
+            ? p.childrenNearWater.ToString("#,0") + " under-5s within ~100 m"
+            : "new flood water since " + ShortDate(passes[0].date);
+        GUI.Label(new Rect(nx - 40, tl.y + 42, 212, 16), sub, Text(11, Muted, FontStyle.Normal, TextAnchor.UpperRight));
 
         // track with the passes
         float tx0 = tl.x + 84, tx1 = nx - 28;

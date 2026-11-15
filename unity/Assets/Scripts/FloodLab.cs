@@ -251,6 +251,7 @@ public class FloodLab : MonoBehaviour
     void OnGUI()
     {
         GUI.depth = -10;   // dock and cards above the viewer's map labels
+        if (viewer != null && viewer.uiFont != null) GUI.skin.font = viewer.uiFont;
         if (Event.current.type == EventType.Layout) uiRects.Clear();
         Styles();
         float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
@@ -315,7 +316,7 @@ public class FloodLab : MonoBehaviour
             case Card.Photo: return 170f;
             case Card.Radar: return 224f;
             case Card.Ranking: return Mathf.Min(maxH, 640f);
-            default: return Mathf.Min(maxH, 352f);
+            default: return Mathf.Min(maxH, 368f);
         }
     }
 
@@ -412,15 +413,16 @@ public class FloodLab : MonoBehaviour
         }
         if (compareWanted) { Swatch(x, y, Color.white, "Left of the line: camera photo"); y += 22; }
         if (level > minM + 0.02f) { Swatch(x, y, KeySheet, "Modeled flat water level"); y += 22; }
-        GradientSwatch(x, y, "Hamlets ranked 1 to 10 (simulated)"); y += 22;
-        Swatch(x, y, KeySchool, "School (simulated)"); y += 30;
+        bool sim = viewer != null && viewer.simulated;
+        GradientSwatch(x, y, sim ? "Hamlets ranked 1 to 10 (simulated)" : "Check first, ranked 1 to 10"); y += 22;
+        Swatch(x, y, KeySchool, sim ? "School (simulated)" : "School (OpenStreetMap)"); y += 30;
 
         GUI.Label(new Rect(x, y, w, 14), "CONTROLS", sEyebrow); y += 20;
         GUI.Label(new Rect(x, y, w, 52), "Drag to rotate · scroll to zoom · WASD to move\n[ and ] step passes · Space plays them", sSmall); y += 46;
         if (GUI.Button(new Rect(x, y, w, 28), "Reset the view", sBtn) && viewer != null && viewer.orbit != null) viewer.orbit.ResetView();
         y += 40;
         GUI.Label(new Rect(x, y, w, 14), "SOURCES", sEyebrow); y += 20;
-        GUI.Label(new Rect(x, y, w, 60), "Water and radar: NISAR (NASA/ISRO), provisional. Elevation: Copernicus GLO-30. Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu.", sSmall);
+        GUI.Label(new Rect(x, y, w, 76), "Water and radar: NISAR (NASA/ISRO), provisional. Children: WorldPop 2026. Schools: OpenStreetMap. Elevation: Copernicus GLO-30. Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu.", sSmall);
     }
 
     void Swatch(float x, float y, Color c, string text)

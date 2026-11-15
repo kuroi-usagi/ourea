@@ -24,7 +24,7 @@ public static class OureaSceneBuilder
     [Serializable] class AssetsWrap { public AssetJ[] items; }
     [Serializable] class ScoreJ { public string place_id; public string pass; public float score; public int rank; public int rank_change; public string[] reasons; }
     [Serializable] class ScoresWrap { public ScoreJ[] items; }
-    [Serializable] class HeadlineJ { public float new_water_km2; public string pass; public int homes_near_water; public int children_under5_near_water; }
+    [Serializable] class HeadlineJ { public float new_water_km2; public string pass; public int homes_near_water; public float children_under5_near_flood_water; }
 
     static string ProjectRoot { get { return Path.GetDirectoryName(Application.dataPath); } }
     static string Handoff { get { return Path.GetFullPath(Path.Combine(ProjectRoot, "..", "handoff")); } }
@@ -98,7 +98,8 @@ public static class OureaSceneBuilder
             {
                 date = dates[i],
                 mask = SaveMask(GenDir + "/mask_" + dates[i] + ".png", masks[i], mw, mh),
-                newWaterKm2 = Mathf.Max(0f, (CountWater(masks[i]) - baseWater) * pixelAreaKm2)
+                // same definition as Mitch's headline.json: water on this pass that was land on the first pass
+                newWaterKm2 = CountNewWater(masks[i], masks[0]) * pixelAreaKm2
             });
         }
 
@@ -226,6 +227,13 @@ public static class OureaSceneBuilder
         }
     }
 
+    static int CountNewWater(byte[] m, byte[] baseline)
+    {
+        int c = 0;
+        for (int i = 0; i < m.Length; i++) if (m[i] == 0 && baseline[i] != 0) c++;
+        return c;
+    }
+
     static int CountWater(byte[] m)
     {
         int c = 0;
@@ -340,8 +348,17 @@ public static class OureaSceneBuilder
             {
                 passes[pi].newWaterKm2 = hl.new_water_km2;
                 passes[pi].homesNearWater = hl.homes_near_water;
-                passes[pi].childrenNearWater = hl.children_under5_near_water;
             }
+            // children under 5 near flood water, per pass (a JSON object JsonUtility can't read)
+            var text = File.ReadAllText(hp);
+            var m = System.Text.RegularExpressions.Regex.Match(text, "\"children_under5_near_flood_water_by_pass\"\\s*:\\s*\\{([^}]*)\\}");
+            if (m.Success)
+                foreach (System.Text.RegularExpressions.Match kv in System.Text.RegularExpressions.Regex.Matches(m.Groups[1].Value, "\"([0-9-]+)\"\\s*:\\s*([0-9.]+)"))
+                {
+                    int i = dates.IndexOf(kv.Groups[1].Value);
+                    if (i >= 0) passes[i].childrenNearWater = Mathf.RoundToInt(float.Parse(kv.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture));
+                }
+            else if (pi >= 0) passes[pi].childrenNearWater = Mathf.RoundToInt(hl.children_under5_near_flood_water);
         }
         return true;
     }

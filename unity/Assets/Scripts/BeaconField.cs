@@ -38,7 +38,7 @@ public class BeaconField : MonoBehaviour
         int used = 0;
         foreach (var s in viewer.scores)
         {
-            if (s.pass != shownPass || s.rank < 1 || s.rank > 10) continue;
+            if (s.pass != shownPass || s.rank < 1 || s.rank > 10 || s.score <= 0f) continue;
             OureaViewer.Place pl;
             if (!byId.TryGetValue(s.placeId, out pl)) continue;
             var b = Get(used++);
