@@ -26,12 +26,17 @@ public static class OureaLook
         mat.SetTexture("_NormalMap", MakeNormals(h, n, sizeX, sizeZ, heightScale));
         // Mekong water is silt-brown (phù sa): the river darker, new flood water lighter, a warm shimmer
         // at the flood front instead of a blue glow (flood-season photos of Đồng Tháp)
-        mat.SetColor("_WaterColor", new Color(0.10f, 0.085f, 0.05f));
-        mat.SetColor("_FloodColor", new Color(0.26f, 0.155f, 0.07f));
+        mat.SetColor("_WaterColor", new Color(0.07f, 0.06f, 0.04f));
+        mat.SetColor("_FloodColor", new Color(0.30f, 0.18f, 0.075f));   // silt under a shiny surface
+        mat.SetFloat("_FloodLift", 1.0f);
+        mat.SetColor("_FloodEdge", new Color(1.0f, 0.80f, 0.45f));
+        mat.SetFloat("_FloodEdgeAmount", 0f);
+        mat.SetFloat("_LandGain", 1.0f);   // a touch darker land, more contrast with the water
         mat.SetColor("_FloodGlow", new Color(0.05f, 0.025f, 0.008f));
         mat.SetColor("_FrontGlow", new Color(0.35f, 0.24f, 0.10f));
-        mat.SetColor("_SkyHorizon", new Color(0.40f, 0.35f, 0.28f));   // muddy water reflects a darker sky
-        mat.SetColor("_SkyZenith", new Color(0.26f, 0.29f, 0.33f));
+        mat.SetColor("_SkyHorizon", new Color(0.62f, 0.69f, 0.77f));   // the sky it reflects: shiny water over silt, as before
+        mat.SetColor("_SkyZenith", new Color(0.22f, 0.34f, 0.52f));
+        mat.SetFloat("_Ripple", 0.8f);   // ripples catch the sun: glints like real water
         EditorUtility.SetDirty(mat);
 
         // 2. Diorama base: earth-coloured walls under the tile edge
