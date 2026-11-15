@@ -26,9 +26,16 @@ public class CompareWipe : MonoBehaviour
     [Serializable] class OptRow { public string pass; public string image_date; public float cloud_pct; }
     [Serializable] class OptList { public OptRow[] rows; }
 
+    // Retired (Kason, Nov 14): the Compare wipe now lives in the What-if panel (Scripts/FloodLab.cs,
+    // "Compare with the camera photo"). Self-install is off so the app doesn't show two wipes.
+    // Set this to true to bring this version back; the photos are in ../OpticalSource (move them
+    // back to Resources/Optical first).
+    const bool SelfInstall = false;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot()
     {
+        if (!SelfInstall) return;
         var v = FindFirstObjectByType<OureaViewer>();
         if (v != null && v.GetComponent<CompareWipe>() == null) v.gameObject.AddComponent<CompareWipe>();
     }
