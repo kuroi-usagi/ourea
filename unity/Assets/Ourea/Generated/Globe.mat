@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Dim: 0.9
+    - _Dim: 1.1
     - _Fade: 1
     - _FrameWidth: 1.2
     m_Colors:

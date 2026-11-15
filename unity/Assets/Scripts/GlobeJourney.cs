@@ -162,7 +162,8 @@ public class GlobeJourney : MonoBehaviour
     float AltStart()
     {
         float half = (cam != null ? cam.fieldOfView : 40f) * 0.5f * Mathf.Deg2Rad;
-        return R / Mathf.Sin(half * 0.47f) - R;   // the globe fills about half the view height
+        // wide screens: a big globe on the right of the front page; narrow: smaller, above the text
+        return R / Mathf.Sin(half * (StoryMode.Wide ? 0.66f : 0.31f)) - R;
     }
 
     Vector3 IdleDir()
@@ -263,7 +264,12 @@ public class GlobeJourney : MonoBehaviour
         cam.transform.position = pos;
         var fwd0 = (look - pos).normalized;
         var up0 = Vector3.ProjectOnPlane(PolarAxis(), fwd0).normalized;
-        look -= up0 * R * 0.55f * k;   // aim a little low, so the globe sits in the upper part of the view
+        if (StoryMode.Wide)
+        {
+            var right0 = Vector3.Cross(up0, fwd0).normalized;
+            look -= right0 * R * 0.62f * k;   // aim left of the globe, so it sits on the right of the front page
+        }
+        else look -= up0 * R * 1.55f * k;     // aim low, so the globe sits in the top part of the view, above the text
         var fwd = (look - pos).normalized;
         var upHint = Vector3.ProjectOnPlane(PolarAxis(), fwd);
         cam.transform.rotation = Quaternion.LookRotation(fwd, upHint.sqrMagnitude > 1e-4f ? upHint : Vector3.forward);
@@ -293,7 +299,7 @@ public class GlobeJourney : MonoBehaviour
             nearR.sharedMaterial.SetFloat("_Fade", f);
             nearR.enabled = f > 0.01f;
         }
-        if (atmoR != null) { atmoR.enabled = alt > 2500f; atmosphereMat.SetFloat("_Fade", space); }
+        if (atmoR != null) atmoR.enabled = false;   // no ring around the globe: cleaner
         if (starR != null) starR.enabled = space > 0.6f;
     }
 
@@ -303,10 +309,8 @@ public class GlobeJourney : MonoBehaviour
         if (cam == null || mode == Mode.Site) return;
         if (sLabel == null)
         {
-            sLabel = OureaTheme.Box(OureaTheme.PanelTex, 14, OureaTheme.Ink, 12);
-            sLabel.padding = new RectOffset(12, 12, 5, 5);
-            sLabelDim = OureaTheme.Box(OureaTheme.PanelTex, 14, OureaTheme.Muted, 11);
-            sLabelDim.padding = new RectOffset(10, 10, 4, 4);
+            sLabel = OureaTheme.Text(14, OureaTheme.Ink, true);
+            sLabelDim = OureaTheme.Text(12, OureaTheme.Muted, true);
             sFly = OureaTheme.Text(13, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.MiddleCenter);
             texDot = OureaTheme.Rounded(Color.white, 10);
         }
@@ -332,8 +336,13 @@ public class GlobeJourney : MonoBehaviour
                 string label = site.ready ? site.name : site.name + "  ·  " + site.note;
                 var st = site.ready ? sLabel : sLabelDim;
                 var size = st.CalcSize(new GUIContent(label));
-                var r = new Rect(x + 12, y - size.y * 0.5f, size.x, size.y);
-                if (GUI.Button(r, label, st) && site.ready && mode == Mode.Globe) FlyIn();
+                var r = new Rect(x + 14, y - size.y * 0.5f, size.x, size.y);
+                var shadow = new Rect(r.x + 1, r.y + 1, r.width, r.height);
+                var c0 = st.normal.textColor; st.normal.textColor = new Color(0, 0, 0, 0.75f);
+                GUI.Label(shadow, label, st);
+                st.normal.textColor = c0;
+                GUI.Label(r, label, st);
+                if (site.ready && mode == Mode.Globe && GUI.Button(new Rect(x - 10, r.y - 4, r.xMax - x + 14, r.height + 8), GUIContent.none, GUIStyle.none)) FlyIn();
             }
         }
         if (mode == Mode.Flying)

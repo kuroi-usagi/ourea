@@ -128,7 +128,7 @@ public static class OureaLook
     [System.Serializable] class Hotspot { public float u; public float v; }
     [System.Serializable] class CommuneScore
     {
-        public string pass, name, name_en, province, confidence;
+        public string pass, name, name_en, province, confidence, commune_code;
         public int rank, under5_in_tile, under5_near_flood_water;
         public float score;
         public string[] reasons;
@@ -148,7 +148,7 @@ public static class OureaLook
             if (c.rank > 10 || c.score <= 0f) continue;
             var hs = c.hotspots != null && c.hotspots.Length > 0 ? c.hotspots[0] : new Hotspot { u = 0.5f, v = 0.5f };
             outList.Add(new DataLoader.BakedCommune {
-                pass = c.pass, rank = c.rank, name = c.name, name_en = c.name_en, province = c.province,
+                pass = c.pass, rank = c.rank, name = c.name, name_en = c.name_en, province = c.province, code = c.commune_code,
                 confidence = c.confidence, score = c.score, under5 = c.under5_in_tile, under5Near = c.under5_near_flood_water,
                 reasons = c.reasons != null && c.reasons.Length > 0 ? c.reasons[0] : "", u = hs.u, v = hs.v });
         }
@@ -384,6 +384,7 @@ public static class OureaLook
         j.contextBoundsDeg = new Vector4(gm.context_bounds_deg[0], gm.context_bounds_deg[1], gm.context_bounds_deg[2], gm.context_bounds_deg[3]);
         j.earthTex = earth; j.contextTex = context;
         j.globeMat = new Material(Shader.Find("Ourea/Globe")); j.globeMat.SetTexture("_MainTex", earth);
+        j.globeMat.SetFloat("_Dim", 1.1f);   // a brighter, cleaner planet on the front page
         SaveAsset(j.globeMat, GenDir + "/Globe.mat");
         j.contextMat = new Material(Shader.Find("Ourea/Globe")); j.contextMat.SetTexture("_MainTex", context);
         j.contextMat.SetVector("_Hole", new Vector4(0f, 0f, sizeX, sizeZ));

@@ -302,7 +302,7 @@ public class FloodLab : MonoBehaviour
 
     // ---------- UI: quiet map ----------
     // A tool dock on the right; one card open at a time beside it. Nothing else covers the map.
-    enum Card { None, Water, Photo, Radar, Ranking, Key }
+    enum Card { None, Water, Photo, Radar, Ranking, Alerts, Key }
     Card card = Card.None;
 
     static Texture2D Rounded(Color col, int radius)
@@ -338,7 +338,7 @@ public class FloodLab : MonoBehaviour
     static readonly Color KeySchool = Lin(64, 120, 245);
 
     float curScale = 1f;
-    GUIStyle sBigRed;
+    GUIStyle sBigRed, sField, sSms, sSmsHead, sSmsBox;
     GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn, sKnob, sChip, sDock, sDockOn, sClose;
     Texture2D texTrack, texFill, texKnob, texDot;
 
@@ -367,6 +367,13 @@ public class FloodLab : MonoBehaviour
         sTitle = OureaTheme.Text(16, Ink, true);
         sBig = OureaTheme.Text(26, Ink, true);
         sBigRed = OureaTheme.Text(26, OureaTheme.Bad, true);
+        sField = OureaTheme.Box(OureaTheme.Rounded(OureaTheme.S(255, 255, 255, 0.07f), 8, OureaTheme.GlassLine), 8, Ink, 14, false);
+        sField.alignment = TextAnchor.MiddleLeft; sField.padding = new RectOffset(10, 10, 4, 4);
+        sField.focused.background = OureaTheme.Rounded(OureaTheme.S(255, 255, 255, 0.10f), 8, Accent); sField.focused.textColor = Ink;
+        sField.hover.background = sField.normal.background; sField.hover.textColor = Ink;
+        sSmsBox = OureaTheme.Box(OureaTheme.Rounded(OureaTheme.S(111, 211, 143, 0.10f), 12, OureaTheme.S(111, 211, 143, 0.45f)), 12, Ink, 12, false);
+        sSmsHead = OureaTheme.Text(10, OureaTheme.Good, true);
+        sSms = OureaTheme.Text(13, Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sBody = Text(13, Ink, FontStyle.Normal, true);
         sSmall = Text(12, Muted, FontStyle.Normal, true);
         sBtn = OureaTheme.Button(12);
@@ -414,8 +421,8 @@ public class FloodLab : MonoBehaviour
         DrawFloodCounter(W);
 
         // --- dock
-        string[] labels = { "WATER", "PHOTO", "RADAR", "TOP 10", "KEY" };
-        Card[] cards = { Card.Water, Card.Photo, Card.Radar, Card.Ranking, Card.Key };
+        string[] labels = { "WATER", "PHOTO", "RADAR", "TOP 10", "ALERTS", "KEY" };
+        Card[] cards = { Card.Water, Card.Photo, Card.Radar, Card.Ranking, Card.Alerts, Card.Key };
         const float bw = 64f, bh = 46f, gap = 6f, pad = 8f;
         float dh = pad * 2 + cards.Length * bh + (cards.Length - 1) * gap;
         var dock = new Rect(W - M - bw - pad * 2, Mathf.Max(70f, H * 0.5f - dh * 0.5f - 30f), bw + pad * 2, dh);
@@ -453,6 +460,7 @@ public class FloodLab : MonoBehaviour
                 case Card.Radar: DrawRadarCard(c); break;
                 case Card.Ranking: DrawRankingCard(c); break;
                 case Card.Key: DrawKeyCard(c); break;
+                case Card.Alerts: DrawAlertsCard(c); break;
             }
         }
         GUI.matrix = Matrix4x4.identity;
@@ -468,6 +476,7 @@ public class FloodLab : MonoBehaviour
             case Card.Photo: return 170f;
             case Card.Radar: return 224f;
             case Card.Ranking: return Mathf.Min(maxH, 640f);
+            case Card.Alerts: return Mathf.Min(maxH, 520f);
             default: return Mathf.Min(maxH, 368f);
         }
     }
@@ -592,6 +601,75 @@ public class FloodLab : MonoBehaviour
             GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), cm.why, sSmall);
         }
         GUI.EndScrollView();
+    }
+
+    // ---- flood texts: pick a commune, enter a number, sign up through Asher's Twilio endpoint ----
+    public bool AlertsOpen { get { return card == Card.Alerts; } }
+
+    public void OpenAlerts(string communeCode)
+    {
+        if (card != Card.Alerts) Toggle(Card.Alerts);
+        var list = AlertCommunes();
+        for (int i = 0; i < list.Count; i++) if (list[i].code == communeCode) alertPick = i;
+    }
+
+    int alertPick;
+    string alertPhone = "+84 ";
+
+    System.Collections.Generic.List<DataLoader.BakedCommune> AlertCommunes()
+    {
+        var list = new System.Collections.Generic.List<DataLoader.BakedCommune>();
+        if (live == null || viewer == null || viewer.passes.Count == 0) return list;
+        string date = viewer.passes[viewer.passes.Count - 1].date;   // the latest pass ranks who needs texts most
+        foreach (var b in live.baked) if (b.pass == date && !string.IsNullOrEmpty(b.code)) list.Add(b);
+        return list;
+    }
+
+    void DrawAlertsCard(Rect p)
+    {
+        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
+        GUI.Label(new Rect(x, y + 2, w - 40, 20), "Flood texts", sTitle);
+        y += 26;
+        float introH = sSmall.CalcHeight(new GUIContent("A text after each NISAR pass when new flood water is near homes in your commune. Sent by Twilio."), w);
+        GUI.Label(new Rect(x, y, w, introH), "A text after each NISAR pass when new flood water is near homes in your commune. Sent by Twilio.", sSmall);
+        y += introH + 12;
+
+        var list = AlertCommunes();
+        if (list.Count == 0) { GUI.Label(new Rect(x, y, w, 40), "No communes loaded in this build.", sBody); return; }
+        alertPick = Mathf.Clamp(alertPick, 0, list.Count - 1);
+        var cm = list[alertPick];
+        GUI.Label(new Rect(x, y, w, 14), "COMMUNE", sEyebrow); y += 18;
+        if (GUI.Button(new Rect(x, y, 30, 30), "<", sBtn)) alertPick = (alertPick + list.Count - 1) % list.Count;
+        if (GUI.Button(new Rect(x + w - 30, y, 30, 30), ">", sBtn)) alertPick = (alertPick + 1) % list.Count;
+        GUI.Label(new Rect(x + 38, y + 1, w - 76, 16), "<b>" + cm.name + "</b>", sBody);
+        GUI.Label(new Rect(x + 38, y + 16, w - 76, 14), "#" + cm.rank + " this pass  ·  " + cm.province, sSmall);
+        y += 42;
+
+        GUI.Label(new Rect(x, y, w, 14), "PHONE (WITH COUNTRY CODE)", sEyebrow); y += 18;
+        GUI.SetNextControlName("ourea-phone");
+        alertPhone = GUI.TextField(new Rect(x, y, w, 30), alertPhone, 20, sField);
+        y += 38;
+        bool ok = DataLoader.ValidPhone(alertPhone);
+        bool sending = live != null && live.subState == DataLoader.SubState.Sending;
+        GUI.enabled = ok && !sending && live != null;
+        if (GUI.Button(new Rect(x, y, w, 32), sending ? "SIGNING UP…" : "TEXT ME FLOOD ALERTS", sBtnOn)) live.Subscribe(alertPhone, cm.code);
+        GUI.enabled = true;
+        y += 38;
+        string note = live != null && live.subState != DataLoader.SubState.Idle ? live.subMessage
+                    : (ok ? "We only use your number for these texts." : "Start with + and the country code, e.g. +84 90 123 4567.");
+        GUI.Label(new Rect(x, y, w, 30), note, sSmall);
+        y += 36;
+
+        // what the text looks like on the phone
+        GUI.Label(new Rect(x, y, w, 14), "WHAT YOU'LL GET", sEyebrow); y += 18;
+        string date = viewer.passes[viewer.passes.Count - 1].date;
+        string sms = "Ourea: new flood water within 100 m of homes in " + cm.name + " on the " + date +
+                     " NISAR pass (provisional). " + cm.under5Near.ToString("#,0") + " children under 5 live near it. Keep small children away from canals and flood water. Reply STOP to stop.";
+        float bh = sSms.CalcHeight(new GUIContent(sms), w - 24) + 34;
+        var bubble = new Rect(x, y, w, Mathf.Min(bh, p.yMax - y - 12));
+        GUI.Box(bubble, GUIContent.none, sSmsBox);
+        GUI.Label(new Rect(bubble.x + 12, bubble.y + 8, bubble.width - 24, 14), "OUREA ALERTS  ·  SMS", sSmsHead);
+        GUI.Label(new Rect(bubble.x + 12, bubble.y + 26, bubble.width - 24, bubble.height - 30), sms, sSms);
     }
 
     void DrawPhotoCard(Rect p)

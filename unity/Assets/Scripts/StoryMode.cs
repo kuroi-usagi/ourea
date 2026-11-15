@@ -23,14 +23,14 @@ public class StoryMode : MonoBehaviour
     static readonly string[] Titles = { "HOME", "UNDER CLOUD", "THE WATER", "ONE VILLAGE", "CHECK FIRST", "WHAT PEOPLE DO", "EVERY PASS" };
 
     GUIStyle sHuge, sLead, sBody, sSmall, sEyebrow, sWho, sWhoSmall, sAva, sPrimary, sButton, sPanel, sDotLabel, sHeadKey;
-    Texture2D texShade, texRound;
+    Texture2D texShade, texSide, texRound;
 
     void Styles()
     {
         if (sPanel != null) return;
         sPanel = OureaTheme.Box(OureaTheme.PanelTex, 14, OureaTheme.Ink, 12, false);
-        sHuge = OureaTheme.Text(64, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.UpperCenter);
-        sLead = OureaTheme.Text(17, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperCenter, true);
+        sHuge = OureaTheme.Text(60, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.UpperLeft);
+        sLead = OureaTheme.Text(19, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sBody = OureaTheme.Text(13, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sSmall = OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sEyebrow = OureaTheme.Text(11, OureaTheme.Accent, true);
@@ -46,6 +46,10 @@ public class StoryMode : MonoBehaviour
         texShade = new Texture2D(1, 256, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         for (int y = 0; y < 256; y++) texShade.SetPixel(0, y, new Color(0.002f, 0.005f, 0.008f, Mathf.Lerp(0.95f, 0f, Mathf.SmoothStep(0f, 1f, y / 255f / 0.62f))));
         texShade.Apply();
+        // wide screens: dark on the left behind the text column, clear over the globe
+        texSide = new Texture2D(256, 1, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        for (int x = 0; x < 256; x++) texSide.SetPixel(x, 0, new Color(0.002f, 0.005f, 0.008f, Mathf.Lerp(0.92f, 0f, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(140f, 255f, x)))));
+        texSide.Apply();
     }
 
     void Start()
@@ -157,7 +161,7 @@ public class StoryMode : MonoBehaviour
         else if (journey != null && journey.mode == GlobeJourney.Mode.Flying) { }
         else if (running)
         {
-            if (chapter == 5) DrawAct(W, H, s);
+            if (chapter == 5 && !lab.AlertsOpen) DrawAct(W, H, s);
             DrawGuide(W, H, s);
         }
         else
@@ -184,41 +188,53 @@ public class StoryMode : MonoBehaviour
     }
     void Block(Rect r, float s) { uiRects.Add(new Rect(r.x * s, r.y * s, r.width * s, r.height * s)); }
 
+    // The front page: the globe on the right (GlobeJourney frames it there on wide screens), one
+    // clean column on the left: what this is, the question, three short points, two buttons.
+    // On narrow screens the globe sits on top and the column below it.
+    public static bool Wide { get { return Screen.width > Screen.height * 1.15f; } }
+
     void DrawIntro(float W, float H, float s)
     {
         var old = GUI.color;
         GUI.color = new Color(1f, 1f, 1f, introFade);   // the opening screen sits over the globe: not tied to the map panels
-        GUI.DrawTexture(new Rect(0, 0, W, H), texShade);
+        bool wide = Wide;
+        GUI.DrawTexture(wide ? new Rect(0, 0, W * 0.62f, H) : new Rect(0, 0, W, H), wide ? texSide : texShade);
         Block(new Rect(0, 0, W, H), s);
 
-        float cw = Mathf.Min(860f, W - 48f), x = (W - cw) * 0.5f;
-        // anchored to the bottom, so the globe stays visible above it
-        float y = Mathf.Max(24f, H - 24f - 392f);
-        GUI.Label(new Rect(x, y, cw, 70), "O U R E A", sHuge); y += 78f;
-        GUI.Label(new Rect(x, y, cw, 54), "Flood season in Vietnam's Mekong Delta. Where should someone check first for young children near flood water?", sLead);
-        y += 62f;
-
-        // three columns: the problem, what Ourea does, who uses it
-        float colGap = 16f, colW = (cw - 2 * colGap) / 3f, colH = 150f;
+        float x = wide ? Mathf.Max(40f, W * 0.07f) : 24f;
+        float cw = wide ? Mathf.Min(470f, W * 0.42f) : W - 48f;
         string[] heads = { "THE PROBLEM", "WHAT OUREA DOES", "WHO USES IT" };
         string[] bodies = {
-            drowningFact + ". In the Delta, floods arrive under monsoon cloud, when ordinary satellites see nothing.",
+            drowningFact + ". In the Delta the floods arrive under monsoon cloud, when camera satellites see nothing.",
             "NASA-ISRO's NISAR radar sees through cloud. Each pass becomes a map of new flood water and a ranked list of communes where it reaches homes with small children.",
-            "Commune officials, child-protection and education offices, drowning-prevention programs. They decide where to check first, which day care to open, and who to warn."
+            "Commune officials, child-protection and education offices and drowning-prevention programs: where to check first, which day care to open, who to warn."
         };
-        bool narrow = W < 760f;
+        // measure, then centre the column vertically (wide) or sit it at the bottom (narrow)
+        float leadH = sLead.CalcHeight(new GUIContent(Lead), cw);
+        float itemsH = 0f;
+        for (int i = 0; i < 3; i++) itemsH += 22f + sBody.CalcHeight(new GUIContent(bodies[i]), cw) + 18f;
+        float total = 18f + 74f + leadH + 26f + itemsH + 8f + 48f;
+        float y = wide ? Mathf.Max(24f, (H - total) * 0.5f) : Mathf.Max(24f, H - 24f - total - 30f);
+
+        GUI.Label(new Rect(x, y, cw, 16), "NASA SPACE APPS 2026  ·  NISAR FLOOD WATCH", sEyebrow); y += 18f;
+        GUI.Label(new Rect(x - 2, y, cw, 70), "O U R E A", sHuge); y += 74f;
+        GUI.Label(new Rect(x, y, cw, leadH), Lead, sLead); y += leadH + 26f;
+
         for (int i = 0; i < 3; i++)
         {
-            var r = narrow ? new Rect(x, y + i * 112f, cw, 104f) : new Rect(x + i * (colW + colGap), y, colW, colH);
-            GUI.Box(r, GUIContent.none, sPanel);
-            GUI.Label(new Rect(r.x + 16, r.y + 14, r.width - 32, 16), heads[i], sEyebrow);
-            GUI.Label(new Rect(r.x + 16, r.y + 36, r.width - 32, r.height - 44), bodies[i], sBody);
+            GUI.color = new Color(OureaTheme.GlassLine.r, OureaTheme.GlassLine.g, OureaTheme.GlassLine.b, introFade * 0.9f);
+            GUI.DrawTexture(new Rect(x, y, cw, 1), Texture2D.whiteTexture);
+            GUI.color = new Color(1f, 1f, 1f, introFade);
+            GUI.Label(new Rect(x, y + 10, cw, 16), heads[i], sEyebrow);
+            float bh = sBody.CalcHeight(new GUIContent(bodies[i]), cw);
+            GUI.Label(new Rect(x, y + 30, cw, bh), bodies[i], sBody);
+            y += 22f + bh + 18f;
         }
-        y += narrow ? 3 * 112f + 6f : colH + 18f;
+        y += 8f;
 
-        float bw = 230f, gap = 12f;
-        var go = new Rect(W * 0.5f - bw - gap * 0.5f, y, bw, 48f);
-        var explore = new Rect(W * 0.5f + gap * 0.5f, y, bw, 48f);
+        float bw = Mathf.Min(210f, (cw - 12f) * 0.5f);
+        var go = new Rect(x, y, bw, 48f);
+        var explore = new Rect(x + bw + 12f, y, bw, 48f);
         if (GUI.Button(go, "BEGIN THE STORY  >", sPrimary))
         {
             if (journey != null)
@@ -234,11 +250,12 @@ public class StoryMode : MonoBehaviour
             if (journey != null) { storyAfterFlight = false; running = false; journey.FlyIn(); }
             else { intro = false; running = false; }
         }
-        y += 60f;
-        GUI.Label(new Rect(x, y, cw, 30), "Source: " + drowningSource + ". NISAR data is provisional. Guide character is fictional; her numbers are real.",
-                  OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperCenter, true));
+        GUI.Label(new Rect(x, H - 34f, wide ? W * 0.55f : cw, 30), "Source: " + drowningSource + ". NISAR data is provisional. The guide in the story is fictional; her numbers are real.",
+                  OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
         GUI.color = old;
     }
+
+    const string Lead = "Flood season in Vietnam's Mekong Delta. Where should someone check first for young children near flood water?";
 
     // Chapter 6: the decision itself, for the first commune on the list — a marker on the map and
     // the three things a commune office does with it, as a checklist people can tick.
@@ -289,7 +306,11 @@ public class StoryMode : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             var row = new Rect(x0, yy, w, 60);
-            if (GUI.Button(row, GUIContent.none, sButton)) done[i] = !done[i];
+            if (GUI.Button(row, GUIContent.none, sButton))
+            {
+                done[i] = !done[i];
+                if (i == 2 && done[i]) lab.OpenAlerts(f.code);   // texting parents: the real sign-up (Twilio)
+            }
             var box = new Rect(row.x + 10, row.y + 20, 18, 18);
             var old = GUI.color;
             GUI.color = OureaTheme.A(done[i] ? OureaTheme.Good : OureaTheme.S(70, 84, 88));

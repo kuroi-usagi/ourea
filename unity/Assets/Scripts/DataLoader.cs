@@ -28,7 +28,7 @@ public class DataLoader : MonoBehaviour
     // Editor/OureaLook.cs. Shown until the API has a pass; u,v = the commune's top hotspot (v from north).
     [Serializable] public class BakedCommune
     {
-        public string pass, name, name_en, province, confidence, reasons;
+        public string pass, name, name_en, province, confidence, reasons, code;
         public int rank, under5, under5Near;
         public float score, u, v;
     }
@@ -79,6 +79,51 @@ public class DataLoader : MonoBehaviour
             source = r != null ? r.source : "";
             state = State.Live;
             message = "Live from the Ourea API · " + asOf + " pass · PROVISIONAL";
+        }
+    }
+
+    // ---- flood texts (Asher's Worker sends them with Twilio): POST /api/subscribe {phone, commune_code}
+    public enum SubState { Idle, Sending, Done, Failed }
+    public SubState subState = SubState.Idle;
+    public string subMessage = "";
+
+    [Serializable] class SubscribeBody { public string phone; public string commune_code; }
+
+    public static bool ValidPhone(string p)
+    {
+        if (string.IsNullOrEmpty(p) || p[0] != '+') return false;
+        int digits = 0;
+        for (int i = 1; i < p.Length; i++) { if (char.IsDigit(p[i])) digits++; else if (p[i] != ' ' && p[i] != '-') return false; }
+        return digits >= 8 && digits <= 15;
+    }
+
+    public void Subscribe(string phone, string communeCode)
+    {
+        if (subState == SubState.Sending) return;
+        StartCoroutine(SubscribeRoutine(phone.Replace(" ", "").Replace("-", ""), communeCode));
+    }
+
+    IEnumerator SubscribeRoutine(string phone, string communeCode)
+    {
+        subState = SubState.Sending; subMessage = "Signing up…";
+        var body = JsonUtility.ToJson(new SubscribeBody { phone = phone, commune_code = communeCode });
+        using (var req = new UnityWebRequest(baseUrl + "/api/subscribe", "POST"))
+        {
+            req.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+            req.downloadHandler = new DownloadHandlerBuffer();
+            req.SetRequestHeader("Content-Type", "application/json");
+            req.timeout = 20;
+            yield return req.SendWebRequest();
+            if (req.result == UnityWebRequest.Result.Success)
+            {
+                subState = SubState.Done;
+                subMessage = "Signed up. Texts come from Ourea Alerts (Twilio) after each NISAR pass. Reply STOP to stop.";
+            }
+            else
+            {
+                subState = SubState.Failed;
+                subMessage = "Couldn't sign up right now (" + (req.responseCode > 0 ? req.responseCode.ToString() : req.error) + "). Try again later.";
+            }
         }
     }
 
