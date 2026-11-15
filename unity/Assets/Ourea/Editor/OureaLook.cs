@@ -110,6 +110,8 @@ public static class OureaLook
     [System.Serializable] class TerrainMeta { public float min_m; public float max_m; }
     [System.Serializable] class NisarPass { public string date; public float water_pct; }
     [System.Serializable] class NisarWrap { public NisarPass[] items; }
+    [System.Serializable] class OpticalPass { public string pass; public string image_date; public float cloud_pct; }
+    [System.Serializable] class OpticalWrap { public OpticalPass[] items; }
 
     static void AddFloodLab(GameObject delta, float[] h, int n, float sizeX, float sizeZ, float heightScale, OureaViewer app)
     {
@@ -158,6 +160,36 @@ public static class OureaLook
             radar[i] = AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
         }
         lab.radar = radar;
+
+        // Sentinel-2 true colour nearest each pass, for the compare wipe (Tina, pipeline/make_optical.py)
+        var optical = new Texture2D[app.passes.Count];
+        var opticalDate = new string[app.passes.Count];
+        var opticalCloud = new float[app.passes.Count];
+        string oj = Path.Combine(Handoff, "layers", "optical", "optical.json");
+        var om = File.Exists(oj) ? JsonUtility.FromJson<OpticalWrap>("{\"items\":" + File.ReadAllText(oj) + "}") : null;
+        for (int i = 0; i < app.passes.Count; i++)
+        {
+            string date = app.passes[i].date;
+            if (om != null) foreach (var it in om.items) if (it.pass == date) { opticalDate[i] = it.image_date; opticalCloud[i] = it.cloud_pct; }
+            string src = Path.Combine(Handoff, "layers", "optical", date + ".png");
+            if (!File.Exists(src) || new FileInfo(src).Length < 1024) continue;
+            string dst = GenDir + "/optical_" + date + ".png";
+            File.Copy(src, Path.Combine(ProjectRoot, dst), true);
+            AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceUpdate);
+            var imp = (TextureImporter)AssetImporter.GetAtPath(dst);
+            imp.mipmapEnabled = true;
+            imp.wrapMode = TextureWrapMode.Clamp;
+            imp.anisoLevel = 8;
+            imp.maxTextureSize = 2048;
+            imp.textureCompression = TextureImporterCompression.Compressed;
+            imp.crunchedCompression = true;
+            imp.compressionQuality = 80;
+            imp.SaveAndReimport();
+            optical[i] = AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
+        }
+        lab.optical = optical;
+        lab.opticalDate = opticalDate;
+        lab.opticalCloud = opticalCloud;
 
         // the water sheet: a flat quad over the tile, a little larger than it
         var plane = new GameObject("Modeled water surface", typeof(MeshFilter), typeof(MeshRenderer));

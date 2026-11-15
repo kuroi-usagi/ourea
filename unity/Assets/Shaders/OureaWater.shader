@@ -27,6 +27,9 @@ Shader "Ourea/Water"
         _RadarTex ("NISAR HV backscatter (current pass)", 2D) = "black" {}
         _Radar ("Radar view", Range(0, 1)) = 0
         _Sweep ("Radar sweep (0 = none, 1 = whole tile)", Range(0, 1)) = 0
+        _OpticalTex ("Sentinel-2 photo nearest the pass", 2D) = "white" {}
+        _Compare ("Compare wipe on", Range(0, 1)) = 0
+        _WipeX ("Wipe position (screen 0..1)", Range(0, 1)) = 0.5
     }
 
     SubShader
@@ -52,11 +55,12 @@ Shader "Ourea/Water"
             TEXTURE2D(_MaskB);
             TEXTURE2D(_MaskBase);
             TEXTURE2D(_RadarTex);
+            TEXTURE2D(_OpticalTex);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float _Blend, _MaskTexel;
-                half _LandGain, _Ripple, _GlowAmount, _Radar, _Sweep;
+                half _LandGain, _Ripple, _GlowAmount, _Radar, _Sweep, _Compare, _WipeX;
                 half4 _WaterColor, _FloodColor, _FloodGlow, _FrontGlow, _RiceColor, _NoDataColor, _SkyHorizon, _SkyZenith;
             CBUFFER_END
 
@@ -68,6 +72,7 @@ Shader "Ourea/Water"
                 float3 normalWS : TEXCOORD1;
                 float3 positionWS : TEXCOORD2;
                 half fog : TEXCOORD3;
+                float4 screen : TEXCOORD4;   // for the compare wipe, independent of render-target size
             };
 
             Varyings vert(Attributes v)
@@ -79,6 +84,7 @@ Shader "Ourea/Water"
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
                 o.uv = v.uv;
                 o.fog = ComputeFogFactor(p.positionCS.z);
+                o.screen = p.positionNDC;
                 return o;
             }
 
@@ -171,6 +177,16 @@ Shader "Ourea/Water"
                 half scan = saturate(1 - abs(i.uv.y - edgeV) / max(fwidth(i.uv.y) * 6, 1e-4)) * step(0.002, _Sweep) * step(_Sweep, 0.998);
                 col = lerp(col, radCol * (ambient * 0.5 + 0.6), _Radar * reveal);
                 col += half3(0.45, 0.95, 0.85) * scan * _Radar * 1.5;
+
+                // ---- compare wipe: left of the line, what a camera satellite saw (clouds and all)
+                float sx = i.screen.x / i.screen.w;
+                half px = max(fwidth(sx), 1e-5);
+                half left = saturate((_WipeX - sx) / px + 0.5) * _Compare;
+                half3 photo = SAMPLE_TEXTURE2D(_OpticalTex, sampler_BaseMap, i.uv).rgb;
+                photo *= 0.75 + 0.35 * ndl * shadow;   // keep a little of the terrain relief
+                col = lerp(col, photo, left);
+                half seam = saturate(1 - abs(sx - _WipeX) / (px * 1.5)) * _Compare;
+                col = lerp(col, half3(1, 1, 1), seam);
 
                 col = MixFog(col, i.fog);
                 return half4(col, 1);

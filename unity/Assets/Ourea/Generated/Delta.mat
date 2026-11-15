@@ -43,6 +43,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: b926044d691804a2c88347a650507930, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _OpticalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _RadarTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -50,12 +54,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _Blend: 0
+    - _Compare: 0
     - _GlowAmount: 1
     - _LandGain: 1.15
     - _MaskTexel: 0.00048828125
     - _Radar: 0
     - _Ripple: 0.5
     - _Sweep: 0
+    - _WipeX: 0.5
     m_Colors:
     - _FloodColor: {r: 0.29999998, g: 0.26999995, b: 0.18999997, a: 1}
     - _FloodGlow: {r: 0.05, g: 0.45, b: 0.9, a: 1}

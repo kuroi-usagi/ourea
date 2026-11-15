@@ -6,6 +6,8 @@ using UnityEngine;
 //     Drag the handle; the surface springs to it and wobbles. Readout = DEM area below that level.
 //  2. Radar view (REAL): sweeps NISAR HV backscatter for the current pass over the map.
 //  3. Model vs radar: the bathtub level that would cover as much ground as NISAR saw as water.
+//  4. Compare wipe (REAL): drag a line across the map; left is the Sentinel-2 photo nearest the
+//     pass (clouds and all, from handoff/layers/optical), right is the NISAR radar water.
 // Every number comes from data baked in by Editor/OureaLook.cs (DEM curve, nisar.json).
 public class FloodLab : MonoBehaviour
 {
@@ -18,11 +20,16 @@ public class FloodLab : MonoBehaviour
     public float minM, maxM;                // DEM range (m, EGM2008)
     public float heightScale;               // world units for maxM - minM
     public float tileAreaKm2;
+    public Texture2D[] optical;             // Sentinel-2 true colour nearest each pass
+    public string[] opticalDate;            // its image date (optical.json)
+    public float[] opticalCloud;            // its cloud % (optical.json)
 
     // spring state for the water level (metres)
     float target, level, velocity;
     float radarOn, radarVel, sweep;
     bool radarWanted, dragging;
+    bool compareWanted, draggingWipe;
+    float compareOn, compareVel, wipe = 0.5f, wipeTarget = 0.5f, wipeVel;
     Material deltaMat;
 
     static readonly List<Rect> uiRects = new List<Rect>();
@@ -55,7 +62,7 @@ public class FloodLab : MonoBehaviour
             if (waterPlaneMaterial != null)
             {
                 waterPlaneMaterial.SetFloat("_Wobble", Mathf.Clamp01(Mathf.Abs(velocity) * 0.35f));
-                waterPlaneMaterial.SetFloat("_Alpha", 0.78f * (1f - 0.85f * radarOn));   // let the radar show through
+                waterPlaneMaterial.SetFloat("_Alpha", 0.78f * (1f - 0.85f * Mathf.Max(radarOn, compareOn)));   // let radar/photo show through
             }
         }
 
@@ -63,11 +70,66 @@ public class FloodLab : MonoBehaviour
         radarVel += (90f * ((radarWanted ? 1f : 0f) - radarOn) - 14f * radarVel) * dt;
         radarOn = Mathf.Clamp01(radarOn + radarVel * dt);
         sweep = radarWanted ? Mathf.MoveTowards(sweep, 1f, dt / 1.8f) : Mathf.MoveTowards(sweep, 0f, dt / 0.6f);
+        // compare wipe: ease in, and let the line spring after the pointer
+        compareVel += (90f * ((compareWanted ? 1f : 0f) - compareOn) - 14f * compareVel) * dt;
+        compareOn = Mathf.Clamp01(compareOn + compareVel * dt);
+        float kw = draggingWipe ? 260f : 120f, cw = draggingWipe ? 24f : 11f;
+        wipeVel += (kw * (wipeTarget - wipe) - cw * wipeVel) * dt;
+        wipe = Mathf.Clamp(wipe + wipeVel * dt, 0.02f, 0.98f);
+        if (deltaMat != null && viewer != null && optical != null && optical.Length > viewer.currentPass && optical[viewer.currentPass] != null)
+        {
+            deltaMat.SetTexture("_OpticalTex", optical[viewer.currentPass]);
+            deltaMat.SetFloat("_Compare", compareOn);
+            deltaMat.SetFloat("_WipeX", wipe);
+        }
+
         if (deltaMat != null && viewer != null && radar != null && radar.Length > viewer.currentPass)
         {
             deltaMat.SetTexture("_RadarTex", radar[viewer.currentPass]);
             deltaMat.SetFloat("_Radar", radarOn);
             deltaMat.SetFloat("_Sweep", Mathf.SmoothStep(0f, 1f, sweep));
+        }
+    }
+
+    // The wipe line across the whole map, with a label on each side. Drawn before the panel so the
+    // panel stays on top of it.
+    void DrawWipe(float W, float H, float s)
+    {
+        if (compareOn < 0.01f || viewer == null) return;
+        const float M = 16f;
+        float top = M, bottom = H - M - 104f - 8f;
+        float lx = wipe * W;
+        var old = GUI.color;
+        GUI.color = new Color(1f, 1f, 1f, compareOn);
+        GUI.DrawTexture(new Rect(lx - 1f, top, 2f, bottom - top), Texture2D.whiteTexture);
+        float squash = 1f + Mathf.Clamp(Mathf.Abs(wipeVel) * 0.15f, 0f, 0.3f);
+        float ky = top + (bottom - top) * 0.52f;
+        var knob = new Rect(lx - 17f * squash, ky - 17f / squash, 34f * squash, 34f / squash);
+        GUI.DrawTexture(new Rect(knob.x - 1, knob.y - 1, knob.width + 2, knob.height + 2), texTrack);
+        GUI.DrawTexture(knob, texKnob);
+        GUI.Label(knob, "< >", sKnob);
+
+        int pi = viewer.currentPass;
+        string photo = "CAMERA  ·  Sentinel-2 " + (opticalDate != null && opticalDate.Length > pi ? opticalDate[pi] : "") +
+                       (opticalCloud != null && opticalCloud.Length > pi ? "  ·  " + opticalCloud[pi].ToString("0") + "% cloud" : "");
+        string radarLbl = "RADAR  ·  NISAR " + viewer.passes[pi].date + "  ·  water";
+        // labels hug the line; each hides when it would run under the side panels
+        float ly = bottom - 34f;
+        float pw = sChip.CalcSize(new GUIContent(photo)).x, rw = sChip.CalcSize(new GUIContent(radarLbl)).x;
+        if (lx - pw - 10f > 360f) GUI.Label(new Rect(lx - pw - 10f, ly, pw, 24f), photo, sChip);
+        if (lx + 10f + rw < W - 270f) GUI.Label(new Rect(lx + 10f, ly, rw, 24f), radarLbl, sChip);
+        GUI.color = old;
+
+        // drag anywhere on the line
+        var hit = new Rect(lx - 20f, top, 40f, bottom - top);
+        uiRects.Add(new Rect(hit.x * s, hit.y * s, hit.width * s, hit.height * s));
+        var e = Event.current;
+        if (e.type == EventType.MouseDown && hit.Contains(e.mousePosition)) { draggingWipe = true; e.Use(); }
+        if (draggingWipe && (e.type == EventType.MouseDrag || e.type == EventType.MouseUp || e.type == EventType.MouseDown))
+        {
+            wipeTarget = Mathf.Clamp(e.mousePosition.x / W, 0.02f, 0.98f);
+            if (e.type == EventType.MouseUp) draggingWipe = false;
+            e.Use();
         }
     }
 
@@ -116,7 +178,7 @@ public class FloodLab : MonoBehaviour
     static readonly Color Water = new Color(0.05f, 0.25f, 0.55f);
     static readonly Color Modeled = new Color(0.45f, 0.20f, 0.01f);
 
-    GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn;
+    GUIStyle sPanel, sEyebrow, sTag, sTitle, sBig, sBody, sSmall, sBtn, sBtnOn, sKnob, sChip;
     Texture2D texTrack, texFill, texKnob;
 
     static GUIStyle Text(int size, Color c, FontStyle fs = FontStyle.Normal, bool wrap = false)
@@ -149,6 +211,10 @@ public class FloodLab : MonoBehaviour
         sBtn.hover.background = Rounded(new Color(0f, 0f, 0f, 0.12f), 8); sBtn.hover.textColor = Ink;
         sBtnOn = Box(Rounded(Accent, 8), 8, Color.white, 12, FontStyle.Bold);
         texTrack = Rounded(new Color(0f, 0f, 0f, 0.16f), 10);
+        sKnob = Text(12, Accent, FontStyle.Bold);
+        sKnob.alignment = TextAnchor.MiddleCenter;
+        sChip = Box(Rounded(new Color(0.06f, 0.08f, 0.10f, 0.78f), 8), 8, Color.white, 11, FontStyle.Bold);
+        sChip.padding = new RectOffset(10, 10, 4, 4);
         texFill = Rounded(Water, 10);
         texKnob = Rounded(Color.white, 13);
     }
@@ -164,7 +230,8 @@ public class FloodLab : MonoBehaviour
 
         // Right column, between the legend/credit (top ~236) and the timeline (bottom 120 from edge)
         float top = 244f, bottom = H - M - 104f - 12f;
-        float ph = Mathf.Min(404f, bottom - top);
+        DrawWipe(W, H, s);
+        float ph = Mathf.Min(440f, bottom - top);
         if (ph < 300f) { GUI.matrix = Matrix4x4.identity; return; }   // window too short: leave the map clear
         var p = new Rect(W - M - PW, bottom - ph, PW, ph);
         GUI.Box(p, GUIContent.none, sPanel);
@@ -227,11 +294,24 @@ public class FloodLab : MonoBehaviour
             y += 82;
         }
 
+        // --- compare wipe (real Sentinel-2 photo vs NISAR)
+        bool hasPhoto = viewer != null && optical != null && optical.Length > viewer.currentPass && optical[viewer.currentPass] != null;
+        GUI.enabled = hasPhoto;
+        if (GUI.Button(new Rect(x, y, w, 30), compareWanted ? "Comparing: drag the line" : "Compare with the camera photo", compareWanted ? sBtnOn : sBtn))
+        {
+            compareWanted = !compareWanted;
+            if (compareWanted) { wipeTarget = 0.5f; wipe = 0.08f; wipeVel = 0f; }   // the line swings in from the left
+        }
+        GUI.enabled = true;
+        y += 34;
+
         // --- radar view (real NISAR backscatter)
         if (GUI.Button(new Rect(x, y, w, 30), radarWanted ? "Radar view: on" : "Show what the radar saw", radarWanted ? sBtnOn : sBtn))
             radarWanted = !radarWanted;
         y += 34;
-        GUI.Label(new Rect(x, y, w, 40), radarWanted
+        GUI.Label(new Rect(x, y, w, 40), compareWanted
+            ? "Left: Sentinel-2 photo. Monsoon cloud hides the ground from cameras. Right: NISAR radar water, which sees through cloud."
+            : radarWanted
             ? "Real NISAR HV backscatter. Smooth open water bounces the signal away (dark); plants and rough ground send it back (bright)."
             : "Bathtub model over the Copernicus DEM, a surface model with trees and buildings. Ignores dikes and flow. Not a forecast.", sSmall);
 
