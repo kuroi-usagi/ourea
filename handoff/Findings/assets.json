@@ -1,0 +1,2893 @@
+[
+ {
+  "id": "cell_00_20",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.49271,
+  "lat": 10.94662,
+  "u": 0.3203,
+  "v": 0.0078,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_00_42",
+  "name": "near Vĩnh Trị",
+  "type": "hamlet",
+  "lon": 105.69951,
+  "lat": 10.94622,
+  "u": 0.6641,
+  "v": 0.0078,
+  "under5_estimate": 39.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_00_53",
+  "name": "near Bàu Nâu",
+  "type": "hamlet",
+  "lon": 105.80291,
+  "lat": 10.94597,
+  "u": 0.8359,
+  "v": 0.0078,
+  "under5_estimate": 24.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_01_14",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.43629,
+  "lat": 10.9381,
+  "u": 0.2266,
+  "v": 0.0234,
+  "under5_estimate": 88.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_01_15",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.44569,
+  "lat": 10.93808,
+  "u": 0.2422,
+  "v": 0.0234,
+  "under5_estimate": 248.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_01_21",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.50209,
+  "lat": 10.938,
+  "u": 0.3359,
+  "v": 0.0234,
+  "under5_estimate": 30.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_02_12",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.41748,
+  "lat": 10.92951,
+  "u": 0.1953,
+  "v": 0.0391,
+  "under5_estimate": 36.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_02_13",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.42688,
+  "lat": 10.9295,
+  "u": 0.2109,
+  "v": 0.0391,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "under_water",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_02_15",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.44568,
+  "lat": 10.92947,
+  "u": 0.2422,
+  "v": 0.0391,
+  "under5_estimate": 55.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_02_21",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.50208,
+  "lat": 10.92938,
+  "u": 0.3359,
+  "v": 0.0391,
+  "under5_estimate": 33.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_02_28",
+  "name": "near Gò Pháo",
+  "type": "hamlet",
+  "lon": 105.56788,
+  "lat": 10.92927,
+  "u": 0.4453,
+  "v": 0.0391,
+  "under5_estimate": 30.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_02_54",
+  "name": "near Bàu Nâu",
+  "type": "hamlet",
+  "lon": 105.81226,
+  "lat": 10.92872,
+  "u": 0.8516,
+  "v": 0.0391,
+  "under5_estimate": 30.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_03_13",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.42687,
+  "lat": 10.92089,
+  "u": 0.2109,
+  "v": 0.0547,
+  "under5_estimate": 37.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_03_22",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.51146,
+  "lat": 10.92076,
+  "u": 0.3516,
+  "v": 0.0547,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_03_30",
+  "name": "near Gò Pháo",
+  "type": "hamlet",
+  "lon": 105.58666,
+  "lat": 10.92062,
+  "u": 0.4766,
+  "v": 0.0547,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_03_56",
+  "name": "near Bàu Nâu",
+  "type": "hamlet",
+  "lon": 105.83104,
+  "lat": 10.92006,
+  "u": 0.8828,
+  "v": 0.0547,
+  "under5_estimate": 36.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_03_57",
+  "name": "near Bàu Nâu",
+  "type": "hamlet",
+  "lon": 105.84044,
+  "lat": 10.92003,
+  "u": 0.8984,
+  "v": 0.0547,
+  "under5_estimate": 46.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_04_13",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.42685,
+  "lat": 10.91227,
+  "u": 0.2109,
+  "v": 0.0703,
+  "under5_estimate": 32.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_04_14",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.43625,
+  "lat": 10.91226,
+  "u": 0.2266,
+  "v": 0.0703,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_04_47",
+  "name": "near Lò Gạch",
+  "type": "hamlet",
+  "lon": 105.74643,
+  "lat": 10.91166,
+  "u": 0.7422,
+  "v": 0.0703,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_05_14",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.43624,
+  "lat": 10.90365,
+  "u": 0.2266,
+  "v": 0.0859,
+  "under5_estimate": 32.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_05_23",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.52083,
+  "lat": 10.90352,
+  "u": 0.3672,
+  "v": 0.0859,
+  "under5_estimate": 41.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_05_24",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.53023,
+  "lat": 10.9035,
+  "u": 0.3828,
+  "v": 0.0859,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_05_30",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.58663,
+  "lat": 10.9034,
+  "u": 0.4766,
+  "v": 0.0859,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_05_31",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.59602,
+  "lat": 10.90338,
+  "u": 0.4922,
+  "v": 0.0859,
+  "under5_estimate": 51.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_18",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.47382,
+  "lat": 10.89498,
+  "u": 0.2891,
+  "v": 0.1016,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_19",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.48322,
+  "lat": 10.89497,
+  "u": 0.3047,
+  "v": 0.1016,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_21",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.50202,
+  "lat": 10.89494,
+  "u": 0.3359,
+  "v": 0.1016,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_22",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.51142,
+  "lat": 10.89492,
+  "u": 0.3516,
+  "v": 0.1016,
+  "under5_estimate": 29.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_24",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.53022,
+  "lat": 10.89489,
+  "u": 0.3828,
+  "v": 0.1016,
+  "under5_estimate": 24.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_50",
+  "name": "near Bàu Sậy",
+  "type": "hamlet",
+  "lon": 105.77458,
+  "lat": 10.89437,
+  "u": 0.7891,
+  "v": 0.1016,
+  "under5_estimate": 40.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_06_51",
+  "name": "near Bàu Sậy",
+  "type": "hamlet",
+  "lon": 105.78398,
+  "lat": 10.89435,
+  "u": 0.8047,
+  "v": 0.1016,
+  "under5_estimate": 225.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_06_52",
+  "name": "near Măng Đa",
+  "type": "hamlet",
+  "lon": 105.79337,
+  "lat": 10.89432,
+  "u": 0.8203,
+  "v": 0.1016,
+  "under5_estimate": 92.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_07_15",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.44562,
+  "lat": 10.88641,
+  "u": 0.2422,
+  "v": 0.1172,
+  "under5_estimate": 124.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_07_16",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.45501,
+  "lat": 10.8864,
+  "u": 0.2578,
+  "v": 0.1172,
+  "under5_estimate": 53.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_07_26",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.549,
+  "lat": 10.88624,
+  "u": 0.4141,
+  "v": 0.1172,
+  "under5_estimate": 41.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_07_51",
+  "name": "near Vĩnh Hưng",
+  "type": "hamlet",
+  "lon": 105.78395,
+  "lat": 10.88573,
+  "u": 0.8047,
+  "v": 0.1172,
+  "under5_estimate": 150.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_07_52",
+  "name": "near Vĩnh Hưng",
+  "type": "hamlet",
+  "lon": 105.79335,
+  "lat": 10.88571,
+  "u": 0.8203,
+  "v": 0.1172,
+  "under5_estimate": 129.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_08_00",
+  "name": "near Bình Thành B",
+  "type": "hamlet",
+  "lon": 105.30463,
+  "lat": 10.87797,
+  "u": 0.0078,
+  "v": 0.1328,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_08_15",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.4456,
+  "lat": 10.8778,
+  "u": 0.2422,
+  "v": 0.1328,
+  "under5_estimate": 41.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_08_16",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.455,
+  "lat": 10.87779,
+  "u": 0.2578,
+  "v": 0.1328,
+  "under5_estimate": 237.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_08_17",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.4644,
+  "lat": 10.87777,
+  "u": 0.2734,
+  "v": 0.1328,
+  "under5_estimate": 233.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_08_26",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.54898,
+  "lat": 10.87763,
+  "u": 0.4141,
+  "v": 0.1328,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_08_54",
+  "name": "near Vĩnh Hưng",
+  "type": "hamlet",
+  "lon": 105.81212,
+  "lat": 10.87705,
+  "u": 0.8516,
+  "v": 0.1328,
+  "under5_estimate": 31.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_09_01",
+  "name": "near Bình Thành B",
+  "type": "hamlet",
+  "lon": 105.31402,
+  "lat": 10.86935,
+  "u": 0.0234,
+  "v": 0.1484,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_09_02",
+  "name": "near Bình Thành B",
+  "type": "hamlet",
+  "lon": 105.32341,
+  "lat": 10.86934,
+  "u": 0.0391,
+  "v": 0.1484,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_09_17",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.46439,
+  "lat": 10.86916,
+  "u": 0.2734,
+  "v": 0.1484,
+  "under5_estimate": 213.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_09_18",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.47378,
+  "lat": 10.86915,
+  "u": 0.2891,
+  "v": 0.1484,
+  "under5_estimate": 58.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_09_27",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.55836,
+  "lat": 10.869,
+  "u": 0.4297,
+  "v": 0.1484,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_10_02",
+  "name": "near Bình Thành B",
+  "type": "hamlet",
+  "lon": 105.32341,
+  "lat": 10.86073,
+  "u": 0.0391,
+  "v": 0.1641,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_30_35",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.63317,
+  "lat": 10.68801,
+  "u": 0.5547,
+  "v": 0.4766,
+  "under5_estimate": 25.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_38_23",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.52035,
+  "lat": 10.61933,
+  "u": 0.3672,
+  "v": 0.6016,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_22_02",
+  "name": "near Chợ Vàm",
+  "type": "hamlet",
+  "lon": 105.32329,
+  "lat": 10.75738,
+  "u": 0.0391,
+  "v": 0.3516,
+  "under5_estimate": 29.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_37_19",
+  "name": "near Thanh Bình",
+  "type": "hamlet",
+  "lon": 105.4828,
+  "lat": 10.628,
+  "u": 0.3047,
+  "v": 0.5859,
+  "under5_estimate": 24.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_16_13",
+  "name": "near Khu phố 5",
+  "type": "hamlet",
+  "lon": 105.42671,
+  "lat": 10.80893,
+  "u": 0.2109,
+  "v": 0.2578,
+  "under5_estimate": 20.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_43_26",
+  "name": "near Thanh Bình",
+  "type": "hamlet",
+  "lon": 105.54844,
+  "lat": 10.57622,
+  "u": 0.4141,
+  "v": 0.6797,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_42_27",
+  "name": "near Thanh Bình",
+  "type": "hamlet",
+  "lon": 105.55784,
+  "lat": 10.58481,
+  "u": 0.4297,
+  "v": 0.6641,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_63_11",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.40738,
+  "lat": 10.40419,
+  "u": 0.1797,
+  "v": 0.9922,
+  "under5_estimate": 44.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_13_41",
+  "name": "near Rọc Chanh",
+  "type": "hamlet",
+  "lon": 105.68985,
+  "lat": 10.83429,
+  "u": 0.6484,
+  "v": 0.2109,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_23_17",
+  "name": "near An Long",
+  "type": "hamlet",
+  "lon": 105.4642,
+  "lat": 10.74859,
+  "u": 0.2734,
+  "v": 0.3672,
+  "under5_estimate": 20.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_63_01",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.31354,
+  "lat": 10.40429,
+  "u": 0.0234,
+  "v": 0.9922,
+  "under5_estimate": 35.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_45_30",
+  "name": "near Tân Hùng",
+  "type": "hamlet",
+  "lon": 105.58596,
+  "lat": 10.55893,
+  "u": 0.4766,
+  "v": 0.7109,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_62_08",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.37924,
+  "lat": 10.41283,
+  "u": 0.1328,
+  "v": 0.9766,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_62_10",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.39801,
+  "lat": 10.41281,
+  "u": 0.1641,
+  "v": 0.9766,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_59_05",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.35112,
+  "lat": 10.4387,
+  "u": 0.0859,
+  "v": 0.9297,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_22_03",
+  "name": "near Chợ Vàm",
+  "type": "hamlet",
+  "lon": 105.33269,
+  "lat": 10.75737,
+  "u": 0.0547,
+  "v": 0.3516,
+  "under5_estimate": 20.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_32_26",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.54861,
+  "lat": 10.67095,
+  "u": 0.4141,
+  "v": 0.5078,
+  "under5_estimate": 97.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "cell_62_03",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.33232,
+  "lat": 10.41289,
+  "u": 0.0547,
+  "v": 0.9766,
+  "under5_estimate": 42.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_63_10",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.398,
+  "lat": 10.4042,
+  "u": 0.1641,
+  "v": 0.9922,
+  "under5_estimate": 40.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_15_62",
+  "name": "near Gò Ớt",
+  "type": "hamlet",
+  "lon": 105.88713,
+  "lat": 10.81656,
+  "u": 0.9766,
+  "v": 0.2422,
+  "under5_estimate": 21.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_51_01",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.31364,
+  "lat": 10.50764,
+  "u": 0.0234,
+  "v": 0.8047,
+  "under5_estimate": 44.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_52_01",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.31364,
+  "lat": 10.49903,
+  "u": 0.0234,
+  "v": 0.8203,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_19_36",
+  "name": "near Gò Cả Bô",
+  "type": "hamlet",
+  "lon": 105.64276,
+  "lat": 10.78272,
+  "u": 0.5703,
+  "v": 0.3047,
+  "under5_estimate": 25.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_44_26",
+  "name": "near Thanh Bình",
+  "type": "hamlet",
+  "lon": 105.54842,
+  "lat": 10.56761,
+  "u": 0.4141,
+  "v": 0.6953,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_62_02",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.32293,
+  "lat": 10.4129,
+  "u": 0.0391,
+  "v": 0.9766,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_29_14",
+  "name": "near An Long",
+  "type": "hamlet",
+  "lon": 105.43594,
+  "lat": 10.69696,
+  "u": 0.2266,
+  "v": 0.4609,
+  "under5_estimate": 25.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_62_00",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.30417,
+  "lat": 10.41291,
+  "u": 0.0078,
+  "v": 0.9766,
+  "under5_estimate": 24.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_60_06",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.36049,
+  "lat": 10.43008,
+  "u": 0.1016,
+  "v": 0.9453,
+  "under5_estimate": 32.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_56_03",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.33237,
+  "lat": 10.46456,
+  "u": 0.0547,
+  "v": 0.8828,
+  "under5_estimate": 63.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_18_20",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.49245,
+  "lat": 10.79161,
+  "u": 0.3203,
+  "v": 0.2891,
+  "under5_estimate": 31.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_44_22",
+  "name": "near Thanh Bình",
+  "type": "hamlet",
+  "lon": 105.51087,
+  "lat": 10.56767,
+  "u": 0.3516,
+  "v": 0.6953,
+  "under5_estimate": 22.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_22_27",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.55816,
+  "lat": 10.75705,
+  "u": 0.4297,
+  "v": 0.3516,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_42_00",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.30433,
+  "lat": 10.58516,
+  "u": 0.0078,
+  "v": 0.6641,
+  "under5_estimate": 42.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_13_40",
+  "name": "near Tân Hưng",
+  "type": "hamlet",
+  "lon": 105.68046,
+  "lat": 10.83431,
+  "u": 0.6328,
+  "v": 0.2109,
+  "under5_estimate": 24.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_43_00",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.30433,
+  "lat": 10.57655,
+  "u": 0.0078,
+  "v": 0.6797,
+  "under5_estimate": 105.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_61_05",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.3511,
+  "lat": 10.42148,
+  "u": 0.0859,
+  "v": 0.9609,
+  "under5_estimate": 71.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_52_02",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.32302,
+  "lat": 10.49902,
+  "u": 0.0391,
+  "v": 0.8203,
+  "under5_estimate": 138.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_31_35",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.63315,
+  "lat": 10.6794,
+  "u": 0.5547,
+  "v": 0.4922,
+  "under5_estimate": 36.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_16_14",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.4361,
+  "lat": 10.80892,
+  "u": 0.2266,
+  "v": 0.2578,
+  "under5_estimate": 39.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_15_63",
+  "name": "near Gò Ớt",
+  "type": "hamlet",
+  "lon": 105.89652,
+  "lat": 10.81654,
+  "u": 0.9922,
+  "v": 0.2422,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_25_24",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.52993,
+  "lat": 10.73126,
+  "u": 0.3828,
+  "v": 0.3984,
+  "under5_estimate": 28.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_23_34",
+  "name": "near Gò Cả Bô",
+  "type": "hamlet",
+  "lon": 105.6239,
+  "lat": 10.74831,
+  "u": 0.5391,
+  "v": 0.3672,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_61_08",
+  "name": "near An Châu",
+  "type": "hamlet",
+  "lon": 105.37925,
+  "lat": 10.42145,
+  "u": 0.1328,
+  "v": 0.9609,
+  "under5_estimate": 76.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_16_12",
+  "name": "near Khu phố 5",
+  "type": "hamlet",
+  "lon": 105.41731,
+  "lat": 10.80894,
+  "u": 0.1953,
+  "v": 0.2578,
+  "under5_estimate": 26.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_39_04",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.34192,
+  "lat": 10.61096,
+  "u": 0.0703,
+  "v": 0.6172,
+  "under5_estimate": 39.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_35_02",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.32318,
+  "lat": 10.64543,
+  "u": 0.0391,
+  "v": 0.5547,
+  "under5_estimate": 20.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_42_01",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.31372,
+  "lat": 10.58515,
+  "u": 0.0234,
+  "v": 0.6641,
+  "under5_estimate": 29.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "under_water",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_40_02",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.32313,
+  "lat": 10.60237,
+  "u": 0.0391,
+  "v": 0.6328,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_19_20",
+  "name": "near Sa Rài",
+  "type": "hamlet",
+  "lon": 105.49244,
+  "lat": 10.783,
+  "u": 0.3203,
+  "v": 0.3047,
+  "under5_estimate": 34.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_39_29",
+  "name": "near Tràm Chim",
+  "type": "hamlet",
+  "lon": 105.57667,
+  "lat": 10.61062,
+  "u": 0.4609,
+  "v": 0.6172,
+  "under5_estimate": 48.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_48_50",
+  "name": "near Mỹ An",
+  "type": "hamlet",
+  "lon": 105.77366,
+  "lat": 10.53269,
+  "u": 0.7891,
+  "v": 0.7578,
+  "under5_estimate": 20.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_40_04",
+  "name": "near Phú Tân",
+  "type": "hamlet",
+  "lon": 105.34191,
+  "lat": 10.60235,
+  "u": 0.0703,
+  "v": 0.6328,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "under_water"
+  }
+ },
+ {
+  "id": "cell_16_63",
+  "name": "near Gò Ớt",
+  "type": "hamlet",
+  "lon": 105.8965,
+  "lat": 10.80793,
+  "u": 0.9922,
+  "v": 0.2578,
+  "under5_estimate": 23.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_61_18",
+  "name": "near Cái Tàu Thượng",
+  "type": "hamlet",
+  "lon": 105.47309,
+  "lat": 10.42132,
+  "u": 0.2891,
+  "v": 0.9609,
+  "under5_estimate": 27.0,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "cell_11_28",
+  "name": "near Ngã Tư",
+  "type": "hamlet",
+  "lon": 105.56773,
+  "lat": 10.85176,
+  "u": 0.4453,
+  "v": 0.1797,
+  "under5_estimate": 25.0,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/169424198",
+  "name": "Tiểu học B Nhơn Mỹ",
+  "type": "school",
+  "lon": 105.40177,
+  "lat": 10.45241,
+  "u": 0.1699,
+  "v": 0.9043,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/169424199",
+  "name": "Trường Trung học cơ sở An Châu",
+  "type": "school",
+  "lon": 105.39431,
+  "lat": 10.43917,
+  "u": 0.1577,
+  "v": 0.9287,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/169426941",
+  "name": "Trường Trung học cơ sở Quản Cơ Thành",
+  "type": "school",
+  "lon": 105.34288,
+  "lat": 10.46379,
+  "u": 0.0718,
+  "v": 0.8838,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/169426942",
+  "name": "Trường Trung học phổ thông Nguyễn Bỉnh Khiêm",
+  "type": "school",
+  "lon": 105.37935,
+  "lat": 10.44421,
+  "u": 0.1328,
+  "v": 0.9194,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/170058710",
+  "name": "Tiêủ học Mỹ Hôị Đông",
+  "type": "school",
+  "lon": 105.33067,
+  "lat": 10.53902,
+  "u": 0.0513,
+  "v": 0.7476,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170058841",
+  "name": "Trường Trung học cơ sở Bình Thủy",
+  "type": "school",
+  "lon": 105.32029,
+  "lat": 10.51671,
+  "u": 0.0342,
+  "v": 0.7881,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/170065555",
+  "name": "Tiểu học Chu Văn An",
+  "type": "school",
+  "lon": 105.64268,
+  "lat": 10.45831,
+  "u": 0.5713,
+  "v": 0.8931,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170178905",
+  "name": "Tiểu học Phú Thuận B",
+  "type": "school",
+  "lon": 105.34621,
+  "lat": 10.76631,
+  "u": 0.0771,
+  "v": 0.335,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170178946",
+  "name": "Trường Trung học cơ sở Phú Thuận B",
+  "type": "school",
+  "lon": 105.34788,
+  "lat": 10.75852,
+  "u": 0.0796,
+  "v": 0.3491,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170190990",
+  "name": "Trường tiểu học Lê Quý Đôn",
+  "type": "school",
+  "lon": 105.63526,
+  "lat": 10.45397,
+  "u": 0.5586,
+  "v": 0.9009,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170316035",
+  "name": "Tiểu học Thường Lạc",
+  "type": "school",
+  "lon": 105.33314,
+  "lat": 10.81604,
+  "u": 0.0552,
+  "v": 0.2451,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/170316168",
+  "name": "Trường Tiểu học An Thạnh 1",
+  "type": "school",
+  "lon": 105.33943,
+  "lat": 10.80834,
+  "u": 0.0654,
+  "v": 0.2588,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170316343",
+  "name": "Trường Trung học cơ sở Thị Trấn",
+  "type": "school",
+  "lon": 105.34049,
+  "lat": 10.80657,
+  "u": 0.0674,
+  "v": 0.2622,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170403679",
+  "name": "Trường tiểu học Lê Thánh Tông",
+  "type": "school",
+  "lon": 105.59277,
+  "lat": 10.47628,
+  "u": 0.4878,
+  "v": 0.8608,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/170408307",
+  "name": "Trường Trung học phổ thông Chu Văn An",
+  "type": "school",
+  "lon": 105.33926,
+  "lat": 10.80546,
+  "u": 0.0654,
+  "v": 0.2642,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/170408624",
+  "name": "Trường Trung học phổ thông Hồng Ngự",
+  "type": "school",
+  "lon": 105.34695,
+  "lat": 10.79345,
+  "u": 0.0781,
+  "v": 0.2856,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/529113159",
+  "name": "Trường Trung học phổ thông Tân Hưng",
+  "type": "school",
+  "lon": 105.66365,
+  "lat": 10.83289,
+  "u": 0.6045,
+  "v": 0.2134,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/529113206",
+  "name": "Trường Trung học phổ thông Vĩnh Hưng",
+  "type": "school",
+  "lon": 105.78895,
+  "lat": 10.89053,
+  "u": 0.8125,
+  "v": 0.1084,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/529113207",
+  "name": "Trường Tiểu học Thị trấn Vĩnh Hưng",
+  "type": "school",
+  "lon": 105.78737,
+  "lat": 10.89256,
+  "u": 0.8101,
+  "v": 0.1045,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/543222383",
+  "name": "Trường Trung học phổ thông Ung Văn Khiêm (Long Kiến)",
+  "type": "school",
+  "lon": 105.45149,
+  "lat": 10.46097,
+  "u": 0.2529,
+  "v": 0.8887,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/543427167",
+  "name": "Trường Trung học phổ thông Chu Văn An",
+  "type": "school",
+  "lon": 105.36015,
+  "lat": 10.57838,
+  "u": 0.1006,
+  "v": 0.6758,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/663150632",
+  "name": "Trường Trung học cơ sở Nguyễn Du",
+  "type": "school",
+  "lon": 105.43204,
+  "lat": 10.90634,
+  "u": 0.2192,
+  "v": 0.0811,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/663150651",
+  "name": "Trường Tiểu học Bình Phú 2",
+  "type": "school",
+  "lon": 105.43002,
+  "lat": 10.9129,
+  "u": 0.2158,
+  "v": 0.0688,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/663150664",
+  "name": "Trường Tiểu học Bình Phú 1",
+  "type": "school",
+  "lon": 105.44405,
+  "lat": 10.88704,
+  "u": 0.2393,
+  "v": 0.1157,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/663150716",
+  "name": "Trường Tiểu học Trần Phú",
+  "type": "school",
+  "lon": 105.45776,
+  "lat": 10.87695,
+  "u": 0.2622,
+  "v": 0.1343,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/663150717",
+  "name": "Trường Trung học phổ thông Tân Hồng",
+  "type": "school",
+  "lon": 105.45704,
+  "lat": 10.87745,
+  "u": 0.2607,
+  "v": 0.1333,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/663150718",
+  "name": "Trường Tiểu học Nguyễn Huệ",
+  "type": "school",
+  "lon": 105.46432,
+  "lat": 10.87039,
+  "u": 0.2729,
+  "v": 0.146,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/663150725",
+  "name": "Trường Trung học cơ sở Nguyễn Văn Tiệp",
+  "type": "school",
+  "lon": 105.4684,
+  "lat": 10.86796,
+  "u": 0.2798,
+  "v": 0.1504,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/677722228",
+  "name": "Trường Tiểu Học Tràm Chim",
+  "type": "school",
+  "lon": 105.54854,
+  "lat": 10.67326,
+  "u": 0.4136,
+  "v": 0.5034,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/677722229",
+  "name": "Trường Tiểu Học Tràm Chim",
+  "type": "school",
+  "lon": 105.5488,
+  "lat": 10.67299,
+  "u": 0.4141,
+  "v": 0.5039,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/677722230",
+  "name": "Trường Tiểu Học Tràm Chim",
+  "type": "school",
+  "lon": 105.54885,
+  "lat": 10.67306,
+  "u": 0.4141,
+  "v": 0.5039,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/685470976",
+  "name": "Trường Trung học cơ sở Long Kiến",
+  "type": "school",
+  "lon": 105.451,
+  "lat": 10.46073,
+  "u": 0.252,
+  "v": 0.8892,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/695260212",
+  "name": "Trường Trung học cơ sở Tràm Chim",
+  "type": "school",
+  "lon": 105.55105,
+  "lat": 10.67367,
+  "u": 0.418,
+  "v": 0.5024,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/852595423",
+  "name": "Trường Tiểu học Thường Thới Hậu B2",
+  "type": "school",
+  "lon": 105.3264,
+  "lat": 10.86495,
+  "u": 0.0439,
+  "v": 0.1562,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1147511175",
+  "name": "Trường Trung học cơ sở Trường Xuân",
+  "type": "school",
+  "lon": 105.79091,
+  "lat": 10.65342,
+  "u": 0.8169,
+  "v": 0.5386,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1147580767",
+  "name": "Trường Tiểu học Trường Xuân 2",
+  "type": "school",
+  "lon": 105.72055,
+  "lat": 10.6147,
+  "u": 0.7002,
+  "v": 0.6089,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1147580769",
+  "name": "Trường Tiểu học Trường Xuân 1",
+  "type": "school",
+  "lon": 105.7891,
+  "lat": 10.65364,
+  "u": 0.814,
+  "v": 0.5381,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1147580770",
+  "name": "Trường Trung học phổ thông Trường Xuân",
+  "type": "school",
+  "lon": 105.78777,
+  "lat": 10.6522,
+  "u": 0.812,
+  "v": 0.5405,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1149340658",
+  "name": "Trường Trung học phổ thông chuyên Nguyễn Quang Diêu",
+  "type": "school",
+  "lon": 105.64854,
+  "lat": 10.47273,
+  "u": 0.5806,
+  "v": 0.8667,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707853",
+  "name": "Trường Trung học phổ thông Châu Văn Liêm",
+  "type": "school",
+  "lon": 105.49245,
+  "lat": 10.50382,
+  "u": 0.3208,
+  "v": 0.811,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707854",
+  "name": "Trường Mẫu giáo Thị trấn Mỹ Luông",
+  "type": "childcare",
+  "lon": 105.49043,
+  "lat": 10.50515,
+  "u": 0.3174,
+  "v": 0.8086,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707857",
+  "name": "Trường Trung học cơ sở Nguyễn Quang Sáng",
+  "type": "school",
+  "lon": 105.49086,
+  "lat": 10.50229,
+  "u": 0.3184,
+  "v": 0.814,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1159707858",
+  "name": "Trường Tiểu học A Thị trấn Mỹ Luông",
+  "type": "school",
+  "lon": 105.48762,
+  "lat": 10.50595,
+  "u": 0.313,
+  "v": 0.8071,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707861",
+  "name": "Trường Tiểu học Phù Đổng",
+  "type": "school",
+  "lon": 105.46086,
+  "lat": 10.53853,
+  "u": 0.2681,
+  "v": 0.748,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707862",
+  "name": "Trường Trung học cơ sở Võ Ánh Đăng",
+  "type": "school",
+  "lon": 105.46006,
+  "lat": 10.53891,
+  "u": 0.2666,
+  "v": 0.7476,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707864",
+  "name": "Trường Trung học cơ sở Nguyễn Đăng Sơn",
+  "type": "school",
+  "lon": 105.40325,
+  "lat": 10.54968,
+  "u": 0.1724,
+  "v": 0.728,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707871",
+  "name": "Trường Tiểu học A thị trấn Chợ Mới",
+  "type": "school",
+  "lon": 105.40245,
+  "lat": 10.54868,
+  "u": 0.1709,
+  "v": 0.73,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707873",
+  "name": "Trường Tiểu học B Kiến An",
+  "type": "school",
+  "lon": 105.39121,
+  "lat": 10.55272,
+  "u": 0.1523,
+  "v": 0.7227,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707874",
+  "name": "Trường Trung học cơ sở Lê Triệu Kiết",
+  "type": "school",
+  "lon": 105.37868,
+  "lat": 10.55984,
+  "u": 0.1313,
+  "v": 0.7095,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707875",
+  "name": "Trường Trung học cơ sở Phú Mỹ",
+  "type": "school",
+  "lon": 105.3608,
+  "lat": 10.57917,
+  "u": 0.1016,
+  "v": 0.6748,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1159707904",
+  "name": "Trường Tiểu học C Phú Mỹ (điểm phụ)",
+  "type": "school",
+  "lon": 105.36022,
+  "lat": 10.58458,
+  "u": 0.1006,
+  "v": 0.6646,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1160002130",
+  "name": "Trường Tiểu học A Tấn Mỹ",
+  "type": "school",
+  "lon": 105.49125,
+  "lat": 10.5211,
+  "u": 0.3188,
+  "v": 0.7798,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002134",
+  "name": "Trường Trung học cơ sở Tấn Mỹ",
+  "type": "school",
+  "lon": 105.49709,
+  "lat": 10.50691,
+  "u": 0.3286,
+  "v": 0.8052,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002139",
+  "name": "Trường Tiểu học B Tấn Mỹ (Điểm chính)",
+  "type": "school",
+  "lon": 105.50392,
+  "lat": 10.50046,
+  "u": 0.3398,
+  "v": 0.8169,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002145",
+  "name": "",
+  "type": "school",
+  "lon": 105.54983,
+  "lat": 10.43188,
+  "u": 0.4165,
+  "v": 0.9414,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002146",
+  "name": "Trường Trung học phổ thông Huỳnh Thị Hưởng",
+  "type": "school",
+  "lon": 105.54946,
+  "lat": 10.43226,
+  "u": 0.416,
+  "v": 0.9404,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002147",
+  "name": "Trường Tiểu học A Hội An (Điểm chính - Ấp Thị 1)",
+  "type": "school",
+  "lon": 105.54973,
+  "lat": 10.43098,
+  "u": 0.4165,
+  "v": 0.9429,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002154",
+  "name": "Trường Trung học cơ sở Nguyễn Thanh Sơn",
+  "type": "school",
+  "lon": 105.55015,
+  "lat": 10.45393,
+  "u": 0.417,
+  "v": 0.9014,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002157",
+  "name": "Trường Trung học cơ sở Phan Bội Châu",
+  "type": "school",
+  "lon": 105.58756,
+  "lat": 10.46349,
+  "u": 0.4795,
+  "v": 0.8838,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002159",
+  "name": "Trường Trung học phổ thông Thanh Bình 1",
+  "type": "school",
+  "lon": 105.49501,
+  "lat": 10.55442,
+  "u": 0.3252,
+  "v": 0.7192,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002160",
+  "name": "Trường Trung học cơ sở Thanh Bình",
+  "type": "school",
+  "lon": 105.49427,
+  "lat": 10.5548,
+  "u": 0.3237,
+  "v": 0.7183,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002187",
+  "name": "Trường Tiểu học Tràm Chim 2",
+  "type": "school",
+  "lon": 105.55745,
+  "lat": 10.679,
+  "u": 0.4287,
+  "v": 0.4932,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1160002188",
+  "name": "Trường Trung học phổ thông Tràm Chim",
+  "type": "school",
+  "lon": 105.55733,
+  "lat": 10.67753,
+  "u": 0.4282,
+  "v": 0.4956,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1160002204",
+  "name": "Trường Tiểu học Hậu Thạnh Đông",
+  "type": "school",
+  "lon": 105.88638,
+  "lat": 10.63797,
+  "u": 0.9761,
+  "v": 0.5659,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1160002206",
+  "name": "Trường Tiểu hoc Hậu Thạnh Tây",
+  "type": "school",
+  "lon": 105.8348,
+  "lat": 10.6469,
+  "u": 0.8901,
+  "v": 0.5503,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1166187810",
+  "name": "Trường Mẫu giáo TT. Vĩnh Hưng",
+  "type": "childcare",
+  "lon": 105.78773,
+  "lat": 10.89014,
+  "u": 0.8105,
+  "v": 0.1089,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1178803332",
+  "name": "Trường Mầm non Minh Đức",
+  "type": "childcare",
+  "lon": 105.34573,
+  "lat": 10.81076,
+  "u": 0.0762,
+  "v": 0.2544,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1180991341",
+  "name": "Trường Trung học cơ sở Vĩnh Châu A",
+  "type": "school",
+  "lon": 105.71889,
+  "lat": 10.71847,
+  "u": 0.6968,
+  "v": 0.4209,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1180991344",
+  "name": "Trường Mẫu giáo Vĩnh Châu A",
+  "type": "childcare",
+  "lon": 105.72206,
+  "lat": 10.7154,
+  "u": 0.7021,
+  "v": 0.4263,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1181162846",
+  "name": "Trường Tiểu học-Trung học cơ sở Vĩnh Bình",
+  "type": "school",
+  "lon": 105.82861,
+  "lat": 10.86154,
+  "u": 0.8789,
+  "v": 0.1606,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1182486052",
+  "name": "Trường Trung học cơ sở Ngô Gia Tự",
+  "type": "school",
+  "lon": 105.43244,
+  "lat": 10.41252,
+  "u": 0.2212,
+  "v": 0.9766,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1185731810",
+  "name": "Trường Trung học cơ sở Phương Thịnh",
+  "type": "school",
+  "lon": 105.66742,
+  "lat": 10.60254,
+  "u": 0.6118,
+  "v": 0.6313,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1185731811",
+  "name": "Trường Tiểu học Phương Thịnh",
+  "type": "school",
+  "lon": 105.66737,
+  "lat": 10.60336,
+  "u": 0.6118,
+  "v": 0.6299,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1185735022",
+  "name": "Trường Tiểu học Gáo Giồng",
+  "type": "school",
+  "lon": 105.63393,
+  "lat": 10.56609,
+  "u": 0.5562,
+  "v": 0.6978,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "way/1250983166",
+  "name": "Trường Trung học cơ sở Chợ Vàm",
+  "type": "school",
+  "lon": 105.33089,
+  "lat": 10.71839,
+  "u": 0.0518,
+  "v": 0.4219,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1250983167",
+  "name": "Trường Trung học phổ thông Nguyễn Chí Thanh",
+  "type": "school",
+  "lon": 105.33099,
+  "lat": 10.71964,
+  "u": 0.0518,
+  "v": 0.4199,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1454579485",
+  "name": "",
+  "type": "school",
+  "lon": 105.3433,
+  "lat": 10.81283,
+  "u": 0.0718,
+  "v": 0.2505,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1459482405",
+  "name": "Trường Trung học phổ thông Cao Lãnh",
+  "type": "school",
+  "lon": 105.62246,
+  "lat": 10.46293,
+  "u": 0.5376,
+  "v": 0.8848,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "way/1459482408",
+  "name": "Trường Trung học phổ thông Đỗ Công Tường",
+  "type": "school",
+  "lon": 105.62062,
+  "lat": 10.46472,
+  "u": 0.5342,
+  "v": 0.8813,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/1813365509",
+  "name": "Trường Trung học cơ sở An Bình A",
+  "type": "school",
+  "lon": 105.36444,
+  "lat": 10.7558,
+  "u": 0.1074,
+  "v": 0.354,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/1813365526",
+  "name": "Tiểu học An Bình A",
+  "type": "school",
+  "lon": 105.36106,
+  "lat": 10.76841,
+  "u": 0.1016,
+  "v": 0.3311,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "node/1813380832",
+  "name": "Tiểu học Phú Thuận A 3",
+  "type": "school",
+  "lon": 105.32902,
+  "lat": 10.7248,
+  "u": 0.0483,
+  "v": 0.4106,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "node/4400670070",
+  "name": "",
+  "type": "school",
+  "lon": 105.78882,
+  "lat": 10.89087,
+  "u": 0.8125,
+  "v": 0.1074,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/4535978498",
+  "name": "trường mầm non thị xã hồng ngự điểm 1",
+  "type": "childcare",
+  "lon": 105.34122,
+  "lat": 10.81003,
+  "u": 0.0684,
+  "v": 0.2559,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/4539596523",
+  "name": "trường mầm non bến xe cũ",
+  "type": "childcare",
+  "lon": 105.34133,
+  "lat": 10.80776,
+  "u": 0.0688,
+  "v": 0.2598,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/4597944895",
+  "name": "Mẫu Giáo Phường An Thạnh",
+  "type": "childcare",
+  "lon": 105.34321,
+  "lat": 10.81565,
+  "u": 0.0718,
+  "v": 0.2456,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/4597956191",
+  "name": "Trường Trung học cơ sở AN THẠNH",
+  "type": "school",
+  "lon": 105.34529,
+  "lat": 10.82129,
+  "u": 0.0752,
+  "v": 0.2354,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "node/4598001589",
+  "name": "Trường Trung học phổ thông CHU VĂN ĂN",
+  "type": "school",
+  "lon": 105.34348,
+  "lat": 10.81728,
+  "u": 0.0723,
+  "v": 0.2427,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/4672108692",
+  "name": "Trường Trung học cơ sở nguyễn văn bảnh",
+  "type": "school",
+  "lon": 105.52096,
+  "lat": 10.81979,
+  "u": 0.3672,
+  "v": 0.2378,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "node/5798146192",
+  "name": "",
+  "type": "school",
+  "lon": 105.88224,
+  "lat": 10.745,
+  "u": 0.9688,
+  "v": 0.3716,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "water_near"
+  }
+ },
+ {
+  "id": "node/11076317570",
+  "name": "Trường tiểu học Lê Văn Tám",
+  "type": "school",
+  "lon": 105.63318,
+  "lat": 10.46674,
+  "u": 0.5552,
+  "v": 0.8779,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/11076377304",
+  "name": "Trường Tiểu Học Mỹ Phú",
+  "type": "school",
+  "lon": 105.64903,
+  "lat": 10.4599,
+  "u": 0.5815,
+  "v": 0.8901,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/11076380541",
+  "name": "Trường Tiểu Học Lý Tự Trọng",
+  "type": "school",
+  "lon": 105.63398,
+  "lat": 10.47328,
+  "u": 0.5566,
+  "v": 0.8657,
+  "status": {
+   "2026-07-11": "clear",
+   "2026-08-28": "clear",
+   "2026-10-03": "clear"
+  }
+ },
+ {
+  "id": "node/11076386439",
+  "name": "Trường Mầm Non Ngôi Sao",
+  "type": "childcare",
+  "lon": 105.62378,
+  "lat": 10.47075,
+  "u": 0.5396,
+  "v": 0.8706,
+  "status": {
+   "2026-07-11": "water_near",
+   "2026-08-28": "water_near",
+   "2026-10-03": "water_near"
+  }
+ }
+]

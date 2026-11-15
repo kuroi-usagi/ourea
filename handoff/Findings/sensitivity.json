@@ -1,0 +1,55 @@
+{
+ "pass": "2026-10-03",
+ "tests": [
+  {
+   "change": "water_near_homes x0.5",
+   "top5_kept": 4,
+   "top10_kept": 8
+  },
+  {
+   "change": "water_near_homes x1.5",
+   "top5_kept": 5,
+   "top10_kept": 9
+  },
+  {
+   "change": "young_children x0.5",
+   "top5_kept": 4,
+   "top10_kept": 10
+  },
+  {
+   "change": "young_children x1.5",
+   "top5_kept": 5,
+   "top10_kept": 8
+  },
+  {
+   "change": "new_water x0.5",
+   "top5_kept": 4,
+   "top10_kept": 8
+  },
+  {
+   "change": "new_water x1.5",
+   "top5_kept": 4,
+   "top10_kept": 9
+  },
+  {
+   "change": "schools_routes x0.5",
+   "top5_kept": 4,
+   "top10_kept": 10
+  },
+  {
+   "change": "schools_routes x1.5",
+   "top5_kept": 5,
+   "top10_kept": 10
+  },
+  {
+   "change": "schools factor off (OSM gaps)",
+   "top5_kept": 4,
+   "top10_kept": 9
+  },
+  {
+   "change": "no 1.3x gap factor",
+   "top5_kept": 5,
+   "top10_kept": 10
+  }
+ ]
+}

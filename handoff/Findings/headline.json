@@ -1,0 +1,37 @@
+{
+ "pass": "2026-10-03",
+ "baseline": "2026-07-11",
+ "water_km2": 2216.8,
+ "new_water_km2": 1334.7,
+ "tile_km2": 4006.3,
+ "water_pct_by_pass": {
+  "2026-07-11": 26.6,
+  "2026-08-28": 39.3,
+  "2026-10-03": 55.3
+ },
+ "flood_water_definition": "water on this pass that was land on the baseline pass",
+ "populated_cells_near_flood_water_pct": 48.0,
+ "children_under5_in_tile": 81100.0,
+ "children_under5_near_flood_water": 28100.0,
+ "children_under5_near_flood_water_by_pass": {
+  "2026-07-11": 0.0,
+  "2026-08-28": 21700.0,
+  "2026-10-03": 28100.0
+ },
+ "children_under5_near_any_water_incl_canals": 37500.0,
+ "schools_near_flood_water": 18,
+ "schools_in_tile": 94,
+ "water_rule": "stand-in: HH < -13.0 dB (Otsu), rice not flagged yet",
+ "sources": [
+  "NISAR L2 GCOV (provisional), ASF",
+  "WorldPop 2026 age/sex structures, constrained, 100 m (R2025A)",
+  "OpenStreetMap schools and places (ODbL), exported 2026-11-14"
+ ],
+ "caveats": [
+  "near = within ~100 m (3 pixels of ~31 m)",
+  "canals narrower than ~30 m are not resolved",
+  "OSM school coverage is incomplete in rural areas",
+  "WorldPop counts are modelled estimates",
+  "water rule is provisional; rice fields flooded on purpose not yet separated"
+ ]
+}
