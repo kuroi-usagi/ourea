@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 // The story: an opening screen that says what this map is for, then a guided walk through the
@@ -22,6 +23,7 @@ public class StoryMode : MonoBehaviour
     const int Chapters = 7;
     static readonly string[] Titles = { "HOME", "UNDER CLOUD", "THE WATER", "ONE VILLAGE", "CHECK FIRST", "WHAT PEOPLE DO", "EVERY PASS" };
 
+    GUIStyle sPrimarySmall, sButtonSmall;
     GUIStyle sHuge, sLead, sBody, sSmall, sEyebrow, sWho, sWhoSmall, sAva, sPrimary, sButton, sPanel, sDotLabel, sHeadKey;
     Texture2D texShade, texSide, texRound;
 
@@ -41,6 +43,8 @@ public class StoryMode : MonoBehaviour
         sDotLabel = OureaTheme.Text(10, OureaTheme.Muted, true, FontStyle.Normal, TextAnchor.UpperLeft);
         sPrimary = OureaTheme.Primary(14);
         sButton = OureaTheme.Button(12);
+        sPrimarySmall = OureaTheme.Primary(11);
+        sButtonSmall = OureaTheme.Button(11);
         texRound = OureaTheme.Rounded(Color.white, 16);
         // dark from the bottom up, so the map still shows behind the opening screen
         texShade = new Texture2D(1, 256, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
@@ -260,6 +264,56 @@ public class StoryMode : MonoBehaviour
     // Chapter 6: the decision itself, for the first commune on the list — a marker on the map and
     // the three things a commune office does with it, as a checklist people can tick.
     readonly bool[] done = new bool[3];
+    int draftFor = -1;          // which action's message is open (0 = send someone, 1 = day care)
+    bool draftVi = true;        // Vietnamese first: it goes to commune staff
+    float copiedAt = -10f;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")] static extern void OureaCopy(string text);
+#else
+    static void OureaCopy(string text) { GUIUtility.systemCopyBuffer = text; }
+#endif
+
+    // Ready-to-send messages for the commune office, filled from the data (a draft: they edit and send
+    // it themselves, by Zalo, SMS or email)
+    string Draft(int action, DataLoader.BakedCommune f, bool vi)
+    {
+        string near = f.under5Near.ToString("#,0"), total = f.under5.ToString("#,0");
+        if (action == 0)
+            return vi
+                ? "Kiểm tra trước hôm nay: " + f.name + ". Ảnh radar NISAR ngày " + f.pass + " (số liệu tạm thời) cho thấy nước lũ mới trong vòng 100 m quanh nhà dân; khoảng " + near + "/" + total + " trẻ dưới 5 tuổi sống gần đó. Đề nghị đến các ấp gần nước nhất, thăm các gia đình có con nhỏ và báo lại tình hình trong ngày. — UBND xã"
+                : "Check first today: " + f.name + ". The NISAR radar pass of " + f.pass + " (provisional) shows new flood water within 100 m of homes; about " + near + " of " + total + " children under 5 live near it. Please visit the hamlets closest to the water, check on families with small children and report back today. — Commune office";
+        return vi
+            ? "Điểm giữ trẻ mùa lũ: " + f.name + " cần mở điểm giữ trẻ có người trông cho trẻ dưới 5 tuổi trong thời gian nước lên. Ảnh radar NISAR ngày " + f.pass + " (tạm thời) cho thấy nước lũ mới gần nhà dân; khoảng " + near + " trẻ nhỏ sống trong vòng 100 m. Đề nghị xác nhận địa điểm, người trông trẻ và giờ mở cửa trước ngày mai. — UBND xã"
+            : "Flood-season day care: " + f.name + " needs a supervised day-care point for children under 5 while the water is high. The NISAR pass of " + f.pass + " (provisional) shows new flood water near homes; about " + near + " young children live within 100 m. Please confirm a site, carers and opening hours by tomorrow. — Commune office";
+    }
+
+    void DrawDraft(Rect act, float W, float H, float s, DataLoader.BakedCommune f)
+    {
+        const float M = 16f;
+        float dw = 330f;
+        string text = Draft(draftFor, f, draftVi);
+        float th = sBody.CalcHeight(new GUIContent(text), dw - 36f);
+        string sub = "Draft from the " + f.pass + " pass. Edit it, then paste into Zalo, SMS or email.";
+        float sh = sSmall.CalcHeight(new GUIContent(sub), dw - 36f);
+        float dh = 16 + 22 + sh + 8 + th + 16 + 34 + 16;
+        // beside the action panel when there's room, otherwise under it
+        var r = act.x - 12f - dw >= M ? new Rect(act.x - 12f - dw, act.y, dw, dh) : new Rect(act.x, Mathf.Min(act.yMax + 12f, H - M - 96f - dh), act.width, dh);
+        GUI.Box(r, GUIContent.none, sPanel);
+        Block(r, s);
+        float x = r.x + 18, w = r.width - 36, y = r.y + 16;
+        GUI.Label(new Rect(x, y, w - 90, 14), draftFor == 0 ? "MESSAGE  ·  TO THE FIELD TEAM" : "MESSAGE  ·  TO THE DAY-CARE LEAD", sEyebrow);
+        if (GUI.Button(new Rect(r.xMax - 18 - 76, y - 4, 36, 22), "VI", draftVi ? sPrimarySmall : sButtonSmall)) draftVi = true;
+        if (GUI.Button(new Rect(r.xMax - 18 - 36, y - 4, 36, 22), "EN", draftVi ? sButtonSmall : sPrimarySmall)) draftVi = false;
+        y += 22;
+        GUI.Label(new Rect(x, y, w, sh), sub, sSmall);
+        y += sh + 8;
+        GUI.Label(new Rect(x, y, w, th), text, sBody);
+        y += th + 16;
+        bool copied = Time.time - copiedAt < 2f;
+        if (GUI.Button(new Rect(x, y, 120, 32), copied ? "COPIED" : "COPY TEXT", sPrimarySmall)) { OureaCopy(text); copiedAt = Time.time; }
+        if (GUI.Button(new Rect(x + 128, y, 90, 32), "CLOSE", sButtonSmall)) draftFor = -1;
+    }
     void DrawAct(float W, float H, float s)
     {
         var f = First();
@@ -310,6 +364,7 @@ public class StoryMode : MonoBehaviour
             {
                 done[i] = !done[i];
                 if (i == 2 && done[i]) lab.OpenAlerts(f.code);   // texting parents: the real sign-up (Twilio)
+                if (i < 2) draftFor = done[i] ? i : (draftFor == i ? -1 : draftFor);   // the message to send for it
             }
             var box = new Rect(row.x + 10, row.y + 20, 18, 18);
             var old = GUI.color;
@@ -321,6 +376,7 @@ public class StoryMode : MonoBehaviour
             yy += 66;
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
+        if (draftFor >= 0) DrawDraft(r, W, H, s, f);
     }
 
     void DrawGuide(float W, float H, float s)
