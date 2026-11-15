@@ -168,6 +168,18 @@ public class FloodLab : MonoBehaviour
         return LevelForFraction(Mathf.Clamp(pi < observedWaterPct.Length ? observedWaterPct[pi] : 50f, 1f, 99f) / 100f);
     }
 
+    // ---- for the guided story (Scripts/StoryMode.cs) ----
+    [System.NonSerialized] public bool guided;   // the story is running: hide the fly-in button
+    public void StartVillageFlood() { StartStory(); }
+    public void Drain() { story = false; target = minM - 0.5f; }
+    public void CloseCard() { if (card != Card.None) Toggle(card); }
+    public void OpenPhoto() { if (card != Card.Photo) Toggle(Card.Photo); }
+    public void OpenRadar() { if (card != Card.Radar) Toggle(Card.Radar); }
+    public void OpenCommunes() { if (card != Card.Ranking) Toggle(Card.Ranking); showCommunes = true; }
+    public float CloudPct(int pass) { return opticalCloud != null && pass < opticalCloud.Length ? opticalCloud[pass] : -1f; }
+    public float WaterPct(int pass) { return observedWaterPct != null && pass < observedWaterPct.Length ? observedWaterPct[pass] : -1f; }
+    public float BuiltFloodedHa() { return buildings != null ? buildings.BuiltAreaBelow(level) : 0f; }
+
     void StartStory()
     {
         storyTo = MatchLevel();
@@ -187,9 +199,10 @@ public class FloodLab : MonoBehaviour
         float x0 = 16f + 268f + 12f;
         if (!any)
         {
-            var b = new Rect(16f, 16f + 58f + 10f, 268f, 40f);
+            if (guided) return;
+            var b = new Rect(16f, 16f + 58f + 10f + 48f, 268f, 40f);
             Block(b, curScale);
-            if (GUI.Button(b, "Watch a village flood  >", sBtnOn)) StartStory();
+            if (GUI.Button(b, "WATCH A VILLAGE FLOOD  >", sBtnOn)) StartStory();
             return;
         }
         float cw = Mathf.Min(460f, W - x0 - 16f - 120f);
@@ -255,11 +268,11 @@ public class FloodLab : MonoBehaviour
     // The project renders in linear space: IMGUI colours are given linear and show up gamma-encoded.
     // Lin() takes the colour you want to SEE (sRGB 0..255) so swatches match the map.
     static Color Lin(int r, int g, int b) { return new Color(Mathf.Pow(r / 255f, 2.2f), Mathf.Pow(g / 255f, 2.2f), Mathf.Pow(b / 255f, 2.2f)); }
-    static readonly Color Ink = Lin(28, 32, 36);
-    static readonly Color Muted = Lin(90, 97, 104);
-    static readonly Color Accent = Lin(49, 100, 110);
-    static readonly Color Water = Lin(58, 111, 176);
-    static readonly Color Modeled = Lin(115, 66, 10);
+    static readonly Color Ink = OureaTheme.Ink;
+    static readonly Color Muted = OureaTheme.Muted;
+    static readonly Color Accent = OureaTheme.Accent;
+    static readonly Color Water = Lin(58, 140, 200);
+    static readonly Color Modeled = OureaTheme.Warn;
     // what the map actually shows (Shaders/OureaWater.shader, OureaFloodPlane.shader, BeaconField)
     static readonly Color KeyRiver = Lin(52, 78, 92);
     static readonly Color KeyFlood = Lin(118, 172, 222);
@@ -293,28 +306,27 @@ public class FloodLab : MonoBehaviour
     void Styles()
     {
         if (sPanel != null) return;
-        sPanel = Box(Rounded(new Color(0.97f, 0.97f, 0.955f, 0.94f), 14), 14, Ink, 12, FontStyle.Normal);
-        sEyebrow = Text(11, Accent, FontStyle.Bold);
-        sTag = Box(Rounded(new Color(0.95f, 0.78f, 0.35f, 0.35f), 7), 7, Modeled, 10, FontStyle.Bold);
-        sTitle = Text(16, Ink, FontStyle.Bold);
-        sBig = Text(26, Ink, FontStyle.Bold);
-        sBigRed = Text(26, Lin(196, 58, 40), FontStyle.Bold);
+        sPanel = Box(OureaTheme.PanelTex, 14, Ink, 12, FontStyle.Normal);
+        sEyebrow = OureaTheme.Text(11, Accent, true);
+        sTag = OureaTheme.Box(OureaTheme.Rounded(new Color(0, 0, 0, 0), 5, Modeled), 5, Modeled, 10);
+        sTitle = OureaTheme.Text(16, Ink, true);
+        sBig = OureaTheme.Text(26, Ink, true);
+        sBigRed = OureaTheme.Text(26, OureaTheme.Bad, true);
         sBody = Text(12, Ink, FontStyle.Normal, true);
         sSmall = Text(11, Muted, FontStyle.Normal, true);
-        sBtn = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 8), 8, Ink, 12, FontStyle.Bold);
-        sBtn.hover.background = Rounded(new Color(0f, 0f, 0f, 0.12f), 8); sBtn.hover.textColor = Ink;
-        sBtnOn = Box(Rounded(Accent, 8), 8, Color.white, 12, FontStyle.Bold);
-        sDock = Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Ink, 11, FontStyle.Bold);
-        sDock.hover.background = Rounded(new Color(0f, 0f, 0f, 0.07f), 10); sDock.hover.textColor = Ink;
-        sDockOn = Box(Rounded(Accent, 10), 10, Color.white, 11, FontStyle.Bold);
-        sClose = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 12), 12, Muted, 13, FontStyle.Bold);
-        texTrack = Rounded(new Color(0f, 0f, 0f, 0.16f), 10);
+        sBtn = OureaTheme.Button(12);
+        sBtnOn = OureaTheme.Primary(12);
+        sDock = OureaTheme.Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Muted, 11);
+        sDock.hover.background = Rounded(new Color(1f, 1f, 1f, 0.07f), 10); sDock.hover.textColor = Ink;
+        sDockOn = OureaTheme.Primary(11);
+        sClose = OureaTheme.Box(Rounded(new Color(1f, 1f, 1f, 0.06f), 12), 12, Muted, 13);
+        texTrack = Rounded(new Color(1f, 1f, 1f, 0.14f), 10);
         texFill = Rounded(Water, 10);
-        texKnob = Rounded(Color.white, 13);
+        texKnob = Rounded(Accent, 13);
         texDot = Rounded(Color.white, 8);
-        sKnob = Text(12, Accent, FontStyle.Bold);
+        sKnob = Text(12, OureaTheme.OnAccent, FontStyle.Bold);
         sKnob.alignment = TextAnchor.MiddleCenter;
-        sChip = Box(Rounded(new Color(0.06f, 0.08f, 0.10f, 0.78f), 8), 8, Color.white, 11, FontStyle.Bold);
+        sChip = Box(OureaTheme.PanelTex, 14, Ink, 11, FontStyle.Bold);
         sChip.padding = new RectOffset(10, 10, 4, 4);
     }
 
@@ -345,7 +357,7 @@ public class FloodLab : MonoBehaviour
         DrawFloodCounter(W);
 
         // --- dock
-        string[] labels = { "Water", "Photo", "Radar", "Top 10", "Key" };
+        string[] labels = { "WATER", "PHOTO", "RADAR", "TOP 10", "KEY" };
         Card[] cards = { Card.Water, Card.Photo, Card.Radar, Card.Ranking, Card.Key };
         const float bw = 64f, bh = 46f, gap = 6f, pad = 8f;
         float dh = pad * 2 + cards.Length * bh + (cards.Length - 1) * gap;

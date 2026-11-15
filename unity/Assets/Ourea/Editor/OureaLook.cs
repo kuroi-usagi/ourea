@@ -105,6 +105,7 @@ public static class OureaLook
 
         // UI font with Vietnamese letters (place names like Chợ Vàm, Gò Ớt); SIL OFL, see Fonts/OFL.txt
         app.uiFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Ourea/Fonts/BeVietnamPro-Regular.ttf");
+        app.displayFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Ourea/Fonts/ChakraPetch-SemiBold.ttf");
 
         // 6. "What if" controls: modeled water surface + real radar view (Scripts/FloodLab.cs)
         AddFloodLab(delta, h, n, sizeX, sizeZ, heightScale, app);
@@ -115,6 +116,7 @@ public static class OureaLook
     [System.Serializable] class NisarWrap { public NisarPass[] items; }
     [System.Serializable] class OpticalPass { public string pass; public string image_date; public float cloud_pct; }
     [System.Serializable] class OpticalWrap { public OpticalPass[] items; }
+    [System.Serializable] class Headline { public float children_under5_in_tile; public int schools_near_flood_water; public int schools_in_tile; }
     [System.Serializable] class Hotspot { public float u; public float v; }
     [System.Serializable] class CommuneScore
     {
@@ -255,6 +257,17 @@ public static class OureaLook
         pm.SetFloat("_MinM", lab.minM);
         EditorUtility.SetDirty(pm);
         lab.buildings = AddBuildings(groundTex, sizeX, sizeZ, heightScale, lab.minM, lab.maxM);
+
+        // the guided story (Scripts/StoryMode.cs), with the team's sourced numbers
+        var story = lab.gameObject.AddComponent<StoryMode>();
+        story.viewer = app; story.lab = lab;
+        var headPath = Path.Combine(Handoff, "findings", "headline.json");
+        if (File.Exists(headPath))
+        {
+            var hl = JsonUtility.FromJson<Headline>(File.ReadAllText(headPath));
+            if (hl.children_under5_in_tile > 0f) story.childrenInTile = hl.children_under5_in_tile;
+            if (hl.schools_in_tile > 0) { story.schoolsNear = hl.schools_near_flood_water; story.schoolsInTile = hl.schools_in_tile; }
+        }
     }
 
     static Texture2D GroundTexture(float[] h, int n)

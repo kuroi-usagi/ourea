@@ -39,7 +39,8 @@ public class OureaViewer : MonoBehaviour
 
     public Renderer deltaRenderer;
     public TimelineController timeline;
-    public Font uiFont;   // Be Vietnam Pro: Unity's built-in web font has no Vietnamese letters (ợ, Ớ, ...)
+    public Font uiFont;        // Be Vietnam Pro: Unity's built-in web font has no Vietnamese letters (ợ, Ớ, ...)
+    public Font displayFont;   // Chakra Petch: headings and buttons
     public OrbitCamera orbit;
     public bool simulated = true;
     public string dataNote = "";
@@ -53,7 +54,7 @@ public class OureaViewer : MonoBehaviour
     {
         for (int i = 0; i < uiRects.Count; i++)
             if (uiRects[i].Contains(guiPoint)) return true;
-        return FloodLab.PointerOver(guiPoint);
+        return FloodLab.PointerOver(guiPoint) || StoryMode.PointerOver(guiPoint);
     }
 
     readonly Dictionary<string, Place> placeById = new Dictionary<string, Place>();
@@ -154,10 +155,11 @@ public class OureaViewer : MonoBehaviour
     // ---------------- UI ----------------
     // Flat dark cards with rounded corners, a big timeline along the bottom,
     // the check-first list on the left and a compact legend on the right.
-    static readonly Color Ink = new Color(0.010f, 0.013f, 0.017f);   // linear values: the project renders in linear space, so these display as ~#1C2024
-    static readonly Color Muted = new Color(0.10f, 0.12f, 0.14f);   // displays as ~#5A6168
-    static readonly Color Accent = new Color(0.03f, 0.13f, 0.16f); // deep teal (#31646E on screen), as in Urban Sentinel
-    static readonly Color Amber = new Color(0.45f, 0.20f, 0.01f);
+    // dark glass and cyan, shared with every panel (Scripts/OureaTheme.cs)
+    static readonly Color Ink = OureaTheme.Ink;
+    static readonly Color Muted = OureaTheme.Muted;
+    static readonly Color Accent = OureaTheme.Accent;
+    static readonly Color Amber = OureaTheme.Warn;
     static readonly Color Up = new Color(0.80f, 0.27f, 0.22f);
     static readonly Color Down = new Color(0.20f, 0.55f, 0.32f);
 
@@ -201,36 +203,35 @@ public class OureaViewer : MonoBehaviour
     void MakeStyles()
     {
         if (sPanel != null) return;
-        texPanel = Rounded(new Color(0.97f, 0.97f, 0.955f, 0.90f), 12); // light frosted card
+        texPanel = OureaTheme.PanelTex;
         texRound = Rounded(Color.white, 12); // drawn scaled, so it reads as a circle
         texRow = Rounded(new Color(1f, 1f, 1f, 0f), 8);
-        texRowHover = Rounded(new Color(0f, 0f, 0f, 0.05f), 8);
+        texRowHover = Rounded(new Color(1f, 1f, 1f, 0.06f), 8);
         texRowSel = Rounded(new Color(Accent.r, Accent.g, Accent.b, 0.14f), 8);
 
-        sPanel = Box(texPanel, 12, Ink);
-        sEyebrow = Text(11, Accent, FontStyle.Bold);
-        sTitle = Text(19, Ink, FontStyle.Bold);
+        sPanel = Box(texPanel, 14, Ink);
+        sEyebrow = OureaTheme.Text(11, Accent, true);
+        sTitle = OureaTheme.Text(19, Ink, true);
         sSub = Text(12, Muted);
         sBody = Text(13, Ink);
         sSmall = Text(11, Muted, FontStyle.Normal, TextAnchor.UpperLeft, true);
-        sBig = Text(30, Ink, FontStyle.Bold);
+        sBig = OureaTheme.Text(30, Ink, true);
         sBadge = Box(texRound, 10, Color.white, 12, FontStyle.Bold);
         sRowName = Text(14, Ink, FontStyle.Bold);
         sRowReason = Text(11, Muted);
         sTrend = Text(12, Ink, FontStyle.Bold, TextAnchor.MiddleRight);
         sTick = Text(11, Muted, FontStyle.Normal, TextAnchor.UpperCenter);
         sTickOn = Text(12, Ink, FontStyle.Bold, TextAnchor.UpperCenter);
-        sBtn = Box(Rounded(new Color(0f, 0f, 0f, 0.06f), 8), 8, Ink, 12, FontStyle.Bold);
-        sBtn.hover.background = Rounded(new Color(0f, 0f, 0f, 0.12f), 8);
-        sBtn.hover.textColor = Ink;
-        sPlay = Box(Rounded(Accent, 20), 20, Color.white, 16, FontStyle.Bold);
-        sPlay.hover.background = Rounded(new Color(0.26f, 0.50f, 0.55f), 20);
-        sPlay.hover.textColor = Color.white;
-        sPill = Box(Rounded(new Color(0.95f, 0.78f, 0.35f, 0.30f), 9), 9, Amber, 11, FontStyle.Bold);
+        sBtn = OureaTheme.Button();
+        sPlay = OureaTheme.Box(Rounded(Accent, 20), 20, OureaTheme.OnAccent, 16);
+        sPlay.hover.background = Rounded(OureaTheme.S(140, 230, 238), 20);
+        sPlay.hover.textColor = OureaTheme.OnAccent;
+        sPill = OureaTheme.Box(OureaTheme.Rounded(OureaTheme.S(8, 14, 17, 0.7f), 6, Amber), 6, Amber, 10);
+        sPill.padding = new RectOffset(8, 8, 2, 2);
         sRow = Box(texRow, 8, Ink, 13, FontStyle.Normal, TextAnchor.MiddleLeft);
         sRow.hover.background = texRowHover;
         sRowSel = Box(texRowSel, 8, Ink, 13, FontStyle.Normal, TextAnchor.MiddleLeft);
-        sCard = Box(Rounded(new Color(0.97f, 0.97f, 0.955f, 0.94f), 8), 8, Ink, 13, FontStyle.Bold);
+        sCard = Box(OureaTheme.PanelTex, 14, Ink, 13, FontStyle.Bold);
         sCard.padding = new RectOffset(10, 10, 4, 4);
     }
 
@@ -264,6 +265,7 @@ public class OureaViewer : MonoBehaviour
     {
         if (Event.current.type == EventType.Layout) uiRects.Clear();
         if (uiFont != null) GUI.skin.font = uiFont;
+        if (displayFont != null) OureaTheme.display = displayFont;
         MakeStyles();
         uiScale = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
         GUI.matrix = Matrix4x4.Scale(new Vector3(uiScale, uiScale, 1f));
@@ -275,10 +277,10 @@ public class OureaViewer : MonoBehaviour
         // Quiet map: a small title, a small data note, the timeline pill. Everything else lives
         // behind the tool dock on the right (Scripts/FloodLab.cs).
         var head = Panel(new Rect(M, M, 268, 58));
-        GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "OUREA  ·  NISAR FLOOD WATCH", sEyebrow);
+        GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "O U R E A   ·   NISAR FLOOD WATCH", sEyebrow);
         GUI.Label(new Rect(head.x + 14, head.y + 26, 240, 24), "Mekong Delta, Vietnam", sTitle);
 
-        string note = simulated ? "Water: real NISAR  ·  ranks simulated" : "NISAR water and scores  ·  provisional";
+        string note = simulated ? "WATER: REAL NISAR  ·  RANKS SIMULATED" : "NISAR  ·  PROVISIONAL";
         var noteSize = sPill.CalcSize(new GUIContent(note));
         GUI.Label(new Rect(W - M - noteSize.x - 16, M + 6, noteSize.x + 16, 24), note, sPill);
 
@@ -371,7 +373,7 @@ public class OureaViewer : MonoBehaviour
 
         // headline number on the right
         float nx = tl.xMax - 186;
-        GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", Text(22, Ink, FontStyle.Bold, TextAnchor.UpperRight));
+        GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", OureaTheme.Text(22, Ink, true, FontStyle.Normal, TextAnchor.UpperRight));
         string sub = p.childrenNearWater > 0
             ? p.childrenNearWater.ToString("#,0") + " under-5s within ~100 m"
             : "new flood water since " + ShortDate(passes[0].date);
@@ -384,7 +386,7 @@ public class OureaViewer : MonoBehaviour
         int max = Mathf.Max(1, passes.Count - 1);
         float frac = passes.Count > 1 ? timeline.Position / max : 1f;
         var oldC = GUI.color;
-        GUI.color = new Color(0f, 0f, 0f, 0.10f);
+        GUI.color = new Color(1f, 1f, 1f, 0.12f);
         GUI.DrawTexture(trackRect, Texture2D.whiteTexture);
         GUI.color = Accent;
         GUI.DrawTexture(new Rect(trackRect.x, trackRect.y, trackRect.width * frac, trackRect.height), Texture2D.whiteTexture);
@@ -393,7 +395,7 @@ public class OureaViewer : MonoBehaviour
             float x = passes.Count > 1 ? Mathf.Lerp(tx0, tx1, i / (float)max) : tx1;
             bool on = i == currentPass;
             float d = on ? 18f : 12f;
-            GUI.color = i <= timeline.Position + 0.001f ? Accent : new Color(0.74f, 0.76f, 0.78f);
+            GUI.color = i <= timeline.Position + 0.001f ? Accent : OureaTheme.S(70, 84, 88);
             GUI.DrawTexture(new Rect(x - d / 2f, trackY - d / 2f, d, d), texRound);
             GUI.color = oldC;
             if (GUI.Button(new Rect(x - 34, trackY + 12, 68, 18), ShortDate(passes[i].date), on ? sTickOn : sTick))
