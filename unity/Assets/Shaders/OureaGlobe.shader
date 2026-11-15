@@ -57,7 +57,7 @@ Shader "Ourea/Globe"
                 half ndl = saturate(dot(n, sun.direction) * 0.8 + 0.2);   // wrapped: the night side stays faintly readable
                 half3 col = albedo * (0.35 + 0.95 * ndl * sun.color) * _Dim;
                 // the frame just outside the study area
-                if (_Hole.z > _Hole.x)
+                if (_Hole.z > _Hole.x && _FrameWidth > 0)
                 {
                     float2 d = max(float2(_Hole.x - p.x, _Hole.y - p.y), float2(p.x - _Hole.z, p.y - _Hole.w));
                     float out_ = max(d.x, d.y);

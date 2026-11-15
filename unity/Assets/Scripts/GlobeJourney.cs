@@ -15,6 +15,8 @@ public class GlobeJourney : MonoBehaviour
     public Material globeMat, contextMat, atmosphereMat, starMat;
     public double siteLat = 10.675, siteLon = 105.6;
     public Vector4 contextBoundsDeg;   // lon0, lat0, lon1, lat1
+    public Texture2D nearTex; public Material nearMat; public Vector4 nearBoundsDeg;   // sharper ground right around the tile
+    public float groundY;              // typical height of the tile's rim; the ground around it sits here
     public float sizeX, sizeZ;         // the tile, world units
     public Material skyMat;
     public float baseFogDensity = 0.0006f;
@@ -33,11 +35,9 @@ public class GlobeJourney : MonoBehaviour
     Vector3 siteCentre;        // centre of the tile, world
     Camera cam;
     OrbitCamera orbit;
-    Renderer earthR, ringR, atmoR, starR;
+    Renderer earthR, ringR, nearR, atmoR, starR;
     float t, dur = 7f, idleAngle;
     bool outbound;
-    Vector3 flyFromDir; float flyFromAlt;
-    Quaternion homeRot; Vector3 homePos;
     float skyExposure = 1.25f;
     GUIStyle sLabel, sLabelDim, sFly;
     Texture2D texDot;
@@ -57,16 +57,16 @@ public class GlobeJourney : MonoBehaviour
     {
         cam = Camera.main;
         orbit = viewer != null ? viewer.orbit : null;
-        siteCentre = new Vector3(sizeX * 0.5f, -0.05f, sizeZ * 0.5f);
+        siteCentre = new Vector3(sizeX * 0.5f, groundY - 0.03f, sizeZ * 0.5f);
         C = siteCentre - Vector3.up * R;
         if (skyMat != null && skyMat.HasProperty("_Exposure")) skyExposure = skyMat.GetFloat("_Exposure");
 
         earthR = MakeSphere("Earth", R - 3f, 192, 96, globeMat, true);
-        ringR = MakeContext();
+        ringR = MakeContext("Context ground", contextTex, contextBoundsDeg, contextMat, 0f);
+        nearR = MakeContext("Near ground", nearTex, nearBoundsDeg, nearMat, 0.02f);
         atmoR = MakeSphere("Atmosphere", R * 1.025f, 96, 48, atmosphereMat, false);
         starR = MakeStars();
 
-        if (orbit != null) { homePos = cam.transform.position; homeRot = cam.transform.rotation; }
         idleAngle = -38f;
         if (mode == Mode.Globe) { HideHud = true; if (orbit != null) orbit.enabled = false; }
         else HideHud = false;
@@ -96,12 +96,12 @@ public class GlobeJourney : MonoBehaviour
     }
 
     // the finer ground around the tile: a lat/lon grid over the context window, faded at its rim
-    Renderer MakeContext()
+    Renderer MakeContext(string name, Texture2D tex, Vector4 boundsDeg, Material mat, float lift)
     {
-        if (contextTex == null) return null;
+        if (tex == null || mat == null) return null;
         const int N = 160;
         var verts = new List<Vector3>(); var norms = new List<Vector3>(); var uvs = new List<Vector2>(); var cols = new List<Color>(); var tris = new List<int>();
-        float lo0 = contextBoundsDeg.x, la0 = contextBoundsDeg.y, lo1 = contextBoundsDeg.z, la1 = contextBoundsDeg.w;
+        float lo0 = boundsDeg.x, la0 = boundsDeg.y, lo1 = boundsDeg.z, la1 = boundsDeg.w;
         float half = Mathf.Min(lo1 - lo0, la1 - la0) * 0.5f;
         for (int r = 0; r <= N; r++)
             for (int c = 0; c <= N; c++)
@@ -109,7 +109,7 @@ public class GlobeJourney : MonoBehaviour
                 float u = c / (float)N, v = r / (float)N;
                 float lon = Mathf.Lerp(lo0, lo1, u), lat = Mathf.Lerp(la0, la1, v);
                 var d = Dir(lat, lon);
-                verts.Add(C + d * R); norms.Add(d); uvs.Add(new Vector2(u, v));
+                verts.Add(C + d * (R + lift)); norms.Add(d); uvs.Add(new Vector2(u, v));
                 float ang = Mathf.Sqrt(Mathf.Pow(lat - (float)siteLat, 2) + Mathf.Pow((lon - (float)siteLon) * Mathf.Cos((float)siteLat * Mathf.Deg2Rad), 2));
                 cols.Add(new Color(1, 1, 1, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(half * 0.55f, half * 0.98f, ang))));
             }
@@ -119,7 +119,7 @@ public class GlobeJourney : MonoBehaviour
                 int a = r * (N + 1) + c, b = a + 1, cc = a + N + 1, d = cc + 1;
                 tris.Add(a); tris.Add(cc); tris.Add(b); tris.Add(b); tris.Add(cc); tris.Add(d);
             }
-        return Make("Context ground", verts, norms, uvs, cols, tris, contextMat);
+        return Make(name, verts, norms, uvs, cols, tris, mat);
     }
 
     Renderer MakeStars()
@@ -173,24 +173,49 @@ public class GlobeJourney : MonoBehaviour
 
     Vector3 PolarAxis() { return Dir(90, 0); }
 
+    // The flight, as in the concept demo: (1) the globe turns until the site is in the middle,
+    // (2) a steady descent straight down through a layer of haze, (3) the camera settles into the
+    // map's own view. u runs 0 -> 1 flying in and 1 -> 0 flying out.
+    const float TurnEnd = 0.24f, DescentEnd = 0.74f, Hover = 1600f;
+    Vector3 endPos; Quaternion endRot;   // the map view at the end of the descent
+
     public void FlyIn()
     {
         if (mode == Mode.Site) return;
-        flyFromDir = mode == Mode.Globe ? IdleDir() : ((cam.transform.position - C).normalized);
-        flyFromAlt = mode == Mode.Globe ? AltStart() : (cam.transform.position - C).magnitude - R;
-        outbound = false; t = 0f; dur = 7.5f; mode = Mode.Flying; HideHud = true;
-        if (orbit != null) { orbit.ResetView(); orbit.enabled = false; }
+        outbound = false; t = 0f; dur = 10f; mode = Mode.Flying; HideHud = true;
+        if (orbit != null) { orbit.ResetView(); orbit.enabled = false; HomePose(out endPos, out endRot); }
     }
 
     public void FlyOut()
     {
         if (mode != Mode.Site) return;
-        homePos = cam.transform.position; homeRot = cam.transform.rotation;
-        outbound = true; t = 0f; dur = 5.5f; mode = Mode.Flying; HideHud = true;
+        endPos = cam.transform.position; endRot = cam.transform.rotation;   // leave from wherever you are
+        outbound = true; t = 0f; dur = 8f; mode = Mode.Flying; HideHud = true;
         if (orbit != null) orbit.enabled = false;
     }
 
-    static float Ease(float x) { return x < 0.5f ? 4f * x * x * x : 1f - Mathf.Pow(-2f * x + 2f, 3f) / 2f; }
+    static float Smooth(float x) { x = Mathf.Clamp01(x); return x * x * x * (x * (6f * x - 15f) + 10f); }
+
+    void Pose(float u)
+    {
+        if (u < TurnEnd)
+        {
+            float e = Smooth(u / TurnEnd);
+            Place(Vector3.Slerp(IdleDir(), Vector3.up, e), AltStart(), 1f - e);
+        }
+        else if (u < DescentEnd)
+        {
+            float e = 0.5f - 0.5f * Mathf.Cos(Mathf.PI * (u - TurnEnd) / (DescentEnd - TurnEnd));
+            Place(Vector3.up, Mathf.Exp(Mathf.Lerp(Mathf.Log(AltStart()), Mathf.Log(Hover), e)), 0f);
+        }
+        else
+        {
+            Place(Vector3.up, Hover, 0f);
+            float e = Smooth((u - DescentEnd) / (1f - DescentEnd));
+            cam.transform.position = Vector3.Lerp(cam.transform.position, endPos, e);
+            cam.transform.rotation = Quaternion.Slerp(cam.transform.rotation, endRot, e);
+        }
+    }
 
     void LateUpdate()
     {
@@ -204,20 +229,7 @@ public class GlobeJourney : MonoBehaviour
         {
             t += Time.deltaTime / dur;
             float k = Mathf.Clamp01(t);
-            float e = Ease(outbound ? 1f - k : k);
-            Vector3 startDir = outbound ? IdleDir() : flyFromDir;
-            float startAlt = outbound ? AltStart() : flyFromAlt;
-            var dir = Vector3.Slerp(startDir, Vector3.up, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(e * 1.25f)));
-            float alt = Mathf.Exp(Mathf.Lerp(Mathf.Log(startAlt), Mathf.Log(Mathf.Max(60f, HomeDistance())), e));
-            Place(dir, alt, 1f - Mathf.SmoothStep(0.35f, 0.85f, e));
-            // ease into the map's own view over the last stretch
-            float land = Mathf.SmoothStep(0.8f, 1f, e);
-            if (land > 0f && orbit != null)
-            {
-                Vector3 hp; Quaternion hr; HomePose(out hp, out hr);
-                cam.transform.position = Vector3.Lerp(cam.transform.position, hp, land);
-                cam.transform.rotation = Quaternion.Slerp(cam.transform.rotation, hr, land);
-            }
+            Pose(outbound ? 1f - k : k);
             if (k >= 1f)
             {
                 if (outbound) mode = Mode.Globe;
@@ -273,6 +285,12 @@ public class GlobeJourney : MonoBehaviour
             ringR.sharedMaterial.SetFloat("_Fade", f);
             ringR.enabled = f > 0.01f;
         }
+        if (nearR != null)
+        {
+            float f = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(3000f, 9000f, alt));
+            nearR.sharedMaterial.SetFloat("_Fade", f);
+            nearR.enabled = f > 0.01f;
+        }
         if (atmoR != null) { atmoR.enabled = alt > 2500f; atmosphereMat.SetFloat("_Fade", space); }
         if (starR != null) starR.enabled = space > 0.6f;
     }
@@ -315,6 +333,15 @@ public class GlobeJourney : MonoBehaviour
                 var r = new Rect(x + 12, y - size.y * 0.5f, size.x, size.y);
                 if (GUI.Button(r, label, st) && site.ready && mode == Mode.Globe) FlyIn();
             }
+        }
+        if (mode == Mode.Flying)
+        {
+            // passing through a layer of haze on the way down (hides the change of imagery detail)
+            float lnA = Mathf.Log(Mathf.Max(1f, alt)), lnH = Mathf.Log(4200f);
+            float haze = 0.82f * Mathf.Exp(-Mathf.Pow((lnA - lnH) / 0.6f, 2f));
+            GUI.color = new Color(0.86f, 0.82f, 0.74f, haze);
+            GUI.DrawTexture(new Rect(0, 0, Screen.width / s, Screen.height / s), Texture2D.whiteTexture);
+            GUI.color = Color.white;
         }
         if (mode == Mode.Flying && !outbound)
         {

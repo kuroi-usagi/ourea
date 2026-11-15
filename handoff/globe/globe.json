@@ -1,4 +1,10 @@
 {
+  "near_bounds_deg": [
+    104.6,
+    9.675,
+    106.6,
+    11.675
+  ],
   "site_lat": 10.675,
   "site_lon": 105.6,
   "context_bounds_deg": [

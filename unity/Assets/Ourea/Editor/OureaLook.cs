@@ -24,6 +24,14 @@ public static class OureaLook
         var basemap = ImportBasemap();
         if (basemap != null) mat.SetTexture("_BaseMap", basemap);
         mat.SetTexture("_NormalMap", MakeNormals(h, n, sizeX, sizeZ, heightScale));
+        // Mekong water is silt-brown (phù sa): the river darker, new flood water lighter, a warm shimmer
+        // at the flood front instead of a blue glow (flood-season photos of Đồng Tháp)
+        mat.SetColor("_WaterColor", new Color(0.10f, 0.085f, 0.05f));
+        mat.SetColor("_FloodColor", new Color(0.26f, 0.155f, 0.07f));
+        mat.SetColor("_FloodGlow", new Color(0.05f, 0.025f, 0.008f));
+        mat.SetColor("_FrontGlow", new Color(0.35f, 0.24f, 0.10f));
+        mat.SetColor("_SkyHorizon", new Color(0.40f, 0.35f, 0.28f));   // muddy water reflects a darker sky
+        mat.SetColor("_SkyZenith", new Color(0.26f, 0.29f, 0.33f));
         EditorUtility.SetDirty(mat);
 
         // 2. Diorama base: earth-coloured walls under the tile edge
@@ -36,24 +44,24 @@ public static class OureaLook
         var sky = new Material(Shader.Find("Skybox/Procedural"));
         sky.SetFloat("_SunSize", 0.035f);
         sky.SetFloat("_AtmosphereThickness", 0.85f);
-        sky.SetColor("_SkyTint", new Color(0.52f, 0.56f, 0.62f));
+        sky.SetColor("_SkyTint", new Color(0.62f, 0.58f, 0.54f));
         sky.SetColor("_GroundColor", new Color(0.64f, 0.70f, 0.77f)); // below the horizon reads as haze
         sky.SetFloat("_Exposure", 1.25f);
         SaveAsset(sky, GenDir + "/Sky.mat");
         RenderSettings.skybox = sky;
         RenderSettings.ambientMode = AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.58f, 0.68f, 0.84f);
-        RenderSettings.ambientEquatorColor = new Color(0.50f, 0.52f, 0.50f);
+        RenderSettings.ambientSkyColor = new Color(0.76f, 0.76f, 0.80f);
+        RenderSettings.ambientEquatorColor = new Color(0.58f, 0.52f, 0.44f);
         RenderSettings.ambientGroundColor = new Color(0.22f, 0.20f, 0.18f);
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared;
-        RenderSettings.fogColor = new Color(0.70f, 0.77f, 0.84f);
+        RenderSettings.fogColor = new Color(0.82f, 0.76f, 0.66f);
         RenderSettings.fogDensity = 0.0006f;   // horizon haze without greying the map
 
         if (sun != null)
         {
-            sun.transform.rotation = Quaternion.Euler(34f, -38f, 0f);
-            sun.color = new Color(1f, 0.92f, 0.80f);
+            sun.transform.rotation = Quaternion.Euler(27f, -52f, 0f);
+            sun.color = new Color(1f, 0.84f, 0.64f);
             sun.intensity = 2.1f;
             sun.shadows = LightShadows.Soft;
             RenderSettings.sun = sun;
@@ -314,6 +322,7 @@ public static class OureaLook
         field.heightTex = hTex; field.coverTex = cTex; field.ground = ground;
         field.unitsPerM = ground.houseUnitsPerM;
         var tm = new Material(Shader.Find("Ourea/Building"));   // same lighting; green, darker where flooded
+        tm.SetFloat("_Palette", 0f);
         tm.SetColor("_Dry", new Color(0.13f, 0.24f, 0.10f));
         tm.SetColor("_Roof", new Color(0.20f, 0.33f, 0.12f));
         tm.SetColor("_Wet", new Color(0.08f, 0.15f, 0.12f));
@@ -359,7 +368,7 @@ public static class OureaLook
     }
 
     // ---------- textures ----------
-    [System.Serializable] class GlobeMeta { public float site_lat, site_lon; public float[] context_bounds_deg; }
+    [System.Serializable] class GlobeMeta { public float site_lat, site_lon; public float[] context_bounds_deg, near_bounds_deg; }
 
     // The globe and the fly-in (Scripts/GlobeJourney.cs, pipeline/make_globe.py)
     static GlobeJourney AddGlobe(OureaViewer app, float sizeX, float sizeZ)
@@ -378,17 +387,27 @@ public static class OureaLook
         SaveAsset(j.globeMat, GenDir + "/Globe.mat");
         j.contextMat = new Material(Shader.Find("Ourea/Globe")); j.contextMat.SetTexture("_MainTex", context);
         j.contextMat.SetVector("_Hole", new Vector4(0f, 0f, sizeX, sizeZ));
-        j.contextMat.SetFloat("_FrameWidth", 2.5f);
+        j.contextMat.SetFloat("_FrameWidth", 0f);
         j.contextMat.SetFloat("_Dim", 0.9f);   // the study area stays the brightest thing on the ground
         j.contextMat.renderQueue = j.globeMat.shader.renderQueue + 1;   // after the Earth, so a faded ring never hides it
         SaveAsset(j.contextMat, GenDir + "/Context.mat");
+        j.groundY = OureaSceneBuilder.EdgeY;
+        var near = ImportImage("globe", "near.jpg", 2048);
+        if (near != null && gm.near_bounds_deg != null && gm.near_bounds_deg.Length == 4)
+        {
+            j.nearTex = near;
+            j.nearBoundsDeg = new Vector4(gm.near_bounds_deg[0], gm.near_bounds_deg[1], gm.near_bounds_deg[2], gm.near_bounds_deg[3]);
+            j.nearMat = new Material(j.contextMat); j.nearMat.SetTexture("_MainTex", near);
+            j.nearMat.renderQueue = j.contextMat.renderQueue + 1;
+            SaveAsset(j.nearMat, GenDir + "/NearGround.mat");
+        }
         j.atmosphereMat = new Material(Shader.Find("Ourea/Atmosphere"));
         SaveAsset(j.atmosphereMat, GenDir + "/Atmosphere.mat");
         j.starMat = new Material(Shader.Find("Ourea/Stars"));
         SaveAsset(j.starMat, GenDir + "/Stars.mat");
         j.skyMat = RenderSettings.skybox;
         j.baseFogDensity = RenderSettings.fogDensity;
-        j.sites.Add(new GlobeJourney.Site { name = "Mekong Delta  ·  Đồng Tháp", lat = gm.site_lat, lon = gm.site_lon, ready = true });
+        j.sites.Add(new GlobeJourney.Site { name = "Đồng Tháp  ·  Mekong Delta", lat = gm.site_lat, lon = gm.site_lon, ready = true });
         j.sites.Add(new GlobeJourney.Site { name = "Ganges–Brahmaputra Delta", note = "next", lat = 22.3f, lon = 89.8f });
         j.sites.Add(new GlobeJourney.Site { name = "Nile Delta", note = "next", lat = 31.0f, lon = 31.2f });
         j.sites.Add(new GlobeJourney.Site { name = "Mississippi River Delta", note = "next", lat = 29.2f, lon = -89.6f });

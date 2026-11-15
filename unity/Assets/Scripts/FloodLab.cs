@@ -44,6 +44,10 @@ public class FloodLab : MonoBehaviour
     bool story;
     float storyT, storyFrom, storyTo;
     const float StoryDelay = 1.6f, StoryRise = 9f;
+    // "as NISAR saw it": the village fly-in plays the real passes, July to October, instead of a
+    // modeled level; houses turn red where new flood water is within ~100 m (Shaders/OureaBuilding.shader)
+    bool observed; float obsT;
+    const float ObsDelay = 2.0f, ObsPlay = 10f;
 
     static readonly List<Rect> uiRects = new List<Rect>();
     public static bool PointerOver(Vector2 guiPoint)
@@ -61,6 +65,26 @@ public class FloodLab : MonoBehaviour
     {
         if (deltaMat == null && viewer != null && viewer.deltaRenderer != null) deltaMat = viewer.deltaRenderer.material;
         float dt = Mathf.Min(Time.deltaTime, 0.05f);
+
+        if (observed && viewer != null && viewer.timeline != null && viewer.passes.Count > 1)
+        {
+            if (dragging) observed = false;
+            else if (obsT < ObsDelay + ObsPlay)
+            {
+                obsT += dt;
+                float play = Mathf.Clamp01((obsT - ObsDelay) / ObsPlay);
+                viewer.timeline.SetPosition(play * play * (3f - 2f * play) * (viewer.passes.Count - 1));
+            }
+        }
+        if (deltaMat != null)
+        {
+            Shader.SetGlobalFloat("_OureaObserved", observed ? 1f : 0f);
+            Shader.SetGlobalTexture("_OureaMaskA", deltaMat.GetTexture("_MaskA"));
+            Shader.SetGlobalTexture("_OureaMaskB", deltaMat.GetTexture("_MaskB"));
+            Shader.SetGlobalTexture("_OureaMaskBase", deltaMat.GetTexture("_MaskBase"));
+            Shader.SetGlobalFloat("_OureaBlend", deltaMat.GetFloat("_Blend"));
+            Shader.SetGlobalVector("_OureaTile", new Vector4(sizeX, sizeZ, 0, 0));
+        }
 
         if (story)
         {
@@ -171,7 +195,7 @@ public class FloodLab : MonoBehaviour
     // ---- for the guided story (Scripts/StoryMode.cs) ----
     [System.NonSerialized] public bool guided;   // the story is running: hide the fly-in button
     public void StartVillageFlood() { StartStory(); }
-    public void Drain() { story = false; target = minM - 0.5f; }
+    public void Drain() { story = false; observed = false; target = minM - 0.5f; }
     public void CloseCard() { if (card != Card.None) Toggle(card); }
     public void OpenPhoto() { if (card != Card.Photo) Toggle(Card.Photo); }
     public void OpenRadar() { if (card != Card.Radar) Toggle(Card.Radar); }
@@ -182,13 +206,16 @@ public class FloodLab : MonoBehaviour
 
     void StartStory()
     {
-        storyTo = MatchLevel();
-        storyFrom = LevelForFraction(0.03f);
         Vector3 spot;
-        if (buildings != null && buildings.BestFloodSpot(storyTo, out spot) && viewer != null && viewer.orbit != null)
+        if (buildings != null && buildings.BestFloodSpot(MatchLevel(), out spot) && viewer != null && viewer.orbit != null)
             viewer.orbit.Focus(spot, 30f, 33f);
-        target = level = storyFrom; velocity = 0f;
-        storyT = 0f; story = true;
+        story = false; target = level = minM - 0.5f; velocity = 0f;   // no modeled water: this is what the radar saw
+        observed = true; obsT = 0f;
+        if (viewer != null && viewer.timeline != null)
+        {
+            if (viewer.timeline.Playing) viewer.timeline.TogglePlay();
+            viewer.timeline.SetPosition(0f);
+        }
         if (card == Card.Photo || card == Card.Radar) Toggle(card);   // plain map while it floods
     }
 
@@ -197,6 +224,7 @@ public class FloodLab : MonoBehaviour
     {
         bool any = level > minM + 0.02f;
         float x0 = 16f + 268f + 12f;
+        if (observed) { DrawObservedCounter(W, x0); return; }
         if (!any)
         {
             if (guided) return;
@@ -221,6 +249,33 @@ public class FloodLab : MonoBehaviour
         }
         GUI.Label(new Rect(x, y + 56, r.width - 36 - 64, 16), (FractionBelow(level) * 100f).ToString("0") + "% of the map under water  ·  MODELED, not a forecast", sSmall);
         if (GUI.Button(new Rect(r.xMax - 70f, r.yMax - 32f, 56f, 22f), "Drain", sBtn)) { story = false; target = minM - 0.5f; }
+    }
+
+    // the counter while the real passes play: date, children near new water, new water area
+    void DrawObservedCounter(float W, float x0)
+    {
+        if (viewer == null || viewer.passes.Count == 0 || viewer.timeline == null) return;
+        float pos = viewer.timeline.Position;
+        int a = Mathf.Clamp(Mathf.FloorToInt(pos), 0, viewer.passes.Count - 1), b = Mathf.Min(a + 1, viewer.passes.Count - 1);
+        float f = pos - a;
+        var pa = viewer.passes[a]; var pb = viewer.passes[b];
+        float kids = Mathf.Lerp(pa.childrenNearWater, pb.childrenNearWater, f);
+        float km2 = Mathf.Lerp(pa.newWaterKm2, pb.newWaterKm2, f);
+        var pn = viewer.passes[Mathf.RoundToInt(pos)];
+        float cw = Mathf.Min(480f, W - x0 - 16f - 120f);
+        var r = new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
+        GUI.Box(r, GUIContent.none, sPanel);
+        Block(r, curScale);
+        float x = r.x + 18f, y = r.y + 12f;
+        System.DateTime d;
+        string date = System.DateTime.TryParse(pn.date, out d) ? d.ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture) : pn.date;
+        GUI.Label(new Rect(x, y, 130, 34), date, sBig);
+        GUI.Label(new Rect(x, y + 34, 130, 16), "NISAR pass", sSmall);
+        float bx = x + 120f, bw = r.xMax - 18f - bx;
+        GUI.Label(new Rect(bx, y, bw, 34), kids.ToString("#,0"), sBigRed);
+        GUI.Label(new Rect(bx, y + 34, bw, 16), "under-5s within 100 m of new flood water", sSmall);
+        GUI.Label(new Rect(x, y + 56, r.width - 36 - 64, 16), "+" + km2.ToString("#,0") + " km² new water since 11 Jul  ·  NISAR, provisional", sSmall);
+        if (GUI.Button(new Rect(r.xMax - 70f, r.yMax - 32f, 56f, 22f), "Clear", sBtn)) observed = false;
     }
 
     // ---------- data ----------
@@ -274,9 +329,9 @@ public class FloodLab : MonoBehaviour
     static readonly Color Water = Lin(58, 140, 200);
     static readonly Color Modeled = OureaTheme.Warn;
     // what the map actually shows (Shaders/OureaWater.shader, OureaFloodPlane.shader, BeaconField)
-    static readonly Color KeyRiver = Lin(52, 78, 92);
-    static readonly Color KeyFlood = Lin(118, 172, 222);
-    static readonly Color KeySheet = Lin(64, 112, 130);
+    static readonly Color KeyRiver = Lin(70, 58, 40);
+    static readonly Color KeyFlood = Lin(176, 132, 84);
+    static readonly Color KeySheet = Lin(150, 110, 70);
     static readonly Color KeyWetBuilding = Lin(219, 66, 46);
     static readonly Color KeyTop1 = Lin(219, 64, 52);
     static readonly Color KeyTop10 = Lin(255, 170, 60);
@@ -439,6 +494,7 @@ public class FloodLab : MonoBehaviour
         if (e.type == EventType.MouseDown && hit.Contains(e.mousePosition)) { dragging = true; e.Use(); }
         if (dragging && (e.type == EventType.MouseDrag || e.type == EventType.MouseDown || e.type == EventType.MouseUp))
         {
+            observed = false;   // the slider is the modeled "what if"
             target = Mathf.Lerp(lo, hi, Mathf.Clamp01(Mathf.InverseLerp(track.yMax, track.y, e.mousePosition.y)));
             if (e.type == EventType.MouseUp) dragging = false;
             e.Use();
@@ -507,8 +563,8 @@ public class FloodLab : MonoBehaviour
         var list = new List<Row>();
         foreach (var b in live.baked)
             if (b.pass == date)
-                list.Add(new Row { rank = b.rank, name = string.IsNullOrEmpty(b.name_en) ? b.name : b.name_en, score = b.score,
-                                   why = b.reasons + " · childcare gap not yet known", at = new Vector3(b.u * sizeX, 0f, (1f - b.v) * sizeZ) });
+                list.Add(new Row { rank = b.rank, name = b.name, score = b.score,
+                                   why = (string.IsNullOrEmpty(b.name_en) ? "" : b.name_en + " · ") + b.reasons + " · childcare gap not yet known", at = new Vector3(b.u * sizeX, 0f, (1f - b.v) * sizeZ) });
         if (list.Count == 0)
         {
             GUI.Label(new Rect(x, y, w, 46), "No flood water yet on the " + date + " pass: it is the baseline. Move the timeline to a later pass.", sBody);

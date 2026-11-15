@@ -94,8 +94,9 @@ public class BuildingField : MonoBehaviour
                     float hx = cellX * side * 0.5f * aspect, hz = cellZ * side * 0.5f / aspect;
                     float y1 = y0 + 0.15f + Mathf.Max(0.1f, hm * houseUnitsPerM * (0.7f + 0.6f * Rand(ref seed)));
                     Box(verts, norms, tris, new Vector3(u * sizeX + ox, 0, v * sizeZ + oz), hx, hz, y0, y1);
+                    float pick = Rand(ref seed);   // which roof and wall colour (Shaders/OureaBuilding.shader)
+                    while (uvs.Count < verts.Count) uvs.Add(new Vector2(y0 + 0.15f, pick));
                 }
-                while (uvs.Count < verts.Count) uvs.Add(new Vector2(y0 + 0.15f, 0f));
                 cellList.Add(new Vector4(u * sizeX, v * sizeZ, g, frac));
                 blocks++;
                 if (verts.Count > 200000) flush();

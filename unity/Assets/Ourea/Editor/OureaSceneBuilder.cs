@@ -140,9 +140,17 @@ public static class OureaSceneBuilder
     }
 
     // ---------- mesh ----------
+    public static float EdgeY;   // typical ground height along the tile's rim (world units), for the ground around it
+
     static Mesh BuildMesh(float[] h, int n, float sizeX, float sizeZ, float heightScale)
     {
         int R = MeshRes;
+        // the rim eases down to its typical height, so the tile meets the ground around it without a step
+        var rim = new System.Collections.Generic.List<float>();
+        for (int k = 0; k < n; k++) { rim.Add(h[k]); rim.Add(h[(n - 1) * n + k]); rim.Add(h[k * n]); rim.Add(h[k * n + n - 1]); }
+        rim.Sort();
+        EdgeY = rim[rim.Count / 2] * heightScale;
+        const float Margin = 0.025f;
         var verts = new Vector3[R * R];
         var uvs = new Vector2[R * R];
         for (int r = 0; r < R; r++)
@@ -154,7 +162,9 @@ public static class OureaSceneBuilder
                 float xr = c / (float)(R - 1);
                 int srcCol = Mathf.RoundToInt(xr * (n - 1));
                 int i = r * R + c;
-                verts[i] = new Vector3(xr * sizeX, h[srcRow * n + srcCol] * heightScale, zr * sizeZ);
+                float edge = Mathf.Min(Mathf.Min(xr, 1f - xr), Mathf.Min(zr, 1f - zr));
+                float y = Mathf.Lerp(EdgeY, h[srcRow * n + srcCol] * heightScale, Mathf.SmoothStep(0f, 1f, edge / Margin));
+                verts[i] = new Vector3(xr * sizeX, y, zr * sizeZ);
                 uvs[i] = new Vector2(xr, zr);
             }
         }

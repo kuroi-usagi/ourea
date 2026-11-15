@@ -6,9 +6,9 @@ Shader "Ourea/FloodPlane"
 {
     Properties
     {
-        _Shallow ("Shallow water", Color) = (0.36, 0.52, 0.56, 1)
-        _Deep ("Deep water", Color) = (0.06, 0.18, 0.28, 1)
-        _SkyHorizon ("Sky horizon", Color) = (0.62, 0.70, 0.78, 1)
+        _Shallow ("Shallow water", Color) = (0.62, 0.46, 0.28, 1)
+        _Deep ("Deep water", Color) = (0.30, 0.19, 0.10, 1)
+        _SkyHorizon ("Sky horizon", Color) = (0.80, 0.72, 0.60, 1)
         _SkyZenith ("Sky zenith", Color) = (0.30, 0.44, 0.62, 1)
         _Alpha ("Opacity", Range(0, 1)) = 0.94
         _Wobble ("Wobble (set by FloodLab from the level's speed)", Range(0, 1)) = 0

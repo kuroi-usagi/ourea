@@ -26,6 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Blend: 0.072000004
+    - _Palette: 0
     m_Colors:
     - _Dry: {r: 0.13, g: 0.24, b: 0.1, a: 1}
     - _Roof: {r: 0.2, g: 0.33, b: 0.12, a: 1}

@@ -125,8 +125,10 @@ Shader "Ourea/Water"
                 half3 nTex = SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv).rgb * 2 - 1;
                 half3 landN = normalize(nTex.y > 0.01 ? nTex : i.normalWS);
 
-                half3 c = Mix(i.uv);
-                half baseWater = Classes(SAMPLE_TEXTURE2D(_MaskBase, sampler_MaskA, i.uv).r).x;
+                // the data fades out over the tile's rim, so it meets the ground around it as plain land
+                half rimFade = smoothstep(0.0, 0.03, min(min(i.uv.x, 1 - i.uv.x), min(i.uv.y, 1 - i.uv.y)));
+                half3 c = Mix(i.uv) * rimFade;
+                half baseWater = Classes(SAMPLE_TEXTURE2D(_MaskBase, sampler_MaskA, i.uv).r).x * rimFade;
                 half flood = saturate(c.x - baseWater);
 
                 // flood front: where the water amount changes over a few texels

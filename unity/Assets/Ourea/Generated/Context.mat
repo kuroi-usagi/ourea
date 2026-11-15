@@ -31,7 +31,7 @@ Material:
     m_Floats:
     - _Dim: 0.9
     - _Fade: 1
-    - _FrameWidth: 2.5
+    - _FrameWidth: 0
     m_Colors:
     - _Frame: {r: 0.36999997, g: 0.83, b: 0.88, a: 1}
     - _Hole: {r: 0, g: 0, b: 657.40796, a: 609.4848}

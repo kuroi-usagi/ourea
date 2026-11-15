@@ -122,8 +122,8 @@ public class StoryMode : MonoBehaviour
                        N(p[last].newWaterKm2) + " km² that was dry land in July. About " + N(p[last].childrenNearWater) +
                        " children under five live within 100 m of that new water, and " + schoolsNear + " of " + schoolsInTile + " schools.";
             case 3:
-                return "This is what that water level means for one town. Houses turn red when the ground under them goes below the water. " +
-                       "This part is modeled from the ground height, not a forecast.";
+                return "This is one town as the radar saw it, from July to October. A house turns red when new flood water comes within 100 m of it: " +
+                       "the same rule behind the " + N(p[last].childrenNearWater) + " children I told you about.";
             case 4:
             {
                 var f = First();
@@ -241,7 +241,7 @@ public class StoryMode : MonoBehaviour
     {
         var f = First();
         if (f == null) return;
-        string name = string.IsNullOrEmpty(f.name_en) ? f.name : f.name_en;
+        string name = f.name;   // Vietnamese first, as people there write it
         var cam = Camera.main;
         if (cam != null)
         {

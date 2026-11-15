@@ -8,6 +8,8 @@ Fetches EOX "Sentinel-2 cloudless" web-mercator tiles (the same source as make_b
   handoff/globe/earth.jpg     4096x2048, whole Earth, plate carree (lon -180..180, lat 90..-90)
   handoff/globe/context.jpg   2048x2048, plate carree window of +-WINDOW degrees around the site,
                               the ground you see around the delta tile while flying in
+  handoff/globe/near.jpg      2048x2048, +-NEAR degrees at zoom 12 (~110 m pixels): the ground right
+                              around the tile, so its edge doesn't jump from sharp to blurry
   handoff/globe/globe.json    site, window bounds, attribution
 Licence: CC BY-NC-SA 4.0 (attribution shown in the app's Key card).
 """
@@ -23,6 +25,7 @@ OUT = ROOT / "handoff" / "globe"
 ATTRIB = f"Sentinel-2 cloudless {YEAR} by EOX IT Services GmbH (s2maps.eu), contains modified Copernicus Sentinel data {YEAR}"
 SITE = (10.675, 105.6)   # centre of the delta tile (handoff/terrain/meta.json bounds_deg)
 WINDOW = 4.0             # degrees each side for the context ground
+NEAR = 1.0               # degrees each side for the sharper ground next to the tile
 
 
 def fetch(args):
@@ -87,7 +90,21 @@ def main():
     LON, LAT = np.meshgrid(lon, lat)
     Image.fromarray(resample(win, z, tx0, ty0, LAT, LON)).save(OUT / "context.jpg", quality=88)
 
+    # near ring at zoom 12
+    z = 12
+    la0n, la1n = SITE[0] - NEAR, SITE[0] + NEAR
+    lo0n, lo1n = SITE[1] - NEAR, SITE[1] + NEAR
+    xa, ya = merc(np.array([la1n, la0n]), np.array([lo0n, lo1n]), z)
+    tx0, tx1 = int(xa[0] // 256), int(xa[1] // 256)
+    ty0, ty1 = int(ya[0] // 256), int(ya[1] // 256)
+    win = mosaic(z, tx0, tx1, ty0, ty1)
+    lon = np.linspace(lo0n, lo1n, N)
+    lat = np.linspace(la1n, la0n, N)
+    LON, LAT = np.meshgrid(lon, lat)
+    Image.fromarray(resample(win, z, tx0, ty0, LAT, LON)).save(OUT / "near.jpg", quality=88)
+
     (OUT / "globe.json").write_text(json.dumps({
+        "near_bounds_deg": [lo0n, la0n, lo1n, la1n],
         "site_lat": SITE[0], "site_lon": SITE[1],
         "context_bounds_deg": [lo0, la0, lo1, la1],
         "earth": "plate carree, lon -180..180 left to right, lat 90..-90 top to bottom",
