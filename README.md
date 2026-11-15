@@ -2,7 +2,7 @@
 
 **NASA Space Apps Challenge 2026 · Dancing with the SARs · Team Ourea (NYC)**
 
-Every flood season, children in Vietnam's Mekong Delta drown in the water that rises around their homes, and the flood arrives under monsoon clouds that blind camera satellites. **Ourea turns each NISAR L-band radar pass into a plain answer for the people who keep children safe: where is flood water now close to homes, schools and young children, and which communes should we check first?**
+Every flood season, children in Vietnam's Mekong Delta drown in the water that rises around their homes (nearly 2,000 children die from drowning in Vietnam every year, Ministry of Health, Jul 2025), and the flood arrives under monsoon clouds that blind camera satellites. **Ourea turns each NISAR L-band radar pass into a plain answer for the people who keep children safe: where is flood water now close to homes, schools and young children, and which communes should we check first?**
 
 ![Ourea: the upper Mekong Delta in 3D with NISAR flood water and check-first beams](docs/readme/hero.webp)
 
@@ -62,6 +62,8 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
 ## What's real, what's modeled
 
 Every number on screen traces to a file in `handoff/`. The full list, including what is modeled (the "what if" water-level slider) and what is fictional (the story guide), is in [`docs/SOURCES.md`](docs/SOURCES.md).
+
+Science notes, drivers and fact-check: [docs/SCIENCE.md](docs/SCIENCE.md).
 
 **Limits we state openly:** NISAR data is provisional. The water rule is a threshold. Rice fields flooded on purpose are not yet separated from river flood, because that rule needs passes 12 days apart and we have processed three passes six weeks apart. Canals narrower than ~30 m are missed. OSM school coverage is incomplete, and WorldPop counts are modeled. 2026 was a low-flood year. Ourea targets protection that already exists (flood-season childcare points, swim classes); it does not see children or prevent drownings by itself.
 

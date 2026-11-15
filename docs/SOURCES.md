@@ -9,7 +9,7 @@
 ## Unity app: what is real, derived or modeled
 | On screen | Status | Source |
 |---|---|---|
-| Water on each pass (timeline, map colour, "+1,150 km²" new water) | REAL, derived | NISAR L2 GCOV, track 047 frame 083, 11 Jul / 28 Aug / 3 Oct 2026 (provisional), via ASF: https://search.asf.alaska.edu/ — water rule is a stand-in (HH < −13 dB, Otsu), see `handoff/layers/nisar.json` |
+| Water on each pass (timeline, map colour, "+1,335 km²" new water (Mitch's number, Jul 11 → Oct 3)) | REAL, derived | NISAR L2 GCOV, track 047 frame 083, 11 Jul / 28 Aug / 3 Oct 2026 (provisional), via ASF: https://search.asf.alaska.edu/ — water rule is a stand-in (HH < −13 dB, Otsu), see `handoff/layers/nisar.json` |
 | "NISAR saw 55% of the tile as water" | REAL, derived | `water_pct` in `handoff/layers/nisar.json` (same masks) |
 | Radar view (dark water, bright fields) | REAL | NISAR HV γ⁰ backscatter, −25…−5 dB mapped to 0…255 (`handoff/layers/backscatter/`) |
 | Terrain shape in the 3D view | REAL elevation | Copernicus GLO-30 DEM (surface model: includes trees and buildings), `handoff/terrain/heightmap.r16`: https://spacedata.copernicus.eu/collections/copernicus-digital-elevation-model |
