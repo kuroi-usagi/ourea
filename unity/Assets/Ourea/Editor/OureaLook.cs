@@ -115,6 +115,37 @@ public static class OureaLook
     [System.Serializable] class NisarWrap { public NisarPass[] items; }
     [System.Serializable] class OpticalPass { public string pass; public string image_date; public float cloud_pct; }
     [System.Serializable] class OpticalWrap { public OpticalPass[] items; }
+    [System.Serializable] class Hotspot { public float u; public float v; }
+    [System.Serializable] class CommuneScore
+    {
+        public string pass, name, name_en, province, confidence;
+        public int rank, under5_in_tile, under5_near_flood_water;
+        public float score;
+        public string[] reasons;
+        public Hotspot[] hotspots;
+    }
+    [System.Serializable] class CommuneWrap { public CommuneScore[] items; }
+
+    // Mitch's commune scores: top 10 per pass with any score, for the Communes tab until the API has a pass
+    static DataLoader.BakedCommune[] BakedCommunes()
+    {
+        var path = Path.Combine(Handoff, "findings", "commune_scores.json");
+        if (!File.Exists(path)) return new DataLoader.BakedCommune[0];
+        var all = JsonUtility.FromJson<CommuneWrap>("{\"items\":" + File.ReadAllText(path) + "}").items;
+        var outList = new System.Collections.Generic.List<DataLoader.BakedCommune>();
+        foreach (var c in all)
+        {
+            if (c.rank > 10 || c.score <= 0f) continue;
+            var hs = c.hotspots != null && c.hotspots.Length > 0 ? c.hotspots[0] : new Hotspot { u = 0.5f, v = 0.5f };
+            outList.Add(new DataLoader.BakedCommune {
+                pass = c.pass, rank = c.rank, name = c.name, name_en = c.name_en, province = c.province,
+                confidence = c.confidence, score = c.score, under5 = c.under5_in_tile, under5Near = c.under5_near_flood_water,
+                reasons = c.reasons != null && c.reasons.Length > 0 ? c.reasons[0] : "", u = hs.u, v = hs.v });
+        }
+        outList.Sort((a, b) => a.pass == b.pass ? a.rank.CompareTo(b.rank) : string.CompareOrdinal(a.pass, b.pass));
+        Debug.Log("Ourea: " + outList.Count + " commune rows from commune_scores.json");
+        return outList.ToArray();
+    }
 
     static void AddFloodLab(GameObject delta, float[] h, int n, float sizeX, float sizeZ, float heightScale, OureaViewer app)
     {
@@ -124,6 +155,7 @@ public static class OureaLook
         var tm = JsonUtility.FromJson<TerrainMeta>(File.ReadAllText(Path.Combine(Handoff, "terrain", "meta.json")));
         lab.boundsM = tm.bounds_m; lab.sizeX = sizeX; lab.sizeZ = sizeZ;
         lab.live = lab.gameObject.AddComponent<DataLoader>();   // Asher's Cloudflare API (k4)
+        lab.live.baked = BakedCommunes();
         lab.groundSource = OureaSceneBuilder.GroundSource;
         lab.heightScale = heightScale;
         lab.tileAreaKm2 = sizeX * sizeZ * 100f * 100f / 1e6f;   // 1 unit = 100 m

@@ -388,31 +388,62 @@ public class FloodLab : MonoBehaviour
         var tabs = new Rect(p.x + 14, p.y + 12, p.width - 64, 30);
         float tw = tabs.width / 2f;
         if (GUI.Button(new Rect(tabs.x, tabs.y, tw - 3, tabs.height), "Hamlets", showCommunes ? sBtn : sBtnOn)) showCommunes = false;
-        if (GUI.Button(new Rect(tabs.x + tw + 3, tabs.y, tw - 3, tabs.height), "Communes · live", showCommunes ? sBtnOn : sBtn)) showCommunes = true;
+        if (GUI.Button(new Rect(tabs.x + tw + 3, tabs.y, tw - 3, tabs.height), "Communes", showCommunes ? sBtnOn : sBtn)) showCommunes = true;
         var body = new Rect(p.x, tabs.yMax + 2, p.width, p.yMax - tabs.yMax - 2);
         if (!showCommunes) { if (viewer != null) viewer.DrawRanking(body); return; }
 
         float x = body.x + 18, y = body.y + 12, w = body.width - 36;
-        GUI.Label(new Rect(x, y, w, 14), "LIVE  ·  OUREA API", sEyebrow); y += 20;
-        if (live == null) { GUI.Label(new Rect(x, y, w, 40), "No API connection in this build.", sBody); return; }
-        GUI.Label(new Rect(x, y, w, 46), live.message, sSmall); y += 46;
-        if (live.state != DataLoader.State.Live || live.top.Length == 0) return;
+        if (live == null) { GUI.Label(new Rect(x, y, w, 40), "No commune data in this build.", sBody); return; }
+        if (live.state == DataLoader.State.Live && live.top.Length > 0)
+        {
+            GUI.Label(new Rect(x, y, w, 14), "LIVE  ·  OUREA API", sEyebrow); y += 20;
+            GUI.Label(new Rect(x, y, w, 30), live.message, sSmall); y += 32;
+            var rows = new Row[live.top.Length];
+            for (int i = 0; i < rows.Length; i++)
+            {
+                var cm = live.top[i];
+                string why = cm.reasons ?? "";
+                if (cm.gap_status != null && cm.gap_status != "known" && !why.Contains("childcare gap")) why += " · childcare gap not yet known";
+                rows[i] = new Row { rank = cm.rank, name = string.IsNullOrEmpty(cm.name_en) ? cm.name : cm.name_en, score = cm.score, why = why,
+                                    at = boundsM != null ? DataLoader.ToWorld(cm.lon, cm.lat, boundsM, sizeX, sizeZ) : Vector3.zero };
+            }
+            DrawCommuneRows(body, y, rows);
+            return;
+        }
 
+        // no pass in the API yet: Mitch's commune scores for the pass on the timeline
+        string date = viewer != null && viewer.passes.Count > viewer.currentPass ? viewer.passes[viewer.currentPass].date : "";
+        GUI.Label(new Rect(x, y, w, 14), date + " PASS  ·  PROVISIONAL", sEyebrow); y += 20;
+        GUI.Label(new Rect(x, y, w, 30), live.message, sSmall); y += 32;
+        var list = new List<Row>();
+        foreach (var b in live.baked)
+            if (b.pass == date)
+                list.Add(new Row { rank = b.rank, name = string.IsNullOrEmpty(b.name_en) ? b.name : b.name_en, score = b.score,
+                                   why = b.reasons + " · childcare gap not yet known", at = new Vector3(b.u * sizeX, 0f, (1f - b.v) * sizeZ) });
+        if (list.Count == 0)
+        {
+            GUI.Label(new Rect(x, y, w, 46), "No flood water yet on the " + date + " pass: it is the baseline. Move the timeline to a later pass.", sBody);
+            return;
+        }
+        DrawCommuneRows(body, y, list.ToArray());
+    }
+
+    struct Row { public int rank; public string name, why; public float score; public Vector3 at; }
+
+    void DrawCommuneRows(Rect body, float y, Row[] rows)
+    {
         var view = new Rect(body.x + 8, y, body.width - 16, body.yMax - y - 8);
         const float rowH = 64f;
-        communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, live.top.Length * rowH), false, false, GUIStyle.none, GUIStyle.none);
-        for (int i = 0; i < live.top.Length; i++)
+        communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, rows.Length * rowH), false, false, GUIStyle.none, GUIStyle.none);
+        for (int i = 0; i < rows.Length; i++)
         {
-            var cm = live.top[i];
+            var cm = rows[i];
             var row = new Rect(0, i * rowH, view.width - 4, rowH - 4);
-            if (GUI.Button(row, GUIContent.none, sDock) && viewer != null && viewer.orbit != null && boundsM != null)
-                viewer.orbit.Focus(DataLoader.ToWorld(cm.lon, cm.lat, boundsM, sizeX, sizeZ), 120f);
-            string title = cm.rank + ".  " + (string.IsNullOrEmpty(cm.name_en) ? cm.name : cm.name_en);
-            GUI.Label(new Rect(row.x + 10, row.y + 6, row.width - 70, 18), "<b>" + title + "</b>", sBody);
+            if (GUI.Button(row, GUIContent.none, sDock) && viewer != null && viewer.orbit != null)
+                viewer.orbit.Focus(cm.at, 120f);
+            GUI.Label(new Rect(row.x + 10, row.y + 6, row.width - 70, 18), "<b>" + cm.rank + ".  " + cm.name + "</b>", sBody);
             GUI.Label(new Rect(row.xMax - 64, row.y + 6, 56, 18), "<b>" + cm.score.ToString("0") + "</b>", sBody);
-            string why = cm.reasons ?? "";
-            if (cm.gap_status != null && cm.gap_status != "known" && !why.Contains("childcare gap")) why += " · childcare gap not yet known";
-            GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), why, sSmall);
+            GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), cm.why, sSmall);
         }
         GUI.EndScrollView();
     }

@@ -24,6 +24,16 @@ public class DataLoader : MonoBehaviour
     [Serializable] class Pass { public string id; public string date; public string status; }
     [Serializable] class PassList { public Pass[] items; }
 
+    // Mitch's commune scores (handoff/findings/commune_scores.json), top 10 per pass, baked in by
+    // Editor/OureaLook.cs. Shown until the API has a pass; u,v = the commune's top hotspot (v from north).
+    [Serializable] public class BakedCommune
+    {
+        public string pass, name, name_en, province, confidence, reasons;
+        public int rank, under5, under5Near;
+        public float score, u, v;
+    }
+    public BakedCommune[] baked = new BakedCommune[0];
+
     public enum State { Loading, Waiting, Live, Offline }
     public State state = State.Loading;
     public string asOf = "", source = "";
@@ -53,7 +63,7 @@ public class DataLoader : MonoBehaviour
             if (passes == null || passes.items == null || passes.items.Length == 0)
             {
                 state = State.Waiting;
-                message = "Ourea API is online. No NISAR pass imported yet, so this shows the hamlet scores built into the app.";
+                message = "Live API has no NISAR pass yet, so these are Mitch's commune scores built into the app.";
                 yield break;
             }
         }
@@ -61,7 +71,7 @@ public class DataLoader : MonoBehaviour
         {
             req.timeout = 15;
             yield return req.SendWebRequest();
-            if (req.responseCode == 404) { state = State.Waiting; message = "Ourea API is online. Scores appear once a pass is imported."; yield break; }
+            if (req.responseCode == 404) { state = State.Waiting; message = "Live API has no NISAR pass yet, so these are Mitch's commune scores built into the app."; yield break; }
             if (req.result != UnityWebRequest.Result.Success) { Offline(); yield break; }
             var r = JsonUtility.FromJson<TopResponse>(req.downloadHandler.text);
             top = r != null && r.communes != null ? r.communes : new Commune[0];
@@ -75,7 +85,7 @@ public class DataLoader : MonoBehaviour
     void Offline()
     {
         state = State.Offline;
-        message = "Can't reach the Ourea API right now. Showing the hamlet scores built into the app.";
+        message = "Can't reach the live API right now, so these are Mitch's commune scores built into the app.";
     }
 
     // Commune centre in world units, for flying the camera to it (tile on the UTM 48N handoff grid).
