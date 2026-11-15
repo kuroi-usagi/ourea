@@ -24,6 +24,7 @@ public class OureaViewer : MonoBehaviour
         public float u;
         public float v;
         public Transform pin;
+        [NonSerialized] public float scale;
     }
 
     [Serializable] public class Score
@@ -134,8 +135,20 @@ public class OureaViewer : MonoBehaviour
             var r = p.pin.GetComponent<Renderer>();
             if (r != null) r.SetPropertyBlock(mpb);
             var baseScale = p.type == "school" ? 2.2f : (hasRank && rank <= 10 ? 2.4f : 1.8f);   // ~200 m: reads as a marker, even zoomed in
-            p.pin.localScale = Vector3.one * baseScale * size;
+            p.scale = baseScale * size;
+            p.pin.localScale = Vector3.one * p.scale * PinShrink();
         }
+    }
+
+    // Pins are sized to read from the whole-map view; close in they'd be the size of a village,
+    // so they shrink with the camera distance.
+    float PinShrink() { return orbit != null ? Mathf.Clamp(orbit.distance / 260f, 0.2f, 1f) : 1f; }
+
+    void LateUpdate()
+    {
+        float f = PinShrink();
+        foreach (var p in places)
+            if (p.pin != null && p.scale > 0f) p.pin.localScale = Vector3.one * p.scale * f;
     }
 
     // ---------------- UI ----------------

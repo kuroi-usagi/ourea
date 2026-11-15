@@ -16,6 +16,7 @@ public class BuildingField : MonoBehaviour
     public float groundScale;       // world units for the whole ground range
     public float minM, maxM;        // ground range (m)
     public float metersToUnitsY;    // vertical exaggeration: world units per metre
+    public float houseUnitsPerM = 0.08f;   // building heights get less exaggeration than the ground
 
     // for the readout: ground elevation under each built-up cell, sorted, with built-up area (ha)
     [System.NonSerialized] public float[] builtGroundM;
@@ -75,11 +76,25 @@ public class BuildingField : MonoBehaviour
                 float u = (c + 0.5f) / w, v = (r + 0.5f) / h;
                 float g = GroundM(u, v);
                 cells.Add(new Vector2(g, frac));   // 1 cell = 1 ha
-                float side = Mathf.Clamp(Mathf.Sqrt(frac), 0.15f, 0.9f);
-                float hx = cellX * side * 0.5f, hz = cellZ * side * 0.5f;
                 float y0 = (g - minM) / Mathf.Max(0.01f, maxM - minM) * groundScale - 0.15f;
-                float y1 = y0 + 0.15f + hm * metersToUnitsY;
-                Box(verts, norms, tris, new Vector3(u * sizeX, 0, v * sizeZ), hx, hz, y0, y1);
+                // a few small houses per cell (more where more of it is built up), on a jittered 3x3
+                // grid, so a village reads as houses rather than one tower per 100 m cell
+                int houses = 1 + (frac > 0.2f ? 1 : 0) + (frac > 0.4f ? 1 : 0) + (frac > 0.65f ? 1 : 0);
+                uint seed = (uint)(i * 2654435761u);
+                int slots = 0;
+                for (int k = 0; k < houses; k++)
+                {
+                    int slot;
+                    do { slot = (int)(Rand(ref seed) * 9f) % 9; } while ((slots & (1 << slot)) != 0);
+                    slots |= 1 << slot;
+                    float ox = ((slot % 3) - 1 + (Rand(ref seed) - 0.5f) * 0.35f) * cellX / 3f;
+                    float oz = ((slot / 3) - 1 + (Rand(ref seed) - 0.5f) * 0.35f) * cellZ / 3f;
+                    float side = Mathf.Lerp(0.22f, 0.31f, frac) * (0.8f + 0.4f * Rand(ref seed));
+                    float aspect = 0.7f + 0.6f * Rand(ref seed);
+                    float hx = cellX * side * 0.5f * aspect, hz = cellZ * side * 0.5f / aspect;
+                    float y1 = y0 + 0.15f + Mathf.Max(0.1f, hm * houseUnitsPerM * (0.7f + 0.6f * Rand(ref seed)));
+                    Box(verts, norms, tris, new Vector3(u * sizeX + ox, 0, v * sizeZ + oz), hx, hz, y0, y1);
+                }
                 while (uvs.Count < verts.Count) uvs.Add(new Vector2(y0 + 0.15f, 0f));
                 cellList.Add(new Vector4(u * sizeX, v * sizeZ, g, frac));
                 blocks++;
@@ -143,6 +158,8 @@ public class BuildingField : MonoBehaviour
         Quad(v, n, t, Up(e, y0), Up(e, y1), Up(a, y1), Up(a, y0), Vector3.left);
         Quad(v, n, t, Up(a, y1), Up(e, y1), Up(d, y1), Up(b, y1), Vector3.up);
     }
+
+    static float Rand(ref uint s) { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (s & 0xFFFFFF) / 16777216f; }
 
     static Vector3 Up(Vector3 p, float y) { return new Vector3(p.x, y, p.z); }
 

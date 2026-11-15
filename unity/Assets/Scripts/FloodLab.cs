@@ -174,7 +174,7 @@ public class FloodLab : MonoBehaviour
         storyFrom = LevelForFraction(0.03f);
         Vector3 spot;
         if (buildings != null && buildings.BestFloodSpot(storyTo, out spot) && viewer != null && viewer.orbit != null)
-            viewer.orbit.Focus(spot, 42f, 30f);
+            viewer.orbit.Focus(spot, 30f, 33f);
         target = level = storyFrom; velocity = 0f;
         storyT = 0f; story = true;
         if (card == Card.Photo || card == Card.Radar) Toggle(card);   // plain map while it floods

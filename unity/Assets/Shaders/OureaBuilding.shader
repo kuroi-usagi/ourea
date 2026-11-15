@@ -6,6 +6,7 @@ Shader "Ourea/Building"
     Properties
     {
         _Dry ("Dry", Color) = (0.88, 0.85, 0.80, 1)
+        _Roof ("Dry roof", Color) = (0.62, 0.66, 0.70, 1)
         _Wet ("Flooded", Color) = (0.86, 0.26, 0.18, 1)
         _Blend ("Units of water for the full colour change", Float) = 0.6
     }
@@ -24,7 +25,7 @@ Shader "Ourea/Building"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             CBUFFER_START(UnityPerMaterial)
-                half4 _Dry, _Wet;
+                half4 _Dry, _Roof, _Wet;
                 float _Blend;
             CBUFFER_END
             float _OureaFloodY;   // global, world units; very low when no water is modeled
@@ -43,8 +44,9 @@ Shader "Ourea/Building"
             half4 frag(V i) : SV_Target
             {
                 half wet = saturate((_OureaFloodY - i.baseY) / max(_Blend, 1e-3));
-                half3 albedo = lerp(_Dry.rgb, _Wet.rgb, wet);
                 float3 n = normalize(i.normalWS);
+                half3 dry = n.y > 0.5 ? _Roof.rgb : _Dry.rgb;   // tin roofs, pale walls
+                half3 albedo = lerp(dry, _Wet.rgb, wet);
                 Light sun = GetMainLight(TransformWorldToShadowCoord(i.positionWS));
                 half ndl = saturate(dot(n, sun.direction));
                 half3 col = albedo * (SampleSH(n) + sun.color * ndl * sun.shadowAttenuation);
