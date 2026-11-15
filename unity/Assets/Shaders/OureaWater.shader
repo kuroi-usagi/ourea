@@ -24,9 +24,6 @@ Shader "Ourea/Water"
         _SkyZenith ("Sky zenith", Color) = (0.22, 0.34, 0.52, 1)
         _Ripple ("Ripple strength", Range(0, 1)) = 0.5
         _GlowAmount ("Data glow amount", Range(0, 1)) = 1
-        _FloodLift ("Flood water brightness", Range(0.5, 3)) = 1
-        _FloodEdge ("Flood edge line", Color) = (1, 0.85, 0.55, 1)
-        _FloodEdgeAmount ("Flood edge line strength", Range(0, 1)) = 0
         _RadarTex ("NISAR HV backscatter (current pass)", 2D) = "black" {}
         _Radar ("Radar view", Range(0, 1)) = 0
         _Sweep ("Radar sweep (0 = none, 1 = whole tile)", Range(0, 1)) = 0
@@ -63,8 +60,7 @@ Shader "Ourea/Water"
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float _Blend, _MaskTexel;
-                half _LandGain, _Ripple, _GlowAmount, _Radar, _Sweep, _Compare, _WipeX, _FloodLift, _FloodEdgeAmount;
-                half4 _FloodEdge;
+                half _LandGain, _Ripple, _GlowAmount, _Radar, _Sweep, _Compare, _WipeX;
                 half4 _WaterColor, _FloodColor, _FloodGlow, _FrontGlow, _RiceColor, _NoDataColor, _SkyHorizon, _SkyZenith;
             CBUFFER_END
 
@@ -164,8 +160,8 @@ Shader "Ourea/Water"
                 half spec = pow(saturate(dot(wN, H)), 380) * 6 * shadow;
                 half3 body = lerp(_WaterColor.rgb, land * 0.55 + _WaterColor.rgb * 0.45, baseWater * 0.5);
                 body = lerp(body, _FloodColor.rgb, flood);
-                half3 water = body * (ambient * 0.6 + sun.color * 0.35) * lerp(1.0, _FloodLift, flood);
-                water = lerp(water, sky, saturate(fres * 0.55 + 0.18)) + sun.color * spec;   // always a little sky in it: reads as water, not mud
+                half3 water = body * (ambient * 0.6 + sun.color * 0.35) ;
+                water = lerp(water, sky, fres * 0.55) + sun.color * spec;
 
                 // data glow: new water breathes, the front shimmers (HDR so Bloom picks it up)
                 half pulse = 0.85 + 0.15 * sin(t * 1.6);   // slow and gentle
@@ -174,12 +170,6 @@ Shader "Ourea/Water"
                 water += glow * _GlowAmount;
 
                 col = lerp(col, water, c.x);
-                // a thin bright line along the edge of new flood water, so it reads at a glance
-                float o1 = _MaskTexel * 1.3;
-                half f1 = saturate(Mix(i.uv + float2(-o1, 0)).x - baseWater), f2 = saturate(Mix(i.uv + float2(o1, 0)).x - baseWater);
-                half f3 = saturate(Mix(i.uv + float2(0, -o1)).x - baseWater), f4 = saturate(Mix(i.uv + float2(0, o1)).x - baseWater);
-                half edgeLine = saturate((abs(f2 - f1) + abs(f4 - f3)) * 1.5) * rimFade;
-                col = lerp(col, _FloodEdge.rgb * (ambient * 0.4 + sun.color * 0.7), edgeLine * _FloodEdgeAmount);
                 col += _FrontGlow.rgb * front * (1 - c.x) * 0.06 * _GlowAmount;
                 // ---- radar view: NISAR HV backscatter revealed north → south like a descending pass
                 half rad = SAMPLE_TEXTURE2D(_RadarTex, sampler_BaseMap, i.uv).r;
