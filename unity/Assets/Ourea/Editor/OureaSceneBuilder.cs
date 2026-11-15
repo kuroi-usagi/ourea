@@ -18,6 +18,11 @@ public static class OureaSceneBuilder
     const string ScenePath = "Assets/Scenes/Ourea.unity";
 
     [Serializable] class Meta { public float[] bounds_m; public int size; public float pixel_m; public float pixel_m_y; public float min_m; public float max_m; }
+    [Serializable] class GroundMeta { public float min_m; public float max_m; public int size; public string source; }
+
+    // What the last build used for the ground, read by OureaLook (flood model, buildings).
+    public static float GroundMinM, GroundMaxM, MetersToUnitsY;
+    public static string GroundSource = "";
     [Serializable] class DateJ { public string date; public string landwater; public float cloud_pct; }
     [Serializable] class DatesWrap { public DateJ[] items; }
     [Serializable] class AssetJ { public string id; public string name; public string type; public float lon; public float lat; public float u; public float v; }
@@ -59,6 +64,21 @@ public static class OureaSceneBuilder
             throw new Exception("handoff/terrain/heightmap.r16 is still a Git LFS pointer.\nIn Terminal run:\n  cd ~/Projects/ourea && git lfs pull\nthen build again.");
         if (raw.Length != n * n * 2)
             throw new Exception("heightmap.r16 is " + raw.Length + " bytes; expected " + (n * n * 2) + " for " + n + "x" + n + ".");
+        GroundSource = "Copernicus GLO-30 DEM (surface model: includes trees and buildings)";
+
+        // Prefer bare earth (FABDEM, pipeline/make_heights.py): the flood fills the real ground, and
+        // buildings stand on it instead of being smeared into it.
+        string gPath = Path.Combine(Handoff, "terrain", "ground.r16"), gMeta = Path.Combine(Handoff, "terrain", "ground.json");
+        if (File.Exists(gPath) && File.Exists(gMeta) && new FileInfo(gPath).Length == raw.Length)
+        {
+            var gm = JsonUtility.FromJson<GroundMeta>(File.ReadAllText(gMeta));
+            raw = File.ReadAllBytes(gPath);
+            meta.min_m = gm.min_m; meta.max_m = gm.max_m;
+            GroundSource = gm.source;
+        }
+        GroundMinM = meta.min_m; GroundMaxM = meta.max_m;
+        MetersToUnitsY = Exaggeration / MetersPerUnit;
+
         var h = new float[n * n]; // row 0 = north
         for (int i = 0; i < h.Length; i++) h[i] = (raw[2 * i] | (raw[2 * i + 1] << 8)) / 65535f;
 

@@ -110,7 +110,7 @@ public static class OureaLook
         AddFloodLab(delta, h, n, sizeX, sizeZ, heightScale, app);
     }
 
-    [System.Serializable] class TerrainMeta { public float min_m; public float max_m; }
+    [System.Serializable] class TerrainMeta { public float min_m; public float max_m; public double[] bounds_m; }
     [System.Serializable] class NisarPass { public string date; public float water_pct; }
     [System.Serializable] class NisarWrap { public NisarPass[] items; }
     [System.Serializable] class OpticalPass { public string pass; public string image_date; public float cloud_pct; }
@@ -120,8 +120,11 @@ public static class OureaLook
     {
         var lab = new GameObject("Flood lab").AddComponent<FloodLab>();
         lab.viewer = app;
-        var meta = JsonUtility.FromJson<TerrainMeta>(File.ReadAllText(Path.Combine(Handoff, "terrain", "meta.json")));
-        lab.minM = meta.min_m; lab.maxM = meta.max_m;
+        lab.minM = OureaSceneBuilder.GroundMinM; lab.maxM = OureaSceneBuilder.GroundMaxM;   // bare earth when available
+        var tm = JsonUtility.FromJson<TerrainMeta>(File.ReadAllText(Path.Combine(Handoff, "terrain", "meta.json")));
+        lab.boundsM = tm.bounds_m; lab.sizeX = sizeX; lab.sizeZ = sizeZ;
+        lab.live = lab.gameObject.AddComponent<DataLoader>();   // Asher's Cloudflare API (k4)
+        lab.groundSource = OureaSceneBuilder.GroundSource;
         lab.heightScale = heightScale;
         lab.tileAreaKm2 = sizeX * sizeZ * 100f * 100f / 1e6f;   // 1 unit = 100 m
 
@@ -211,6 +214,64 @@ public static class OureaLook
         plane.SetActive(false);
         lab.waterPlane = plane.transform;
         lab.waterPlaneMaterial = pm;
+
+        // ground heights as a small texture: places the building blocks and shades flood depth
+        var groundTex = GroundTexture(h, n);
+        pm.SetTexture("_GroundTex", groundTex);
+        pm.SetFloat("_GroundScale", heightScale);
+        pm.SetFloat("_MetersToUnitsY", OureaSceneBuilder.MetersToUnitsY);
+        pm.SetFloat("_MinM", lab.minM);
+        EditorUtility.SetDirty(pm);
+        lab.buildings = AddBuildings(groundTex, sizeX, sizeZ, heightScale, lab.minM, lab.maxM);
+    }
+
+    static Texture2D GroundTexture(float[] h, int n)
+    {
+        const int S = 1024;
+        var t = new Texture2D(S, S, TextureFormat.RHalf, false, true) { name = "Ground", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+        var px = new Color[S * S];
+        for (int r = 0; r < S; r++)          // texture row 0 = south
+            for (int c = 0; c < S; c++)
+                px[r * S + c] = new Color(H(h, n, c / (float)(S - 1), 1f - r / (float)(S - 1)), 0, 0, 1);
+        t.SetPixels(px);
+        t.Apply(false, false);
+        SaveAsset(t, GenDir + "/GroundTex.asset");
+        return t;
+    }
+
+    // Buildings from GHSL (pipeline/make_heights.py): two 100 m images, turned into blocks at load time.
+    static BuildingField AddBuildings(Texture2D groundTex, float sizeX, float sizeZ, float heightScale, float minM, float maxM)
+    {
+        var hTex = ImportGrid("height.png");
+        var bTex = ImportGrid("built.png");
+        if (hTex == null || bTex == null) { Debug.LogWarning("Ourea: no handoff/buildings (run pipeline/make_heights.py); no building blocks."); return null; }
+        var field = new GameObject("Buildings").AddComponent<BuildingField>();
+        field.heightTex = hTex; field.builtTex = bTex; field.groundTex = groundTex;
+        field.sizeX = sizeX; field.sizeZ = sizeZ; field.groundScale = heightScale;
+        field.minM = minM; field.maxM = maxM;
+        field.metersToUnitsY = OureaSceneBuilder.MetersToUnitsY;
+        field.material = LitMaterial(GenDir + "/Building.mat", new Color(0.88f, 0.85f, 0.80f), 0.12f);
+        return field;
+    }
+
+    static Texture2D ImportGrid(string file)
+    {
+        string src = Path.Combine(Handoff, "buildings", file);
+        if (!File.Exists(src) || new FileInfo(src).Length < 100) return null;
+        string dst = GenDir + "/buildings_" + file;
+        File.Copy(src, Path.Combine(ProjectRoot, dst), true);
+        AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceUpdate);
+        var imp = (TextureImporter)AssetImporter.GetAtPath(dst);
+        imp.isReadable = true;                 // read on load to build the blocks
+        imp.sRGBTexture = false;
+        imp.mipmapEnabled = false;
+        imp.npotScale = TextureImporterNPOTScale.None;
+        imp.filterMode = FilterMode.Point;
+        imp.wrapMode = TextureWrapMode.Clamp;
+        imp.textureCompression = TextureImporterCompression.Uncompressed;
+        var ps = imp.GetDefaultPlatformTextureSettings(); ps.format = TextureImporterFormat.R8; imp.SetPlatformTextureSettings(ps);
+        imp.SaveAndReimport();
+        return AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
     }
 
     static void UseQualityTierForWebGL(string tierName)

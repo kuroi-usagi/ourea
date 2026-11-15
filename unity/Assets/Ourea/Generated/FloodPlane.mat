@@ -22,14 +22,22 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _GroundTex:
+        m_Texture: {fileID: 2800000, guid: 9d7e35f58e44543d0a8ed10f295901ba, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.78
+    - _Alpha: 0.9
+    - _DeepM: 2
+    - _GroundScale: 2.1891985
+    - _MetersToUnitsY: 0.24
     - _Wobble: 0
     m_Colors:
+    - _Deep: {r: 0.12999997, g: 0.24999997, b: 0.32999998, a: 1}
+    - _Shallow: {r: 0.62, g: 0.7, b: 0.6399999, a: 1}
     - _SkyHorizon: {r: 0.62, g: 0.7, b: 0.78, a: 1}
     - _SkyZenith: {r: 0.29999998, g: 0.43999997, b: 0.62, a: 1}
-    - _Water: {r: 0.41999996, g: 0.5, b: 0.4699999, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

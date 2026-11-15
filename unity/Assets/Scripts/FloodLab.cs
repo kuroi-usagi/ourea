@@ -20,6 +20,13 @@ public class FloodLab : MonoBehaviour
     public float minM, maxM;                // DEM range (m, EGM2008)
     public float heightScale;               // world units for maxM - minM
     public float tileAreaKm2;
+    public string groundSource;             // which elevation the bathtub uses (bare earth when available)
+    public BuildingField buildings;         // for "built-up land below the water"
+    public DataLoader live;                 // live commune ranking from the Ourea API (Asher)
+    public double[] boundsM;                // tile bounds on the UTM grid, for flying to a commune
+    public float sizeX, sizeZ;
+    bool showCommunes;
+    Vector2 communeScroll;
     public Texture2D[] optical;             // Sentinel-2 true colour nearest each pass
     public string[] opticalDate;            // its image date (optical.json)
     public float[] opticalCloud;            // its cloud % (optical.json)
@@ -62,7 +69,7 @@ public class FloodLab : MonoBehaviour
             if (waterPlaneMaterial != null)
             {
                 waterPlaneMaterial.SetFloat("_Wobble", Mathf.Clamp01(Mathf.Abs(velocity) * 0.35f));
-                waterPlaneMaterial.SetFloat("_Alpha", 0.78f * (1f - 0.85f * Mathf.Max(radarOn, compareOn)));   // let radar/photo show through
+                waterPlaneMaterial.SetFloat("_Alpha", 0.9f * (1f - 0.85f * Mathf.Max(radarOn, compareOn)));   // let radar/photo show through
             }
         }
 
@@ -299,7 +306,7 @@ public class FloodLab : MonoBehaviour
                 case Card.Water: DrawWaterCard(c); break;
                 case Card.Photo: DrawPhotoCard(c); break;
                 case Card.Radar: DrawRadarCard(c); break;
-                case Card.Ranking: if (viewer != null) viewer.DrawRanking(c); break;
+                case Card.Ranking: DrawRankingCard(c); break;
                 case Card.Key: DrawKeyCard(c); break;
             }
         }
@@ -312,7 +319,7 @@ public class FloodLab : MonoBehaviour
     {
         switch (c)
         {
-            case Card.Water: return Mathf.Min(maxH, 330f);
+            case Card.Water: return Mathf.Min(maxH, 350f);
             case Card.Photo: return 170f;
             case Card.Radar: return 224f;
             case Card.Ranking: return Mathf.Min(maxH, 640f);
@@ -355,6 +362,11 @@ public class FloodLab : MonoBehaviour
         GUI.Label(new Rect(rx, y + 32, rw, 18), "water level above sea level", sSmall);
         GUI.Label(new Rect(rx, y + 66, rw, 32), any ? (frac * tileAreaKm2).ToString("#,0") + " km²" : "0 km²", sBig);
         GUI.Label(new Rect(rx, y + 98, rw, 30), any ? (frac * 100f).ToString("0") + "% of the map is below it" : "Drag the handle up", sSmall);
+        if (any && buildings != null && buildings.builtAreaHa > 0f)
+        {
+            float bha = buildings.BuiltAreaBelow(level);
+            GUI.Label(new Rect(rx, y + 120, rw, 30), "<b>" + (bha / buildings.builtAreaHa * 100f).ToString("0") + "%</b> of built-up land is below it", sSmall);
+        }
 
         y = track.yMax + 22;
         if (viewer != null && observedWaterPct != null && observedWaterPct.Length > viewer.currentPass && viewer.passes.Count > viewer.currentPass)
@@ -367,7 +379,42 @@ public class FloodLab : MonoBehaviour
             GUI.Label(new Rect(x, y, w, 34), "NISAR saw " + pct.ToString("0") + "% of the map as water on " + viewer.passes[viewer.currentPass].date + ".", sSmall);
             y += 30;
         }
-        GUI.Label(new Rect(x, y, w, 40), "A flat water level over the elevation map. Ignores dikes and flow. Not a forecast.", sSmall);
+        GUI.Label(new Rect(x, y, w, 40), "A flat water level over " + (groundSource != null && groundSource.StartsWith("FABDEM") ? "bare-earth ground (FABDEM)" : "the elevation map") + ". Ignores dikes and flow. Not a forecast.", sSmall);
+    }
+
+    void DrawRankingCard(Rect p)
+    {
+        // two sources: hamlet scores built into the app (Mitch) and the live commune ranking (Asher's API)
+        var tabs = new Rect(p.x + 14, p.y + 12, p.width - 64, 30);
+        float tw = tabs.width / 2f;
+        if (GUI.Button(new Rect(tabs.x, tabs.y, tw - 3, tabs.height), "Hamlets", showCommunes ? sBtn : sBtnOn)) showCommunes = false;
+        if (GUI.Button(new Rect(tabs.x + tw + 3, tabs.y, tw - 3, tabs.height), "Communes · live", showCommunes ? sBtnOn : sBtn)) showCommunes = true;
+        var body = new Rect(p.x, tabs.yMax + 2, p.width, p.yMax - tabs.yMax - 2);
+        if (!showCommunes) { if (viewer != null) viewer.DrawRanking(body); return; }
+
+        float x = body.x + 18, y = body.y + 12, w = body.width - 36;
+        GUI.Label(new Rect(x, y, w, 14), "LIVE  ·  OUREA API", sEyebrow); y += 20;
+        if (live == null) { GUI.Label(new Rect(x, y, w, 40), "No API connection in this build.", sBody); return; }
+        GUI.Label(new Rect(x, y, w, 46), live.message, sSmall); y += 46;
+        if (live.state != DataLoader.State.Live || live.top.Length == 0) return;
+
+        var view = new Rect(body.x + 8, y, body.width - 16, body.yMax - y - 8);
+        const float rowH = 64f;
+        communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, live.top.Length * rowH), false, false, GUIStyle.none, GUIStyle.none);
+        for (int i = 0; i < live.top.Length; i++)
+        {
+            var cm = live.top[i];
+            var row = new Rect(0, i * rowH, view.width - 4, rowH - 4);
+            if (GUI.Button(row, GUIContent.none, sDock) && viewer != null && viewer.orbit != null && boundsM != null)
+                viewer.orbit.Focus(DataLoader.ToWorld(cm.lon, cm.lat, boundsM, sizeX, sizeZ), 120f);
+            string title = cm.rank + ".  " + (string.IsNullOrEmpty(cm.name_en) ? cm.name : cm.name_en);
+            GUI.Label(new Rect(row.x + 10, row.y + 6, row.width - 70, 18), "<b>" + title + "</b>", sBody);
+            GUI.Label(new Rect(row.xMax - 64, row.y + 6, 56, 18), "<b>" + cm.score.ToString("0") + "</b>", sBody);
+            string why = cm.reasons ?? "";
+            if (cm.gap_status != null && cm.gap_status != "known" && !why.Contains("childcare gap")) why += " · childcare gap not yet known";
+            GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), why, sSmall);
+        }
+        GUI.EndScrollView();
     }
 
     void DrawPhotoCard(Rect p)

@@ -1,0 +1,21 @@
+{
+  "crs": "EPSG:32648",
+  "bounds_m": [
+    532778.8035874644,
+    1149653.9563548663,
+    598516.7499547674,
+    1210597.6393508143
+  ],
+  "width": 657,
+  "height": 609,
+  "cell_m": 100,
+  "height_png": "value / 4 = average building height in metres",
+  "built_png": "value / 255 = share of the 100 m cell covered by buildings",
+  "cells_with_buildings": 48148,
+  "mean_height_m_where_built": 3.26,
+  "max_height_m": 22.75,
+  "sources": [
+    "GHS-BUILT-H ANBH 2018 R2023A, EU JRC (CC BY 4.0)",
+    "GHS-BUILT-S 2020 R2023A, EU JRC (CC BY 4.0)"
+  ]
+}

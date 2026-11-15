@@ -1,0 +1,121 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+// Buildings as 3D blocks, built at load time from two small images (handoff/buildings, GHSL 100 m):
+// one block per built-up 100 m cell, its footprint from the share of the cell covered by buildings,
+// its height from the cell's average building height. Standing on the bare-earth ground, so the
+// modeled flood rises around them. Building here (not as a saved mesh) keeps the web build small.
+public class BuildingField : MonoBehaviour
+{
+    public Texture2D heightTex;     // value / 4 = average building height (m)
+    public Texture2D builtTex;      // value / 255 = share of the cell covered by buildings
+    public Texture2D groundTex;     // bare-earth ground, 0..1 over the ground range (RHalf)
+    public Material material;
+    public float sizeX, sizeZ;      // tile size in world units
+    public float groundScale;       // world units for the whole ground range
+    public float minM, maxM;        // ground range (m)
+    public float metersToUnitsY;    // vertical exaggeration: world units per metre
+
+    // for the readout: ground elevation under each built-up cell, sorted, with built-up area (ha)
+    [System.NonSerialized] public float[] builtGroundM;
+    [System.NonSerialized] public float[] builtAreaHaCum;
+    [System.NonSerialized] public float builtAreaHa;
+    [System.NonSerialized] public int blocks;
+
+    bool built;
+
+    void Start() { EnsureBuilt(); }
+
+    public float GroundM(float u, float vSouth)
+    {
+        if (groundTex == null) return minM;
+        return Mathf.Lerp(minM, maxM, groundTex.GetPixelBilinear(u, vSouth).r);
+    }
+
+    // Also called by Editor/OureaCapture.cs outside Play mode.
+    public void EnsureBuilt()
+    {
+        if (built || heightTex == null || builtTex == null) return;
+        built = true;
+        int w = heightTex.width, h = heightTex.height;
+        var hp = heightTex.GetPixels32();   // row 0 = south (texture space)
+        var bp = builtTex.GetPixels32();
+        float cellX = sizeX / w, cellZ = sizeZ / h;
+
+        var cells = new List<Vector2>();   // (groundM, areaHa) for the readout
+        var verts = new List<Vector3>(); var norms = new List<Vector3>(); var tris = new List<int>();
+        int chunk = 0;
+        System.Action flush = () =>
+        {
+            if (verts.Count == 0) return;
+            var go = new GameObject("Buildings " + chunk++, typeof(MeshFilter), typeof(MeshRenderer));
+            go.hideFlags = Application.isPlaying ? HideFlags.None : HideFlags.DontSave;
+            go.transform.SetParent(transform, false);
+            var m = new Mesh { name = "Buildings", indexFormat = IndexFormat.UInt32 };
+            m.SetVertices(verts); m.SetNormals(norms); m.SetTriangles(tris, 0);
+            m.RecalculateBounds();
+            go.GetComponent<MeshFilter>().sharedMesh = m;
+            var r = go.GetComponent<MeshRenderer>();
+            r.sharedMaterial = material;
+            r.shadowCastingMode = ShadowCastingMode.On;
+            verts.Clear(); norms.Clear(); tris.Clear();
+        };
+
+        for (int r = 0; r < h; r++)
+            for (int c = 0; c < w; c++)
+            {
+                int i = r * w + c;
+                float frac = bp[i].r / 255f, hm = hp[i].r / 4f;
+                if (frac < 0.05f || hm < 0.5f) continue;
+                float u = (c + 0.5f) / w, v = (r + 0.5f) / h;
+                float g = GroundM(u, v);
+                cells.Add(new Vector2(g, frac));   // 1 cell = 1 ha
+                float side = Mathf.Clamp(Mathf.Sqrt(frac), 0.15f, 0.9f);
+                float hx = cellX * side * 0.5f, hz = cellZ * side * 0.5f;
+                float y0 = (g - minM) / Mathf.Max(0.01f, maxM - minM) * groundScale - 0.15f;
+                float y1 = y0 + 0.15f + hm * metersToUnitsY;
+                Box(verts, norms, tris, new Vector3(u * sizeX, 0, v * sizeZ), hx, hz, y0, y1);
+                blocks++;
+                if (verts.Count > 200000) flush();
+            }
+        flush();
+
+        cells.Sort((a, b) => a.x.CompareTo(b.x));
+        builtGroundM = new float[cells.Count];
+        builtAreaHaCum = new float[cells.Count];
+        float acc = 0f;
+        for (int k = 0; k < cells.Count; k++) { acc += cells[k].y; builtGroundM[k] = cells[k].x; builtAreaHaCum[k] = acc; }
+        builtAreaHa = acc;
+    }
+
+    // Built-up area (ha) whose ground is below a water level (m).
+    public float BuiltAreaBelow(float levelM)
+    {
+        if (builtGroundM == null || builtGroundM.Length == 0) return 0f;
+        int lo = 0, hi = builtGroundM.Length;
+        while (lo < hi) { int mid = (lo + hi) / 2; if (builtGroundM[mid] < levelM) lo = mid + 1; else hi = mid; }
+        return lo == 0 ? 0f : builtAreaHaCum[lo - 1];
+    }
+
+    static void Box(List<Vector3> v, List<Vector3> n, List<int> t, Vector3 c, float hx, float hz, float y0, float y1)
+    {
+        Vector3 a = new Vector3(c.x - hx, 0, c.z - hz), b = new Vector3(c.x + hx, 0, c.z - hz),
+                d = new Vector3(c.x + hx, 0, c.z + hz), e = new Vector3(c.x - hx, 0, c.z + hz);
+        Quad(v, n, t, Up(a, y0), Up(a, y1), Up(b, y1), Up(b, y0), Vector3.back);
+        Quad(v, n, t, Up(b, y0), Up(b, y1), Up(d, y1), Up(d, y0), Vector3.right);
+        Quad(v, n, t, Up(d, y0), Up(d, y1), Up(e, y1), Up(e, y0), Vector3.forward);
+        Quad(v, n, t, Up(e, y0), Up(e, y1), Up(a, y1), Up(a, y0), Vector3.left);
+        Quad(v, n, t, Up(a, y1), Up(e, y1), Up(d, y1), Up(b, y1), Vector3.up);
+    }
+
+    static Vector3 Up(Vector3 p, float y) { return new Vector3(p.x, y, p.z); }
+
+    static void Quad(List<Vector3> v, List<Vector3> n, List<int> t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 nrm)
+    {
+        int s = v.Count;
+        v.Add(p0); v.Add(p1); v.Add(p2); v.Add(p3);
+        n.Add(nrm); n.Add(nrm); n.Add(nrm); n.Add(nrm);
+        t.Add(s); t.Add(s + 1); t.Add(s + 2); t.Add(s); t.Add(s + 2); t.Add(s + 3);
+    }
+}
