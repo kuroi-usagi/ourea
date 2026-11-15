@@ -21,6 +21,13 @@ Outputs, on the handoff grid (EPSG:32648, bounds from handoff/terrain/meta.json,
   handoff/buildings/height.png   8-bit, 100 m cells: average building height, 0.25 m per step
   handoff/buildings/built.png    8-bit, 100 m cells: share of the cell covered by buildings (0..255)
   handoff/buildings/buildings.json  grid, scales, sources
+  handoff/trees/height.png       8-bit, 100 m cells: mean height of the tree canopy, 0.25 m per step
+                                 (only 10 m pixels >= 10 m: the model reads 3-8 m over rice paddies)
+  handoff/trees/cover.png        8-bit, 100 m cells: share of the cell with canopy >= 10 m (0..255)
+  handoff/trees/trees.json       grid, scales, source
+
+  --canopy: ETH Global Canopy Height 2020, 10 m (Lang et al. 2023, CC BY 4.0), tile N09E105
+    https://langnico.github.io/globalcanopyheight/
 """
 import argparse, json, pathlib
 import numpy as np
@@ -31,6 +38,7 @@ from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DST_CRS = "EPSG:32648"
+TREE_M = 10.0   # canopy height that counts as a tree (ETH reads 3-8 m over rice paddies)
 
 
 def warp(src_path, bounds, w, h, resampling, nodata_out=np.nan):
@@ -48,6 +56,7 @@ def main():
     ap.add_argument("--fabdem")
     ap.add_argument("--ghsl-height")
     ap.add_argument("--ghsl-built")
+    ap.add_argument("--canopy")
     a = ap.parse_args()
     meta = json.loads((ROOT / "handoff/terrain/meta.json").read_text())
     bounds, size = meta["bounds_m"], meta["size"]
@@ -88,6 +97,33 @@ def main():
             "sources": ["GHS-BUILT-H ANBH 2018 R2023A, EU JRC (CC BY 4.0)",
                         "GHS-BUILT-S 2020 R2023A, EU JRC (CC BY 4.0)"]}, indent=2) + "\n")
         print(f"buildings: {w}x{h} cells, {int(built.sum())} built, mean {hgt[built].mean():.1f} m, max {hgt.max():.1f} m")
+
+
+    if a.canopy:
+        left, bottom, right, top = bounds
+        w, h = round((right - left) / 100), round((top - bottom) / 100)
+        # 10 m pixels -> 100 m cells: 10x finer grid first, then block statistics
+        fine = warp(a.canopy, bounds, w * 10, h * 10, Resampling.nearest)
+        fine = np.where((fine >= 0) & (fine < 100), fine, 0.0)   # 255 = no data
+        blocks = fine[: h * 10, : w * 10].reshape(h, 10, w, 10)
+        tall = blocks >= TREE_M
+        cover = tall.mean(axis=(1, 3))
+        hsum = np.where(tall, blocks, 0).sum(axis=(1, 3))
+        height = np.where(tall.any(axis=(1, 3)), hsum / np.maximum(tall.sum(axis=(1, 3)), 1), 0.0)
+        out = ROOT / "handoff/trees"
+        out.mkdir(parents=True, exist_ok=True)
+        Image.fromarray(np.clip(np.round(height * 4), 0, 255).astype(np.uint8)).save(out / "height.png")
+        Image.fromarray(np.clip(np.round(cover * 255), 0, 255).astype(np.uint8)).save(out / "cover.png")
+        treed = cover > 0.15
+        (out / "trees.json").write_text(json.dumps({
+            "crs": DST_CRS, "bounds_m": bounds, "width": w, "height": h, "cell_m": 100,
+            "height_png": "value / 4 = mean canopy height (m) of the 10 m pixels >= 10 m",
+            "cover_png": "value / 255 = share of the cell with canopy >= 10 m",
+            "threshold_note": "the model reads 3-8 m over rice paddies (known bias over low crops), so only pixels >= 10 m count as trees",
+            "cells_with_trees": int(treed.sum()),
+            "mean_height_m_where_treed": round(float(height[treed].mean()), 2) if treed.any() else 0,
+            "source": "ETH Global Canopy Height 2020, 10 m (Lang et al. 2023, Nature Ecology & Evolution), CC BY 4.0"}, indent=2) + "\n")
+        print(f"trees: {int(treed.sum())} cells with >15% canopy, mean {height[treed].mean():.1f} m")
 
 
 if __name__ == "__main__":

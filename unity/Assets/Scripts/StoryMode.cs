@@ -241,7 +241,7 @@ public class StoryMode : MonoBehaviour
         }
 
         const float M = 16f;
-        float pw = 320f, ph = 330f;
+        float pw = 340f, ph = 372f;
         var r = new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
@@ -249,7 +249,7 @@ public class StoryMode : MonoBehaviour
         GUI.Label(new Rect(x0, yy, w, 14), "CHECK FIRST  ·  " + f.pass + "  ·  PROVISIONAL", sEyebrow); yy += 20;
         GUI.Label(new Rect(x0, yy, w - 50, 24), name, OureaTheme.Text(18, OureaTheme.Ink, true)); 
         GUI.Label(new Rect(r.xMax - 18 - 50, yy, 50, 24), f.score.ToString("0"), OureaTheme.Text(18, OureaTheme.Bad, true, FontStyle.Normal, TextAnchor.UpperRight)); yy += 26;
-        GUI.Label(new Rect(x0, yy, w, 34), f.reasons + ". Childcare gap not yet known.", sSmall); yy += 44;
+        GUI.Label(new Rect(x0, yy, w, 40), f.reasons + ". Childcare gap not yet known.", OureaTheme.Text(12, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true)); yy += 48;
 
         GUI.Label(new Rect(x0, yy, w, 14), "WHAT THE COMMUNE OFFICE DOES", sEyebrow); yy += 20;
         string[] acts = {
@@ -259,16 +259,16 @@ public class StoryMode : MonoBehaviour
         };
         for (int i = 0; i < 3; i++)
         {
-            var row = new Rect(x0, yy, w, 52);
+            var row = new Rect(x0, yy, w, 60);
             if (GUI.Button(row, GUIContent.none, sButton)) done[i] = !done[i];
-            var box = new Rect(row.x + 10, row.y + 16, 18, 18);
+            var box = new Rect(row.x + 10, row.y + 20, 18, 18);
             var old = GUI.color;
             GUI.color = done[i] ? OureaTheme.Good : OureaTheme.S(70, 84, 88);
             GUI.DrawTexture(box, texRound);
             GUI.color = old;
             if (!done[i]) { GUI.color = OureaTheme.Glass; GUI.DrawTexture(new Rect(box.x + 3, box.y + 3, 12, 12), texRound); GUI.color = old; }   // hollow until ticked
-            GUI.Label(new Rect(row.x + 38, row.y + 8, row.width - 46, 40), acts[i], OureaTheme.Text(12, done[i] ? OureaTheme.Muted : OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
-            yy += 58;
+            GUI.Label(new Rect(row.x + 38, row.y + 7, row.width - 46, 50), acts[i], OureaTheme.Text(12, done[i] ? OureaTheme.Muted : OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
+            yy += 66;
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
     }
@@ -276,7 +276,7 @@ public class StoryMode : MonoBehaviour
     void DrawGuide(float W, float H, float s)
     {
         const float M = 16f;
-        float gw = Mathf.Min(460f, W - 2 * M), gh = 196f;
+        float gw = Mathf.Min(470f, W - 2 * M), gh = 214f;
         var r = new Rect(M, H - M - 72f - 12f - gh, gw, gh);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);

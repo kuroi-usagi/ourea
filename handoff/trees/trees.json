@@ -1,0 +1,18 @@
+{
+  "crs": "EPSG:32648",
+  "bounds_m": [
+    532778.8035874644,
+    1149653.9563548663,
+    598516.7499547674,
+    1210597.6393508143
+  ],
+  "width": 657,
+  "height": 609,
+  "cell_m": 100,
+  "height_png": "value / 4 = mean canopy height (m) of the 10 m pixels >= 10 m",
+  "cover_png": "value / 255 = share of the cell with canopy >= 10 m",
+  "threshold_note": "the model reads 3-8 m over rice paddies (known bias over low crops), so only pixels >= 10 m count as trees",
+  "cells_with_trees": 111577,
+  "mean_height_m_where_treed": 12.11,
+  "source": "ETH Global Canopy Height 2020, 10 m (Lang et al. 2023, Nature Ecology & Evolution), CC BY 4.0"
+}

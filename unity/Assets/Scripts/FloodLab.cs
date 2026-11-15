@@ -316,7 +316,7 @@ public class FloodLab : MonoBehaviour
         sSmall = Text(11, Muted, FontStyle.Normal, true);
         sBtn = OureaTheme.Button(12);
         sBtnOn = OureaTheme.Primary(12);
-        sDock = OureaTheme.Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Muted, 11);
+        sDock = OureaTheme.Box(Rounded(new Color(0f, 0f, 0f, 0f), 10), 10, Ink, 11);
         sDock.hover.background = Rounded(new Color(1f, 1f, 1f, 0.07f), 10); sDock.hover.textColor = Ink;
         sDockOn = OureaTheme.Primary(11);
         sClose = OureaTheme.Box(Rounded(new Color(1f, 1f, 1f, 0.06f), 12), 12, Muted, 13);

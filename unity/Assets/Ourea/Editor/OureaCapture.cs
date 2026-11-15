@@ -22,6 +22,8 @@ public static class OureaCapture
         var beacons = Object.FindAnyObjectByType<BeaconField>();
         var buildings = Object.FindAnyObjectByType<BuildingField>();
         if (buildings != null) buildings.EnsureBuilt();   // blocks are made at load time; make them for the stills
+        var trees = Object.FindAnyObjectByType<TreeField>();
+        if (trees != null) trees.EnsureBuilt();
         var cam = Camera.main;
         var mat = viewer.deltaRenderer.sharedMaterial;
         var oldA = mat.GetTexture("_MaskA"); var oldB = mat.GetTexture("_MaskB");

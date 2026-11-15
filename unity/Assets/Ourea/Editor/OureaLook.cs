@@ -257,6 +257,7 @@ public static class OureaLook
         pm.SetFloat("_MinM", lab.minM);
         EditorUtility.SetDirty(pm);
         lab.buildings = AddBuildings(groundTex, sizeX, sizeZ, heightScale, lab.minM, lab.maxM);
+        AddTrees(lab.buildings);
 
         // the guided story (Scripts/StoryMode.cs), with the team's sourced numbers
         var story = lab.gameObject.AddComponent<StoryMode>();
@@ -303,11 +304,29 @@ public static class OureaLook
         return field;
     }
 
-    static Texture2D ImportGrid(string file)
+    static TreeField AddTrees(BuildingField ground)
     {
-        string src = Path.Combine(Handoff, "buildings", file);
+        var hTex = ImportGrid("height.png", "trees");
+        var cTex = ImportGrid("cover.png", "trees");
+        if (hTex == null || cTex == null || ground == null) { Debug.LogWarning("Ourea: no handoff/trees (run pipeline/make_heights.py --canopy); no trees."); return null; }
+        var field = new GameObject("Trees").AddComponent<TreeField>();
+        field.heightTex = hTex; field.coverTex = cTex; field.ground = ground;
+        field.unitsPerM = ground.houseUnitsPerM;
+        var tm = new Material(Shader.Find("Ourea/Building"));   // same lighting; green, darker where flooded
+        tm.SetColor("_Dry", new Color(0.13f, 0.24f, 0.10f));
+        tm.SetColor("_Roof", new Color(0.20f, 0.33f, 0.12f));
+        tm.SetColor("_Wet", new Color(0.08f, 0.15f, 0.12f));
+        tm.SetFloat("_Blend", OureaSceneBuilder.MetersToUnitsY * 0.3f);
+        SaveAsset(tm, GenDir + "/Tree.mat");
+        field.material = tm;
+        return field;
+    }
+
+    static Texture2D ImportGrid(string file, string folder = "buildings")
+    {
+        string src = Path.Combine(Handoff, folder, file);
         if (!File.Exists(src) || new FileInfo(src).Length < 100) return null;
-        string dst = GenDir + "/buildings_" + file;
+        string dst = GenDir + "/" + folder + "_" + file;
         File.Copy(src, Path.Combine(ProjectRoot, dst), true);
         AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceUpdate);
         var imp = (TextureImporter)AssetImporter.GetAtPath(dst);
