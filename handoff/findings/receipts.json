@@ -1,0 +1,92 @@
+{
+ "children_under5_near_flood_water": {
+  "value": 28100.0,
+  "pass": "2026-10-03",
+  "source": "NISAR L2 GCOV water map x WorldPop 2026 under-5 (100 m, constrained)",
+  "product": "NISAR_L2_PR_GCOV_032_047_D_083 + WorldPop R2025A",
+  "date": "2026-10-03",
+  "maturity": "provisional",
+  "confidence": "medium",
+  "method": "under-5s in 100 m cells within ~100 m (3 px) of water that was land on 2026-07-11"
+ },
+ "children_under5_in_tile": {
+  "value": 81100.0,
+  "source": "WorldPop R2025A age/sex structures 2026, f/m 00 + 01, constrained 100 m",
+  "product": "vnm_*_00/01_2026_CN_100m_R2025A_v1",
+  "date": "2026",
+  "maturity": "modelled estimate",
+  "confidence": "medium",
+  "note": "independently reproduced by Asher: 80,760"
+ },
+ "flood_water_km2": {
+  "value": 1334.7,
+  "pass": "2026-10-03",
+  "baseline": "2026-07-11",
+  "source": "NISAR L2 GCOV, track 047 desc, frame 083",
+  "date": "2026-10-03",
+  "maturity": "provisional",
+  "confidence": "medium",
+  "method": "stand-in: HH < -13.0 dB (Otsu), rice not flagged yet"
+ },
+ "water_pct_by_pass": {
+  "value": {
+   "2026-07-11": 26.6,
+   "2026-08-28": 39.3,
+   "2026-10-03": 55.3
+  },
+  "source": "NISAR L2 GCOV",
+  "maturity": "provisional",
+  "confidence": "medium",
+  "method": "stand-in: HH < -13.0 dB (Otsu), rice not flagged yet"
+ },
+ "schools_near_flood_water": {
+  "value": 18,
+  "of": 94,
+  "pass": "2026-10-03",
+  "source": "OpenStreetMap amenity=school|kindergarten|childcare (ODbL), exported 2026-11-14",
+  "maturity": "volunteer map, incomplete in rural areas",
+  "confidence": "low"
+ },
+ "river_level_tan_chau": {
+  "value": {
+   "2026-07-11": 1.04,
+   "2026-08-28": 2.88,
+   "2026-10-03": 2.75,
+   "2026-10-15": 2.05
+  },
+  "unit": "m",
+  "time": "~18:00 ICT, nearest 2-hourly reading to the 18:23 pass",
+  "source": "Mekong River Commission Data Portal, telemetry water level, Tan Chau (Tien River), read from the public chart viewer",
+  "maturity": "telemetry (unvalidated)",
+  "confidence": "medium"
+ },
+ "river_alarm_level_1_tan_chau": {
+  "value": 3.5,
+  "unit": "m",
+  "source": "VietnamPlus, Water levels rise in upper Mekong River",
+  "url": "https://en.vietnamplus.vn/water-levels-rise-in-upper-mekong-river-post79366.vnp",
+  "maturity": "news report",
+  "confidence": "medium"
+ },
+ "vietnam_child_drownings_per_year": {
+  "value": "nearly 2,000",
+  "source": "Ministry of Health, via Tuoi Tre News, 26 Jul 2025",
+  "url": "https://news.tuoitre.vn/vietnam-reports-nearly-2000-child-drownings-annually-urges-stronger-prevention-measures-103250726120628814.htm",
+  "maturity": "official statistic",
+  "confidence": "high"
+ },
+ "dong_thap_child_drownings_2018": {
+  "value": 29,
+  "under_6_pct": 79,
+  "source": "VOV, 4 Jun 2019, citing a local report",
+  "url": "https://english.vov.vn/en/society/mekong-delta-takes-action-to-prevent-drowning-incidents-397911.vov",
+  "maturity": "news report",
+  "confidence": "medium"
+ },
+ "commune_ranking": {
+  "source": "science/commune_score.py on NISAR water maps + WorldPop + OSM schools; communes: thanglequoc/vietnamese-provinces-database (post-1 Jul 2025 units), via Asher",
+  "maturity": "provisional",
+  "confidence": "medium",
+  "sensitivity": "weights +/-50%: >=3 of top 5 and >=7 of top 10 kept; schools off: 9 of top 10 kept"
+ }
+}
