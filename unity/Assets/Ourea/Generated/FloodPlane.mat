@@ -31,7 +31,7 @@ Material:
     m_Floats:
     - _Alpha: 0.9
     - _DeepM: 2
-    - _GroundScale: 2.1891985
+    - _GroundScale: 2.4192
     - _MetersToUnitsY: 0.24
     - _Wobble: 0
     m_Colors:

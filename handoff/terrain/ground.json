@@ -1,0 +1,14 @@
+{
+  "min_m": -0.408,
+  "max_m": 9.672,
+  "size": 2049,
+  "crs": "EPSG:32648",
+  "bounds_m": [
+    532778.8035874644,
+    1149653.9563548663,
+    598516.7499547674,
+    1210597.6393508143
+  ],
+  "source": "FABDEM V1-2 (Hawker et al. 2022, Univ. of Bristol), bare earth, CC BY-NC-SA 4.0",
+  "notes": "value = (elev - min_m)/(max_m - min_m) * 65535; 0.05/99.95 percentile clipped"
+}
