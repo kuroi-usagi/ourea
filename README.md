@@ -55,6 +55,7 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
 
 ## Try it
 
+- **Live app:** https://ourea-2wp.pages.dev/
 - **Playable build:** `web/public/unity` (Unity WebGL). Locally: `cd web/public/unity && python3 -m http.server 8000`, then open http://localhost:8000
 - **In the app:** it opens on the globe. **Begin the story** flies you down to Đồng Tháp and walks through the three passes with a guide; **Explore the map** lands you on the map.
   - Scrub the **timeline** to watch the flood spread; **Watch a village flood** plays the real passes over one town, houses turning red as new water comes within 100 m.
