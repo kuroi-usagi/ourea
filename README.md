@@ -60,6 +60,7 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
   - Scrub the **timeline** to watch the flood spread; **Watch a village flood** plays the real passes over one town, houses turning red as new water comes within 100 m.
   - In the dock: **PHOTO** wipes between the cloudy camera photo and the radar, **RADAR** shows the raw NISAR backscatter, **WATER** is the modeled "what if" level, **TOP 10 → Communes** has the ranked list and the reasons behind each rank, **ALERTS** signs a phone up for flood texts (Twilio, via the API), **KEY** explains every colour.
   - **GLOBE** (top left) flies back out.
+  - **ROUTES TO SCHOOL** (under the Top 10 hamlet list, and in the story) opens a Google Maps page with the walking routes from that hamlet to its nearest schools, scored by how much of each runs within 100 m of new flood water.
 - **Rebuild the data:** `pipeline/run_pipeline.py` (NISAR), `pipeline/make_heightmap.py` (terrain), `pipeline/make_optical.py` (Sentinel-2), then `science/score.py` and `science/commune_score.py`.
 
 ## What's real, what's modeled

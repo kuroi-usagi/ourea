@@ -28,7 +28,8 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--body); }
-#map { position: fixed; inset: 0; }
+.mapwrap { position: fixed; inset: 0; }
+#map { width: 100%; height: 100%; }   /* Google sets the map div's own position, so the wrapper fills the window */
 .panel {
   position: fixed; z-index: 2; top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px));
   width: min(380px, calc(100% - 24px)); max-height: calc(100% - 24px); overflow: auto;
@@ -71,7 +72,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 </style>
 </head>
 <body>
-<div id="map" role="application" aria-label="Map of walking routes and new flood water"></div>
+<div class="mapwrap"><div id="map" role="application" aria-label="Map of walking routes and new flood water"></div></div>
 
 <aside class="panel" aria-live="polite">
   <div class="top">
@@ -82,7 +83,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   </div>
   <div>
     <h1 id="t-title">Routes to school</h1>
-    <p class="lede" id="t-lede">Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs through new flood water on that radar pass.</p>
+    <p class="lede" id="t-lede">Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs within 100 m of new flood water on that radar pass.</p>
   </div>
   <div>
     <div class="label" id="t-pass">NISAR pass</div>
@@ -104,22 +105,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 <script>
 // Paste the key from Google Cloud here. It is meant to be public: it only works on this site
 // (HTTP referrer restriction) and only for the Maps JavaScript and Routes APIs.
-const GOOGLE_MAPS_KEY = "PASTE_KEY_HERE";
+const GOOGLE_MAPS_KEY = "AIzaSyD_lmdyNiizYpVz3DW0GkhDN9BDlUKxfHQ";
 
 const T = {
   en: { title: "Routes to school", pass: "NISAR pass", hamlets: "Check first", flood: "New flood water", low: "Less water", high: "More water",
-        lede: "Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs through new flood water on that radar pass.",
+        lede: "Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs within 100 m of new flood water on that radar pass.",
         note: "NISAR data is provisional. A route with less water is not a safe route: it had the least flood water on that pass. Routes by Google Maps; check on the ground.",
         baseline: "11 Jul is the baseline pass: no new flood water yet. Pick a later pass.", pick: "Pick a hamlet to see its routes.",
         loading: "Asking Google Maps for walking routes…", none: "Google Maps found no walking route here.", nokey: "Add the Google Maps key to this page to show the map and routes.",
-        least: d => "Least water on the " + d + " pass", through: "through new flood water", route: "Route", to: "to", school: "school", childcare: "day care",
+        least: d => "Least water on the " + d + " pass", through: "of the route within 100 m of new flood water", route: "Route", to: "to", school: "school", childcare: "day care",
         min: "min", fail: "Couldn't get routes from Google Maps: " },
   vi: { title: "Đường đến trường", pass: "Lượt chụp NISAR", hamlets: "Cần kiểm tra trước", flood: "Nước lũ mới", low: "Ít nước hơn", high: "Nhiều nước hơn",
-        lede: "Đường đi bộ từ các ấp cần kiểm tra trước đến trường học hoặc điểm giữ trẻ gần nhất. Mỗi tuyến cho biết bao nhiêu phần đi qua nước lũ mới trong lượt chụp radar đó.",
+        lede: "Đường đi bộ từ các ấp cần kiểm tra trước đến trường học hoặc điểm giữ trẻ gần nhất. Mỗi tuyến cho biết bao nhiêu phần đi cách nước lũ mới dưới 100 m trong lượt chụp radar đó.",
         note: "Số liệu NISAR là tạm thời. Tuyến ít nước hơn không có nghĩa là an toàn: đó chỉ là tuyến ít nước lũ nhất trong lượt chụp đó. Tuyến đường từ Google Maps; hãy kiểm tra thực tế.",
         baseline: "11/7 là lượt chụp gốc: chưa có nước lũ mới. Hãy chọn lượt sau.", pick: "Chọn một ấp để xem các tuyến đường.",
         loading: "Đang lấy tuyến đi bộ từ Google Maps…", none: "Google Maps không tìm thấy tuyến đi bộ ở đây.", nokey: "Thêm khóa Google Maps vào trang này để hiện bản đồ và tuyến đường.",
-        least: d => "Ít nước nhất trong lượt chụp " + d, through: "qua nước lũ mới", route: "Tuyến", to: "đến", school: "trường", childcare: "điểm giữ trẻ",
+        least: d => "Ít nước nhất trong lượt chụp " + d, through: "quãng đường cách nước lũ mới dưới 100 m", route: "Tuyến", to: "đến", school: "trường", childcare: "điểm giữ trẻ",
         min: "phút", fail: "Không lấy được tuyến đường từ Google Maps: " }
 };
 let lang = "en";
@@ -170,7 +171,9 @@ function drawRoutes() {
 function colour(w) { return w < 0.15 ? "var(--dry)" : w < 0.45 ? "var(--mid)" : "var(--wet)"; }
 const lineColour = w => (w < 0.15 ? "#eef5f3" : w < 0.45 ? "#f2b544" : "#ff6b57");
 
-// how much of a path runs through new flood water: sample every ~20 m against the overlay pixels
+// how much of a path runs within ~100 m of new flood water (the app's "near water" rule): sample every
+// ~20 m and look for flood pixels in a ~100 m radius. Roads here sit on dikes, so the road itself often
+// reads dry at the radar's ~30 m pixels while the fields beside it are under water.
 function wetShare(path) {
   if (!floodPx) return 0;
   const b = data.bounds; let wet = 0, n = 0;
@@ -181,10 +184,21 @@ function wetShare(path) {
       const lat = a.lat() + (c.lat() - a.lat()) * s / steps, lng = a.lng() + (c.lng() - a.lng()) * s / steps;
       const x = Math.floor((lng - b.west) / (b.east - b.west) * floodW), y = Math.floor((b.north - lat) / (b.north - b.south) * floodH);
       n++;
-      if (x >= 0 && y >= 0 && x < floodW && y < floodH && floodPx[(y * floodW + x) * 4 + 3] > 0) wet++;
+      if (nearFlood(x, y)) wet++;
     }
   }
   return n ? wet / n : 0;
+}
+
+const R100 = 3;   // overlay pixels are ~32 m, so 3 pixels is ~100 m
+function nearFlood(x, y) {
+  for (let dy = -R100; dy <= R100; dy++)
+    for (let dx = -R100; dx <= R100; dx++) {
+      if (dx * dx + dy * dy > R100 * R100) continue;
+      const xx = x + dx, yy = y + dy;
+      if (xx >= 0 && yy >= 0 && xx < floodW && yy < floodH && floodPx[(yy * floodW + xx) * 4 + 3] > 0) return true;
+    }
+  return false;
 }
 
 function loadFlood(src) {

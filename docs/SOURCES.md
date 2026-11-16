@@ -25,3 +25,11 @@
 
 ## Look (style choices, not data)
 Water is drawn silt-brown (phù sa), houses with tile and tin roofs and painted walls, coconut palms on narrow canal-side tree strips and rounded crowns in orchards, warm humid light: taken from flood-season photos of Đồng Tháp and Cao Lãnh. Positions and heights of houses and trees are the real data (GHSL, ETH canopy); colours and shapes are a style. In the story's village chapter and "Watch a village flood", the water is NISAR's own passes (11 Jul → 3 Oct) and a house turns red when new flood water is within ~100 m, the rule behind the under-5 counts.
+
+## Routes to school (web/public/unity/routes/)
+| On screen | Status | Source |
+|---|---|---|
+| Walking routes (usual + alternatives) from a check-first hamlet to its 2 nearest schools / day-care points | REAL routes | Google Maps Platform Routes API (walking), asked in the browser and drawn on a Google map; never stored or shown on the Unity map (Google's terms). Map imagery © Google and its providers. |
+| "% of the route within 100 m of new flood water" | REAL, derived | Each route sampled every ~20 m against NISAR new flood water for that pass (`pipeline/make_routes_data.py`, same rule as the app). Roads sit on dikes, so "within 100 m" is used rather than "on water". The lowest is labelled "least water on the <date> pass", never "safe". |
+| Which hamlets and destinations | REAL, derived | Top 10 hamlets per pass (`handoff/findings/scores.json`); nearest schools / day care by straight line (`assets.json`, OSM). |
+
