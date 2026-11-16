@@ -1,0 +1,650 @@
+{
+ "bounds": {
+  "west": 105.3,
+  "south": 10.4,
+  "east": 105.9,
+  "north": 10.95
+ },
+ "passes": [
+  {
+   "date": "2026-07-11",
+   "overlay": "flood_2026-07-11.png",
+   "hamlets": []
+  },
+  {
+   "date": "2026-08-28",
+   "overlay": "flood_2026-08-28.png",
+   "hamlets": [
+    {
+     "id": "cell_30_35",
+     "name": "near Tràm Chim",
+     "rank": 1,
+     "lat": 10.68801,
+     "lon": 105.63317,
+     "under5": 25.0,
+     "reasons": [
+      "about 25 children under 5 live within ~100 m of flood water",
+      "98% of homes here have flood water within ~100 m",
+      "60% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002187",
+       "name": "Trường Tiểu học Tràm Chim 2",
+       "type": "school",
+       "lat": 10.679,
+       "lon": 105.55745,
+       "km": 8.34
+      },
+      {
+       "id": "way/1160002188",
+       "name": "Trường Trung học phổ thông Tràm Chim",
+       "type": "school",
+       "lat": 10.67753,
+       "lon": 105.55733,
+       "km": 8.38
+      }
+     ]
+    },
+    {
+     "id": "cell_38_23",
+     "name": "near Tràm Chim",
+     "rank": 2,
+     "lat": 10.61933,
+     "lon": 105.52035,
+     "under5": 21.0,
+     "reasons": [
+      "about 21 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "59% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/677722229",
+       "name": "Trường Tiểu Học Tràm Chim",
+       "type": "school",
+       "lat": 10.67299,
+       "lon": 105.5488,
+       "km": 6.74
+      },
+      {
+       "id": "way/677722230",
+       "name": "Trường Tiểu Học Tràm Chim",
+       "type": "school",
+       "lat": 10.67306,
+       "lon": 105.54885,
+       "km": 6.75
+      }
+     ]
+    },
+    {
+     "id": "cell_10_02",
+     "name": "near Bình Thành B",
+     "rank": 3,
+     "lat": 10.86073,
+     "lon": 105.32341,
+     "under5": 21.0,
+     "reasons": [
+      "about 18 children under 5 live within ~100 m of flood water",
+      "88% of homes here have flood water within ~100 m",
+      "43% of the square is flood water (land on 2026-07-11)",
+      "1 school(s) with flood water within ~100 m"
+     ],
+     "to": [
+      {
+       "id": "way/852595423",
+       "name": "Trường Tiểu học Thường Thới Hậu B2",
+       "type": "school",
+       "lat": 10.86495,
+       "lon": 105.3264,
+       "km": 0.57
+      },
+      {
+       "id": "node/4597956191",
+       "name": "Trường Trung học cơ sở AN THẠNH",
+       "type": "school",
+       "lat": 10.82129,
+       "lon": 105.34529,
+       "km": 5.0
+      }
+     ]
+    },
+    {
+     "id": "cell_22_02",
+     "name": "near Chợ Vàm",
+     "rank": 4,
+     "lat": 10.75738,
+     "lon": 105.32329,
+     "under5": 29.0,
+     "reasons": [
+      "about 29 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "51% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/170178946",
+       "name": "Trường Trung học cơ sở Phú Thuận B",
+       "type": "school",
+       "lat": 10.75852,
+       "lon": 105.34788,
+       "km": 2.69
+      },
+      {
+       "id": "way/170178905",
+       "name": "Tiểu học Phú Thuận B",
+       "type": "school",
+       "lat": 10.76631,
+       "lon": 105.34621,
+       "km": 2.7
+      }
+     ]
+    },
+    {
+     "id": "cell_37_19",
+     "name": "near Thanh Bình",
+     "rank": 5,
+     "lat": 10.628,
+     "lon": 105.4828,
+     "under5": 24.0,
+     "reasons": [
+      "about 22 children under 5 live within ~100 m of flood water",
+      "96% of homes here have flood water within ~100 m",
+      "59% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002160",
+       "name": "Trường Trung học cơ sở Thanh Bình",
+       "type": "school",
+       "lat": 10.5548,
+       "lon": 105.49427,
+       "km": 8.24
+      },
+      {
+       "id": "way/1160002159",
+       "name": "Trường Trung học phổ thông Thanh Bình 1",
+       "type": "school",
+       "lat": 10.55442,
+       "lon": 105.49501,
+       "km": 8.3
+      }
+     ]
+    },
+    {
+     "id": "cell_02_21",
+     "name": "near Sa Rài",
+     "rank": 6,
+     "lat": 10.92938,
+     "lon": 105.50208,
+     "under5": 33.0,
+     "reasons": [
+      "about 30 children under 5 live within ~100 m of flood water",
+      "92% of homes here have flood water within ~100 m",
+      "56% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/663150716",
+       "name": "Trường Tiểu học Trần Phú",
+       "type": "school",
+       "lat": 10.87695,
+       "lon": 105.45776,
+       "km": 7.59
+      },
+      {
+       "id": "way/663150717",
+       "name": "Trường Trung học phổ thông Tân Hồng",
+       "type": "school",
+       "lat": 10.87745,
+       "lon": 105.45704,
+       "km": 7.59
+      }
+     ]
+    },
+    {
+     "id": "cell_16_13",
+     "name": "near Khu phố 5",
+     "rank": 7,
+     "lat": 10.80893,
+     "lon": 105.42671,
+     "under5": 20.0,
+     "reasons": [
+      "about 19 children under 5 live within ~100 m of flood water",
+      "96% of homes here have flood water within ~100 m",
+      "58% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/663150718",
+       "name": "Trường Tiểu học Nguyễn Huệ",
+       "type": "school",
+       "lat": 10.87039,
+       "lon": 105.46432,
+       "km": 7.98
+      },
+      {
+       "id": "way/663150725",
+       "name": "Trường Trung học cơ sở Nguyễn Văn Tiệp",
+       "type": "school",
+       "lat": 10.86796,
+       "lon": 105.4684,
+       "km": 8.0
+      }
+     ]
+    },
+    {
+     "id": "cell_43_26",
+     "name": "near Thanh Bình",
+     "rank": 8,
+     "lat": 10.57622,
+     "lon": 105.54844,
+     "under5": 27.0,
+     "reasons": [
+      "about 24 children under 5 live within ~100 m of flood water",
+      "93% of homes here have flood water within ~100 m",
+      "56% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002159",
+       "name": "Trường Trung học phổ thông Thanh Bình 1",
+       "type": "school",
+       "lat": 10.55442,
+       "lon": 105.49501,
+       "km": 6.33
+      },
+      {
+       "id": "way/1160002160",
+       "name": "Trường Trung học cơ sở Thanh Bình",
+       "type": "school",
+       "lat": 10.5548,
+       "lon": 105.49427,
+       "km": 6.39
+      }
+     ]
+    },
+    {
+     "id": "cell_42_27",
+     "name": "near Thanh Bình",
+     "rank": 9,
+     "lat": 10.58481,
+     "lon": 105.55784,
+     "under5": 22.0,
+     "reasons": [
+      "about 22 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "46% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002159",
+       "name": "Trường Trung học phổ thông Thanh Bình 1",
+       "type": "school",
+       "lat": 10.55442,
+       "lon": 105.49501,
+       "km": 7.66
+      },
+      {
+       "id": "way/1160002160",
+       "name": "Trường Trung học cơ sở Thanh Bình",
+       "type": "school",
+       "lat": 10.5548,
+       "lon": 105.49427,
+       "km": 7.72
+      }
+     ]
+    },
+    {
+     "id": "cell_63_11",
+     "name": "near An Châu",
+     "rank": 10,
+     "lat": 10.40419,
+     "lon": 105.40738,
+     "under5": 44.0,
+     "reasons": [
+      "about 40 children under 5 live within ~100 m of flood water",
+      "96% of homes here have flood water within ~100 m",
+      "41% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1182486052",
+       "name": "Trường Trung học cơ sở Ngô Gia Tự",
+       "type": "school",
+       "lat": 10.41252,
+       "lon": 105.43244,
+       "km": 2.9
+      },
+      {
+       "id": "way/169424199",
+       "name": "Trường Trung học cơ sở An Châu",
+       "type": "school",
+       "lat": 10.43917,
+       "lon": 105.39431,
+       "km": 4.15
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-10-03",
+   "overlay": "flood_2026-10-03.png",
+   "hamlets": [
+    {
+     "id": "cell_10_02",
+     "name": "near Bình Thành B",
+     "rank": 1,
+     "lat": 10.86073,
+     "lon": 105.32341,
+     "under5": 21.0,
+     "reasons": [
+      "about 18 children under 5 live within ~100 m of flood water",
+      "91% of homes here have flood water within ~100 m",
+      "49% of the square is flood water (land on 2026-07-11)",
+      "1 school(s) with flood water within ~100 m"
+     ],
+     "to": [
+      {
+       "id": "way/852595423",
+       "name": "Trường Tiểu học Thường Thới Hậu B2",
+       "type": "school",
+       "lat": 10.86495,
+       "lon": 105.3264,
+       "km": 0.57
+      },
+      {
+       "id": "node/4597956191",
+       "name": "Trường Trung học cơ sở AN THẠNH",
+       "type": "school",
+       "lat": 10.82129,
+       "lon": 105.34529,
+       "km": 5.0
+      }
+     ]
+    },
+    {
+     "id": "cell_30_35",
+     "name": "near Tràm Chim",
+     "rank": 2,
+     "lat": 10.68801,
+     "lon": 105.63317,
+     "under5": 25.0,
+     "reasons": [
+      "about 25 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "60% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002187",
+       "name": "Trường Tiểu học Tràm Chim 2",
+       "type": "school",
+       "lat": 10.679,
+       "lon": 105.55745,
+       "km": 8.34
+      },
+      {
+       "id": "way/1160002188",
+       "name": "Trường Trung học phổ thông Tràm Chim",
+       "type": "school",
+       "lat": 10.67753,
+       "lon": 105.55733,
+       "km": 8.38
+      }
+     ]
+    },
+    {
+     "id": "cell_38_23",
+     "name": "near Tràm Chim",
+     "rank": 3,
+     "lat": 10.61933,
+     "lon": 105.52035,
+     "under5": 21.0,
+     "reasons": [
+      "about 21 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "60% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/677722229",
+       "name": "Trường Tiểu Học Tràm Chim",
+       "type": "school",
+       "lat": 10.67299,
+       "lon": 105.5488,
+       "km": 6.74
+      },
+      {
+       "id": "way/677722230",
+       "name": "Trường Tiểu Học Tràm Chim",
+       "type": "school",
+       "lat": 10.67306,
+       "lon": 105.54885,
+       "km": 6.75
+      }
+     ]
+    },
+    {
+     "id": "cell_43_26",
+     "name": "near Thanh Bình",
+     "rank": 4,
+     "lat": 10.57622,
+     "lon": 105.54844,
+     "under5": 27.0,
+     "reasons": [
+      "about 25 children under 5 live within ~100 m of flood water",
+      "97% of homes here have flood water within ~100 m",
+      "57% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002159",
+       "name": "Trường Trung học phổ thông Thanh Bình 1",
+       "type": "school",
+       "lat": 10.55442,
+       "lon": 105.49501,
+       "km": 6.33
+      },
+      {
+       "id": "way/1160002160",
+       "name": "Trường Trung học cơ sở Thanh Bình",
+       "type": "school",
+       "lat": 10.5548,
+       "lon": 105.49427,
+       "km": 6.39
+      }
+     ]
+    },
+    {
+     "id": "cell_22_02",
+     "name": "near Chợ Vàm",
+     "rank": 5,
+     "lat": 10.75738,
+     "lon": 105.32329,
+     "under5": 29.0,
+     "reasons": [
+      "about 29 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "52% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/170178946",
+       "name": "Trường Trung học cơ sở Phú Thuận B",
+       "type": "school",
+       "lat": 10.75852,
+       "lon": 105.34788,
+       "km": 2.69
+      },
+      {
+       "id": "way/170178905",
+       "name": "Tiểu học Phú Thuận B",
+       "type": "school",
+       "lat": 10.76631,
+       "lon": 105.34621,
+       "km": 2.7
+      }
+     ]
+    },
+    {
+     "id": "cell_37_19",
+     "name": "near Thanh Bình",
+     "rank": 6,
+     "lat": 10.628,
+     "lon": 105.4828,
+     "under5": 24.0,
+     "reasons": [
+      "about 22 children under 5 live within ~100 m of flood water",
+      "96% of homes here have flood water within ~100 m",
+      "60% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1160002160",
+       "name": "Trường Trung học cơ sở Thanh Bình",
+       "type": "school",
+       "lat": 10.5548,
+       "lon": 105.49427,
+       "km": 8.24
+      },
+      {
+       "id": "way/1160002159",
+       "name": "Trường Trung học phổ thông Thanh Bình 1",
+       "type": "school",
+       "lat": 10.55442,
+       "lon": 105.49501,
+       "km": 8.3
+      }
+     ]
+    },
+    {
+     "id": "cell_02_21",
+     "name": "near Sa Rài",
+     "rank": 7,
+     "lat": 10.92938,
+     "lon": 105.50208,
+     "under5": 33.0,
+     "reasons": [
+      "about 30 children under 5 live within ~100 m of flood water",
+      "91% of homes here have flood water within ~100 m",
+      "58% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/663150716",
+       "name": "Trường Tiểu học Trần Phú",
+       "type": "school",
+       "lat": 10.87695,
+       "lon": 105.45776,
+       "km": 7.59
+      },
+      {
+       "id": "way/663150717",
+       "name": "Trường Trung học phổ thông Tân Hồng",
+       "type": "school",
+       "lat": 10.87745,
+       "lon": 105.45704,
+       "km": 7.59
+      }
+     ]
+    },
+    {
+     "id": "cell_09_01",
+     "name": "near Bình Thành B",
+     "rank": 8,
+     "lat": 10.86935,
+     "lon": 105.31402,
+     "under5": 26.0,
+     "reasons": [
+      "about 26 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "50% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/852595423",
+       "name": "Trường Tiểu học Thường Thới Hậu B2",
+       "type": "school",
+       "lat": 10.86495,
+       "lon": 105.3264,
+       "km": 1.44
+      },
+      {
+       "id": "way/170316035",
+       "name": "Tiểu học Thường Lạc",
+       "type": "school",
+       "lat": 10.81604,
+       "lon": 105.33314,
+       "km": 6.29
+      }
+     ]
+    },
+    {
+     "id": "cell_15_62",
+     "name": "near Gò Ớt",
+     "rank": 9,
+     "lat": 10.81656,
+     "lon": 105.88713,
+     "under5": 21.0,
+     "reasons": [
+      "about 21 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "52% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "node/5798146192",
+       "name": "",
+       "type": "school",
+       "lat": 10.745,
+       "lon": 105.88224,
+       "km": 7.98
+      },
+      {
+       "id": "way/1181162846",
+       "name": "Trường Tiểu học-Trung học cơ sở Vĩnh Bình",
+       "type": "school",
+       "lat": 10.86154,
+       "lon": 105.82861,
+       "km": 8.12
+      }
+     ]
+    },
+    {
+     "id": "cell_35_02",
+     "name": "near Phú Tân",
+     "rank": 10,
+     "lat": 10.64543,
+     "lon": 105.32318,
+     "under5": 20.0,
+     "reasons": [
+      "about 20 children under 5 live within ~100 m of flood water",
+      "100% of homes here have flood water within ~100 m",
+      "51% of the square is flood water (land on 2026-07-11)"
+     ],
+     "to": [
+      {
+       "id": "way/1159707904",
+       "name": "Trường Tiểu học C Phú Mỹ (điểm phụ)",
+       "type": "school",
+       "lat": 10.58458,
+       "lon": 105.36022,
+       "km": 7.89
+      },
+      {
+       "id": "way/1250983166",
+       "name": "Trường Trung học cơ sở Chợ Vàm",
+       "type": "school",
+       "lat": 10.71839,
+       "lon": 105.33089,
+       "km": 8.17
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "note": "Overlays: new flood water (water on the pass that was land on 2026-07-11), NISAR L2 GCOV, provisional. Hamlets: top 10 per pass from handoff/findings/scores.json; destinations: nearest 2 schools/day-care points (straight line)."
+}

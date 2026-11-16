@@ -167,6 +167,8 @@ public class OureaViewer : MonoBehaviour
     GUIStyle sPanel, sEyebrow, sTitle, sSub, sBody, sSmall, sBig, sBadge, sRowName, sRowReason, sTrend, sTick, sTickOn, sBtn, sPlay, sPill, sRow, sRowSel, sCard;
     Vector2 listScroll;
     string selectedId;
+    public string SelectedPlaceId { get { return selectedId; } }
+    public string CurrentPassDate { get { return passes.Count > 0 ? passes[Mathf.Clamp(currentPass, 0, passes.Count - 1)].date : ""; } }
     bool draggingTrack;
 
     static Texture2D Rounded(Color c, int radius)

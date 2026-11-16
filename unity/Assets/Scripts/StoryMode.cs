@@ -341,7 +341,7 @@ public class StoryMode : MonoBehaviour
         }
 
         const float M = 16f;
-        float pw = 340f, ph = 372f;
+        float pw = 340f, ph = 412f;
         var r = new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
@@ -376,6 +376,7 @@ public class StoryMode : MonoBehaviour
             yy += 66;
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
+        if (OureaLinks.Button(new Rect(x0, yy + 30, w, 30), "SEE WALKING ROUTES TO SCHOOL  >", sButton)) OureaLinks.Routes(f.pass, null);
         if (draftFor >= 0) DrawDraft(r, W, H, s, f);
     }
 

@@ -545,7 +545,17 @@ public class FloodLab : MonoBehaviour
         if (GUI.Button(new Rect(tabs.x, tabs.y, tw - 3, tabs.height), "Hamlets", showCommunes ? sBtn : sBtnOn)) showCommunes = false;
         if (GUI.Button(new Rect(tabs.x + tw + 3, tabs.y, tw - 3, tabs.height), "Communes", showCommunes ? sBtnOn : sBtn)) showCommunes = true;
         var body = new Rect(p.x, tabs.yMax + 2, p.width, p.yMax - tabs.yMax - 2);
-        if (!showCommunes) { if (viewer != null) viewer.DrawRanking(body); return; }
+        if (!showCommunes)
+        {
+            if (viewer == null) return;
+            // the hamlet list, and under it the walking routes to school on Google Maps (web/public/unity/routes/)
+            viewer.DrawRanking(new Rect(body.x, body.y, body.width, body.height - 50f));
+            var rb = new Rect(body.x + 18f, body.yMax - 44f, body.width - 36f, 32f);
+            string sel = viewer.SelectedPlaceId;
+            if (OureaLinks.Button(rb, string.IsNullOrEmpty(sel) ? "ROUTES TO SCHOOL  >" : "ROUTES TO SCHOOL FROM THIS HAMLET  >", sBtnOn))
+                OureaLinks.Routes(viewer.CurrentPassDate, sel);
+            return;
+        }
 
         float x = body.x + 18, y = body.y + 12, w = body.width - 36;
         if (live == null) { GUI.Label(new Rect(x, y, w, 40), "No commune data in this build.", sBody); return; }

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ourea · Routes to school</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<style>
+/* Routes to school: a Google satellite map with NISAR's new flood water, and the walking routes from
+   a check-first hamlet to its nearest schools, each scored by how much of it runs through that water.
+   Same look as the 3D app: dark glass, cyan accent. */
+:root {
+  --bg: #04080a;
+  --glass: rgba(8, 14, 17, 0.92);
+  --line: rgba(200, 240, 240, 0.16);
+  --fg: #eef5f3;
+  --muted: #b2c4c0;
+  --accent: #5fd4e0;
+  --wet: #ff6b57;
+  --mid: #f2b544;
+  --dry: #eef5f3;
+  --flood: #40aaff;
+  --display: "Chakra Petch", "Arial Narrow", Arial, sans-serif;
+  --body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--body); }
+#map { position: fixed; inset: 0; }
+.panel {
+  position: fixed; z-index: 2; top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px));
+  width: min(380px, calc(100% - 24px)); max-height: calc(100% - 24px); overflow: auto;
+  background: var(--glass); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 14px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.brand { font: 600 12px var(--display); letter-spacing: 0.2em; color: var(--accent); text-decoration: none; }
+h1 { margin: 2px 0 0; font: 600 20px/1.2 var(--display); text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); font-size: 13px; }
+.label { font: 600 11px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+button {
+  font: 600 12px var(--display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg);
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 9px; padding: 7px 11px; cursor: pointer;
+}
+button:hover { background: rgba(255, 255, 255, 0.1); }
+button[aria-pressed="true"] { background: var(--accent); color: #03171a; border-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hamlets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.hamlets button { width: 100%; display: flex; gap: 10px; align-items: baseline; text-align: left; text-transform: none; letter-spacing: 0; font: 500 13px var(--body); padding: 8px 10px; }
+.hamlets .rank { font: 600 12px var(--display); color: var(--accent); min-width: 22px; }
+.hamlets button[aria-pressed="true"] .rank { color: #03171a; }
+.routes { display: flex; flex-direction: column; gap: 8px; }
+.route { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; background: rgba(255, 255, 255, 0.03); }
+.route.on { border-color: var(--accent); }
+.route .head { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+.route .pct { font: 600 14px var(--display); font-variant-numeric: tabular-nums; }
+.route small { color: var(--muted); }
+.tag { align-self: flex-start; font: 600 10px var(--display); letter-spacing: 0.08em; text-transform: uppercase; color: #03171a; background: var(--accent); border-radius: 999px; padding: 2px 8px; }
+.note { color: var(--muted); font-size: 12px; }
+.warn { color: var(--mid); font-size: 13px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
+.box { width: 12px; height: 12px; border-radius: 3px; display: inline-block; background: var(--flood); opacity: 0.8; }
+@media (max-width: 640px) {
+  .panel { top: auto; bottom: max(12px, env(safe-area-inset-bottom, 0px)); max-height: 55%; }
+}
+</style>
+</head>
+<body>
+<div id="map" role="application" aria-label="Map of walking routes and new flood water"></div>
+
+<aside class="panel" aria-live="polite">
+  <div class="top">
+    <a class="brand" href="../">OUREA</a>
+    <div class="seg" role="group" aria-label="Language">
+      <button id="lang-en" aria-pressed="true">EN</button><button id="lang-vi" aria-pressed="false">VI</button>
+    </div>
+  </div>
+  <div>
+    <h1 id="t-title">Routes to school</h1>
+    <p class="lede" id="t-lede">Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs through new flood water on that radar pass.</p>
+  </div>
+  <div>
+    <div class="label" id="t-pass">NISAR pass</div>
+    <div class="seg" id="passes" role="group"></div>
+  </div>
+  <div>
+    <div class="label" id="t-hamlets">Check first</div>
+    <ul class="hamlets" id="hamlets"></ul>
+  </div>
+  <div class="routes" id="routes"></div>
+  <div class="legend">
+    <span><i class="box"></i><span id="t-flood">New flood water</span></span>
+    <span><i class="sw" style="background:var(--dry)"></i><span id="t-low">Less water</span></span>
+    <span><i class="sw" style="background:var(--wet)"></i><span id="t-high">More water</span></span>
+  </div>
+  <p class="note" id="t-note">NISAR data is provisional. A route with less water is not a safe route: it had the least flood water on that pass. Routes by Google Maps; check on the ground.</p>
+</aside>
+
+<script>
+// Paste the key from Google Cloud here. It is meant to be public: it only works on this site
+// (HTTP referrer restriction) and only for the Maps JavaScript and Routes APIs.
+const GOOGLE_MAPS_KEY = "PASTE_KEY_HERE";
+
+const T = {
+  en: { title: "Routes to school", pass: "NISAR pass", hamlets: "Check first", flood: "New flood water", low: "Less water", high: "More water",
+        lede: "Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs through new flood water on that radar pass.",
+        note: "NISAR data is provisional. A route with less water is not a safe route: it had the least flood water on that pass. Routes by Google Maps; check on the ground.",
+        baseline: "11 Jul is the baseline pass: no new flood water yet. Pick a later pass.", pick: "Pick a hamlet to see its routes.",
+        loading: "Asking Google Maps for walking routes…", none: "Google Maps found no walking route here.", nokey: "Add the Google Maps key to this page to show the map and routes.",
+        least: d => "Least water on the " + d + " pass", through: "through new flood water", route: "Route", to: "to", school: "school", childcare: "day care",
+        min: "min", fail: "Couldn't get routes from Google Maps: " },
+  vi: { title: "Đường đến trường", pass: "Lượt chụp NISAR", hamlets: "Cần kiểm tra trước", flood: "Nước lũ mới", low: "Ít nước hơn", high: "Nhiều nước hơn",
+        lede: "Đường đi bộ từ các ấp cần kiểm tra trước đến trường học hoặc điểm giữ trẻ gần nhất. Mỗi tuyến cho biết bao nhiêu phần đi qua nước lũ mới trong lượt chụp radar đó.",
+        note: "Số liệu NISAR là tạm thời. Tuyến ít nước hơn không có nghĩa là an toàn: đó chỉ là tuyến ít nước lũ nhất trong lượt chụp đó. Tuyến đường từ Google Maps; hãy kiểm tra thực tế.",
+        baseline: "11/7 là lượt chụp gốc: chưa có nước lũ mới. Hãy chọn lượt sau.", pick: "Chọn một ấp để xem các tuyến đường.",
+        loading: "Đang lấy tuyến đi bộ từ Google Maps…", none: "Google Maps không tìm thấy tuyến đi bộ ở đây.", nokey: "Thêm khóa Google Maps vào trang này để hiện bản đồ và tuyến đường.",
+        least: d => "Ít nước nhất trong lượt chụp " + d, through: "qua nước lũ mới", route: "Tuyến", to: "đến", school: "trường", childcare: "điểm giữ trẻ",
+        min: "phút", fail: "Không lấy được tuyến đường từ Google Maps: " }
+};
+let lang = "en";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmtDate = (iso, l) => { const [y, m, d] = iso.split("-").map(Number); return l === "vi" ? d + "/" + m : d + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1]; };
+
+let data, map, overlay, pass, hamlet, lines = [], marks = [], floodPx = null, floodW = 0, floodH = 0, results = [];
+
+function texts() {
+  const t = T[lang];
+  for (const k of ["title", "pass", "hamlets", "flood", "low", "high", "lede", "note"]) $("t-" + k).textContent = t[k];
+  document.documentElement.lang = lang;
+  $("lang-en").setAttribute("aria-pressed", lang === "en"); $("lang-vi").setAttribute("aria-pressed", lang === "vi");
+}
+
+function drawPasses() {
+  $("passes").innerHTML = data.passes.map(p => `<button data-d="${p.date}" aria-pressed="${p === pass}">${fmtDate(p.date, lang)}</button>`).join("");
+  $("passes").querySelectorAll("button").forEach(b => b.onclick = () => selectPass(b.dataset.d));
+}
+
+function drawHamlets() {
+  const list = pass.hamlets;
+  $("hamlets").innerHTML = list.length ? list.map(h => `<li><button data-id="${h.id}" aria-pressed="${hamlet && hamlet.id === h.id}"><span class="rank">#${h.rank}</span><span>${esc(h.name)}</span></button></li>`).join("")
+    : `<li class="note">${T[lang].baseline}</li>`;
+  $("hamlets").querySelectorAll("button").forEach(b => b.onclick = () => selectHamlet(b.dataset.id));
+}
+
+function drawRoutes() {
+  const t = T[lang];
+  if (!hamlet) { $("routes").innerHTML = pass.hamlets.length ? `<p class="note">${t.pick}</p>` : ""; return; }
+  if (!results.length) return;
+  const scored = results.filter(r => r.ok);
+  const best = scored.length ? scored.reduce((a, b) => (a.wet <= b.wet ? a : b)) : null;
+  $("routes").innerHTML = results.map((r, i) => {
+    if (!r.ok) return `<p class="warn">${esc(r.msg)}</p>`;
+    const dest = r.dest;
+    return `<div class="route${r === best ? " on" : ""}" data-i="${i}" tabindex="0">
+      ${r === best ? `<span class="tag">${t.least(fmtDate(pass.date, lang))}</span>` : ""}
+      <div class="head"><span>${t.route} ${String.fromCharCode(65 + i)} · ${(r.meters / 1000).toFixed(1)} km · ${Math.round(r.seconds / 60)} ${t.min}</span>
+        <span class="pct" style="color:${colour(r.wet)}">${Math.round(r.wet * 100)}%</span></div>
+      <small>${t.through} · ${t.to} ${esc(dest.name)} (${dest.type === "school" ? t.school : t.childcare})</small>
+    </div>`;
+  }).join("");
+  $("routes").querySelectorAll(".route").forEach(el => el.onclick = () => highlight(+el.dataset.i));
+}
+
+function colour(w) { return w < 0.15 ? "var(--dry)" : w < 0.45 ? "var(--mid)" : "var(--wet)"; }
+const lineColour = w => (w < 0.15 ? "#eef5f3" : w < 0.45 ? "#f2b544" : "#ff6b57");
+
+// how much of a path runs through new flood water: sample every ~20 m against the overlay pixels
+function wetShare(path) {
+  if (!floodPx) return 0;
+  const b = data.bounds; let wet = 0, n = 0;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1], c = path[i];
+    const steps = Math.max(1, Math.round(google.maps.geometry.spherical.computeDistanceBetween(a, c) / 20));
+    for (let s = 0; s < steps; s++) {
+      const lat = a.lat() + (c.lat() - a.lat()) * s / steps, lng = a.lng() + (c.lng() - a.lng()) * s / steps;
+      const x = Math.floor((lng - b.west) / (b.east - b.west) * floodW), y = Math.floor((b.north - lat) / (b.north - b.south) * floodH);
+      n++;
+      if (x >= 0 && y >= 0 && x < floodW && y < floodH && floodPx[(y * floodW + x) * 4 + 3] > 0) wet++;
+    }
+  }
+  return n ? wet / n : 0;
+}
+
+function loadFlood(src) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas"); c.width = floodW = img.width; c.height = floodH = img.height;
+      const g = c.getContext("2d"); g.drawImage(img, 0, 0); floodPx = g.getImageData(0, 0, c.width, c.height).data; res();
+    };
+    img.onerror = () => { floodPx = null; res(); };
+    img.src = src;
+  });
+}
+
+function clearMap() { lines.forEach(l => l && l.setMap(null)); marks.forEach(m => m.setMap(null)); lines = []; marks = []; }
+
+function highlight(i) {
+  lines.forEach((l, j) => l && l.setOptions({ strokeWeight: j === i ? 7 : 4, zIndex: j === i ? 10 : 1, strokeOpacity: j === i ? 1 : 0.6 }));
+  document.querySelectorAll(".route").forEach(el => el.classList.toggle("on", +el.dataset.i === i));
+}
+
+async function selectPass(d) {
+  pass = data.passes.find(p => p.date === d) || data.passes[data.passes.length - 1];
+  hamlet = null; results = []; clearMap();
+  if (overlay) overlay.setMap(null);
+  overlay = new google.maps.GroundOverlay(pass.overlay, data.bounds, { opacity: 0.85, clickable: false });
+  overlay.setMap(map);
+  await loadFlood(pass.overlay);
+  drawPasses(); drawHamlets(); drawRoutes();
+  map.fitBounds(data.bounds);
+}
+
+async function routesTo(h, dest) {
+  // Routes API (walking, with alternatives); the result is drawn on this Google map and not stored
+  const r = await fetch("https://routes.googleapis.com/directions/v2:computeRoutes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Goog-Api-Key": GOOGLE_MAPS_KEY,
+               "X-Goog-FieldMask": "routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline" },
+    body: JSON.stringify({ origin: { location: { latLng: { latitude: h.lat, longitude: h.lon } } },
+                           destination: { location: { latLng: { latitude: dest.lat, longitude: dest.lon } } },
+                           travelMode: "WALK", computeAlternativeRoutes: true, languageCode: lang === "vi" ? "vi" : "en" })
+  });
+  const j = await r.json();
+  if (!r.ok) throw new Error((j.error && j.error.message) || r.status);
+  return (j.routes || []).map(x => ({ dest, meters: x.distanceMeters, seconds: parseInt(x.duration, 10) || 0,
+                                     path: google.maps.geometry.encoding.decodePath(x.polyline.encodedPolyline) }));
+}
+
+async function selectHamlet(id) {
+  hamlet = pass.hamlets.find(h => h.id === id); if (!hamlet) return;
+  drawHamlets(); clearMap(); results = [];
+  $("routes").innerHTML = `<p class="note">${T[lang].loading}</p>`;
+  marks.push(new google.maps.Marker({ map, position: { lat: hamlet.lat, lng: hamlet.lon }, title: hamlet.name,
+    label: { text: "#" + hamlet.rank, color: "#03171a", fontWeight: "700", fontSize: "11px" },
+    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 13, fillColor: "#5fd4e0", fillOpacity: 1, strokeColor: "#03171a", strokeWeight: 2 } }));
+  const bounds = new google.maps.LatLngBounds({ lat: hamlet.lat, lng: hamlet.lon });
+  for (const dest of hamlet.to) {
+    marks.push(new google.maps.Marker({ map, position: { lat: dest.lat, lng: dest.lon }, title: dest.name,
+      icon: { path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW, scale: 5, fillColor: "#eef5f3", fillOpacity: 1, strokeColor: "#03171a", strokeWeight: 1.5 } }));
+    bounds.extend({ lat: dest.lat, lng: dest.lon });
+    try {
+      const rs = await routesTo(hamlet, dest);
+      if (!rs.length) results.push({ ok: false, msg: T[lang].none + " (" + dest.name + ")" });
+      for (const r of rs) { r.ok = true; r.wet = wetShare(r.path); results.push(r); r.path.forEach(p => bounds.extend(p)); }
+    } catch (e) { results.push({ ok: false, msg: T[lang].fail + e.message }); }
+  }
+  // one line per result (null where Google found none), so a route's index is its line's index
+  lines = results.map(r => r.ok ? new google.maps.Polyline({ map, path: r.path, strokeColor: lineColour(r.wet), strokeWeight: 4, strokeOpacity: 0.8 }) : null);
+  map.fitBounds(bounds, 60);
+  drawRoutes();
+  const okRoutes = results.filter(r => r.ok);
+  if (okRoutes.length) highlight(results.indexOf(okRoutes.reduce((a, b) => (a.wet <= b.wet ? a : b))));
+}
+
+function loadGoogle() {
+  // Google's own bootstrap loader (importLibrary)
+  (g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })({ key: GOOGLE_MAPS_KEY, v: "weekly" });
+}
+
+async function start() {
+  texts();
+  data = await (await fetch("data.json")).json();
+  pass = data.passes[data.passes.length - 1];
+  drawPasses(); drawHamlets();
+  if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY.startsWith("PASTE")) { $("routes").innerHTML = `<p class="warn">${T[lang].nokey}</p>`; return; }
+  loadGoogle();
+  await google.maps.importLibrary("maps"); await google.maps.importLibrary("geometry"); await google.maps.importLibrary("marker");
+  map = new google.maps.Map($("map"), { mapTypeId: "hybrid", disableDefaultUI: true, zoomControl: true, gestureHandling: "greedy",
+                                        backgroundColor: "#04080a", tilt: 0 });
+  const q = new URLSearchParams(location.search);
+  await selectPass(q.get("pass") || pass.date);
+  if (q.get("h")) selectHamlet(q.get("h"));
+}
+
+$("lang-en").onclick = () => { lang = "en"; texts(); drawPasses(); drawHamlets(); drawRoutes(); };
+$("lang-vi").onclick = () => { lang = "vi"; texts(); drawPasses(); drawHamlets(); drawRoutes(); };
+start();
+</script>
+</body>
+</html>
