@@ -2,6 +2,13 @@
 
 **NASA Space Apps Challenge 2026 · Dancing with the SARs · Team Ourea (NYC)**
 
+| | |
+|---|---|
+| **Live app** | https://ourea-2wp.pages.dev (runs in the browser on a laptop or a phone) |
+| **Space Apps project page** | https://www.spaceappschallenge.org/2026/find-a-team/ourea/?tab=project |
+| **Demo video** | https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing |
+| **Event** | NASA Space Apps NYC, Nov 13–15, 2026, hosted by NYU Tandon CUSP. Submitted for judging Nov 15. |
+
 Every flood season, children in Vietnam's Mekong Delta drown in the water that rises around their homes (nearly 2,000 children die from drowning in Vietnam every year, Ministry of Health, Jul 2025), and the flood arrives under monsoon clouds that blind camera satellites. **Ourea turns each NISAR L-band radar pass into a plain answer for the people who keep children safe: where is flood water now close to homes, schools and young children, and which communes should we check first?**
 
 ![Ourea: the upper Mekong Delta in 3D with NISAR flood water and check-first beams](docs/readme/hero.webp)
@@ -14,16 +21,20 @@ Over a 4,006 km² tile of the upper delta (105.30–105.90°E, 10.40–10.95°N,
 |---|---|
 | Open water on the tile | **26.6%** (Jul 11) → **39.3%** (Aug 28) → **55.3%** (Oct 3) |
 | New water since July | **≈1,335 km²** |
-| Children under 5 living within ~100 m of new flood water | **≈28,100** (of ≈81,100 on the tile) |
+| Children under 5 living within ~100 m of new flood water | **≈21,700** (Aug 28) → **≈28,100** (Oct 3), of ≈81,100 on the tile |
 | Schools near flood water | **18 of 94** mapped |
 | Communes ranked every pass | **64** (#1 on Oct 3: Xã Vĩnh Châu, 488 of 538 under-5s near flood water) |
 | Ranking robustness | every weight ±50% keeps 3–5 of the top 5 and 7–10 of the top 10 |
+
+**What drove it:** the Mekong at Tân Châu rose from 1.04 m in July to a peak near 3.2 m around Sep 21, then fell (Mekong River Commission). Water on the land kept spreading after the peak because the floodplain fills and drains slowly; dikes and the rice calendar decide which fields fill. 2026 was a low-flood year: the river never reached the first flood-alarm level.
 
 ![The flood spreading across the tile, Jul 11 → Aug 28 → Oct 3, rendered in Unity from NISAR water maps](docs/readme/flood_sequence.webp)
 
 ## Why radar
 
 On the days NISAR passed, the camera satellite (Sentinel-2) saw on average about **70% cloud**, and **94–98%** on Jul 11, Aug 16 and Sep 9, right as the flood built up. L-band radar sees the water through cloud and between rice stalks.
+
+**Polarization and frequency.** NISAR transmits horizontally and listens two ways. **HH** shows open water best (calm water reflects the wave away, so it looks dark). Flooded rice and trees can look bright in HH, because the wave bounces off the water and then off the stems. **HV** responds to the leaves themselves. Using both is how we plan to tell rice paddies from river flood. NISAR's 24 cm L-band wave passes through cloud and crops better than Sentinel-1's 5.5 cm C-band.
 
 ![Cloud cover in the Sentinel-2 photo nearest each NISAR pass vs. water seen by NISAR](docs/readme/clouds_vs_radar.webp)
 
@@ -55,16 +66,26 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
 
 ## Try it
 
-- **Live app:** https://ourea-2wp.pages.dev/
+- **Live app:** https://ourea-2wp.pages.dev/ (laptop or phone: the layout fits phone screens and lists scroll by touch)
+- **Demo video:** https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing
 - **Playable build:** `web/public/unity` (Unity WebGL). Locally: `cd web/public/unity && python3 -m http.server 8000`, then open http://localhost:8000
 - **In the app:** it opens on the globe. **Begin the story** flies you down to Đồng Tháp and walks through the three passes with a guide; **Explore the map** lands you on the map.
-  - Scrub the **timeline** to watch the flood spread; **Watch a village flood** plays the real passes over one town, houses turning red as new water comes within 100 m.
+  - Scrub the **timeline** to watch the flood spread; **Follow the water in one town** plays the real passes over one town, houses turning red as new water comes within 100 m.
   - In the dock: **PHOTO** wipes between the cloudy camera photo and the radar, **RADAR** shows the raw NISAR backscatter, **WATER** is the modeled "what if" level, **TOP 10 → Communes** has the ranked list and the reasons behind each rank, **ALERTS** signs a phone up for flood texts (Twilio, via the API), **KEY** explains every colour.
   - **GLOBE** (top left) flies back out.
+  - Calm music and water sounds (generated in code) rise with the flood.
   - Click a hamlet in **TOP 10 → Hamlets**: its walking routes to the nearest day care and school appear on the 3D map (OpenStreetMap roads), coloured by how much of each is **at risk**: under water, or low ground next to new flood water. Raised dikes and roads don't count. Each hamlet's bar shows what put it on the list.
   - **ROUTES TO DAY CARE & SCHOOL** slides in a Google Maps panel over the app. It shows walking routes to the nearest day care first, then schools. You can pick the school your children actually attend. Use **CSV** or **PRINT SHEET** to take the list to a meeting.
   - In the story's last step, the commune office's message drafts have **SHARE · ZALO**.
 - **Rebuild the data:** `pipeline/run_pipeline.py` (NISAR), `pipeline/make_heightmap.py` (terrain), `pipeline/make_optical.py` (Sentinel-2), then `science/score.py` and `science/commune_score.py`.
+
+## Who it's for and what they do with it
+
+Ourea is built for provincial education and child-protection offices and commune officials who decide where to open flood-season childcare points and where to send safety teams. In UNICEF and Alliance for Safe Children research, young children in supervised village day care had over 80% fewer drowning deaths, and WHO recommends day care for children under 6 to prevent drowning. Ourea does not replace that protection; it points it at the right communes after every NISAR pass, for free, under any cloud.
+
+The app ends in an action: a ranked list with reasons, a ready-to-send message for the commune office (Vietnamese or English, shareable to Zalo), and a list of hamlets, routes and schools to print or download as CSV for a meeting.
+
+**Safeguards:** radar maps water, not children. We never label a place or route as safe (the best route is labelled "least water on that pass"), and we use no personal data about children.
 
 ## What's real, what's modeled
 
@@ -85,6 +106,16 @@ Science notes, drivers and fact-check: [docs/SCIENCE.md](docs/SCIENCE.md). How s
 | WorldPop 2026 age/sex structures (100 m) | Children under 5 |
 | OpenStreetMap (ODbL) | Homes, schools, places |
 | GHS-BUILT (EU JRC) · ETH Global Canopy Height | 3D buildings, trees |
+| Sentinel-1 (ESA), via Microsoft Planetary Computer | Accuracy check of the NISAR water map |
+| Mekong River Commission Data Portal (Tân Châu) | River levels, flood driver |
+| Google Maps Platform (Maps JavaScript, Routes) · OpenStreetMap roads | Walking routes to day care and school |
+| NASA Worldview (MODIS) · ISS astronaut photo ISS073-E-0818427 | Context imagery |
+
+The full source list, including the news and research sources behind the drowning and day-care figures, is in [`docs/SOURCES.md`](docs/SOURCES.md) and on the [Space Apps project page](https://www.spaceappschallenge.org/2026/find-a-team/ourea/?tab=project).
+
+## Tools
+
+Python (rasterio, numpy, pystac-client) · Unity 6 (C#, URP, WebGL) · Cloudflare Workers and Pages (JavaScript) · Google Maps JavaScript and Routes APIs · OpenStreetMap routing · Twilio · GitHub Actions · Claude (AI use is logged in `docs/`, as Space Apps requires)
 
 ## Repo layout
 
@@ -95,7 +126,7 @@ Science notes, drivers and fact-check: [docs/SCIENCE.md](docs/SCIENCE.md). How s
 | `unity/` | Kason, Tina | Unity 6 project (URP, WebGL) |
 | `web/` | Asher, Kason | Cloudflare API, playable WebGL build |
 | `handoff/` | everyone | The data contract between pipeline, science and Unity ([`CONTRACT.md`](handoff/CONTRACT.md)) |
-| `docs/` | Christopher, all | Stills, sources, AI-use log |
+| `docs/` | Christopher, all | Stills, sources, science notes, validation, AI-use log |
 
 ## Team
 
