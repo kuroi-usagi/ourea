@@ -133,7 +133,7 @@ public class RouteField : MonoBehaviour
         for (int i = 0; i < shown.Count; i++)
         {
             Vector3 sp = cam.WorldToScreenPoint(ends[i] + Vector3.up * 2f);
-            if (sp.z <= 0f) continue;
+            if (sp.z <= 0f || OureaViewer.PointerOverUI(new Vector2(sp.x, Screen.height - sp.y))) continue;
             var r = shown[i];
             string km = r.m < 150f ? "in the hamlet" : (r.m / 1000f).ToString("0.0") + " km · " + r.min.ToString("0") + " min";
             string col = ColorUtility.ToHtmlStringRGB(RiskColour(r.wet));

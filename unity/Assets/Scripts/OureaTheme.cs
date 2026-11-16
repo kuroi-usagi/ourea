@@ -25,6 +25,40 @@ public static class OureaTheme
     // IMGUI scale: the layout is ~820 units tall on a laptop, ~390 units wide on a phone
     public static float UIScale { get { return Mathf.Clamp(Phone ? Screen.width / 390f : Screen.height / 820f, 0.7f, 3.5f); } }
     public const float PhoneDockH = 56f;
+
+    // IMGUI scroll views only scroll by scrollbar: add dragging (touch or mouse) and the wheel.
+    // Call just before GUI.BeginScrollView with the same view rect. A drag longer than a few
+    // pixels scrolls and cancels the tap, so rows inside still work as buttons.
+    static bool dragOn; static Rect dragView; static Vector2 dragLast; static float dragMoved;
+    public static Vector2 DragScroll(Rect view, Vector2 scroll, float contentH)
+    {
+        var e = Event.current;
+        float max = Mathf.Max(0f, contentH - view.height);
+        bool mine = dragOn && Mathf.Abs(dragView.y - view.y) < 1f && Mathf.Abs(dragView.x - view.x) < 1f;
+        switch (e.type)
+        {
+            case EventType.MouseDown:
+                if (e.button == 0 && view.Contains(e.mousePosition)) { dragOn = true; dragView = view; dragLast = e.mousePosition; dragMoved = 0f; }
+                break;
+            case EventType.MouseDrag:
+                if (mine)
+                {
+                    float dy = e.mousePosition.y - dragLast.y;
+                    dragLast = e.mousePosition; dragMoved += Mathf.Abs(dy);
+                    scroll.y -= dy;
+                    if (dragMoved > 6f) { GUIUtility.hotControl = 0; e.Use(); }
+                }
+                break;
+            case EventType.MouseUp:
+                if (mine) { dragOn = false; if (dragMoved > 6f) e.Use(); }
+                break;
+            case EventType.ScrollWheel:
+                if (view.Contains(e.mousePosition)) { scroll.y += e.delta.y * 40f; e.Use(); }
+                break;
+        }
+        scroll.y = Mathf.Clamp(scroll.y, 0f, max);
+        return scroll;
+    }
     // the phone's bottom bar, in GUI units (W, H already divided by UIScale)
     public static Rect PhoneDock(float W, float H) { return new Rect(16f, H - 16f - PhoneDockH, W - 32f, PhoneDockH); }
 

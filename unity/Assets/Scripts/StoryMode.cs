@@ -17,6 +17,19 @@ public class StoryMode : MonoBehaviour
 
     bool intro = true, running, storyAfterFlight;
     public static bool Running;   // the guide is on screen (on a phone the timeline gives it the space)
+    public static float GuideTop; // top of the guide's panel in GUI units (phone sheets stop above it)
+
+    const float GuideFullH = 214f, GuideCompactH = 96f;
+    // On a short phone screen the guide folds to its name and buttons while a panel or card needs the room
+    float GuideH(float H)
+    {
+        if (!OureaTheme.Phone) return GuideFullH;
+        // room between the title and the full guide
+        float room = OureaTheme.PhoneDock(Screen.width / OureaTheme.UIScale, H).y - 8f - GuideFullH - 8f - (16f + 58f + 8f);
+        bool actShown = chapter == 5 && !actMin && !lab.CardOpen;
+        float need = lab.CardOpen ? Mathf.Min(lab.OpenCardHeight, lab.OpenCardMinHeight) : actShown ? 388f : 0f;
+        return need > room ? GuideCompactH : GuideFullH;
+    }
     int chapter;
     float chapterStart, introFade = 1f;
     Vector2 introScroll;
@@ -25,7 +38,7 @@ public class StoryMode : MonoBehaviour
     static readonly string[] Titles = { "HOME", "UNDER CLOUD", "THE WATER", "ONE VILLAGE", "CHECK FIRST", "WHAT PEOPLE DO", "EVERY PASS" };
 
     GUIStyle sPrimarySmall, sButtonSmall;
-    GUIStyle sHugePhone;
+    GUIStyle sHugePhone, sAvaSmall;
     GUIStyle sHuge, sLead, sBody, sSmall, sEyebrow, sWho, sWhoSmall, sAva, sPrimary, sButton, sPanel, sDotLabel, sHeadKey;
     Texture2D texShade, texSide, texRound;
 
@@ -43,6 +56,7 @@ public class StoryMode : MonoBehaviour
         sWho = OureaTheme.Text(12, OureaTheme.Accent, true);
         sWhoSmall = OureaTheme.Text(11, OureaTheme.Muted);
         sAva = OureaTheme.Text(22, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.MiddleCenter);
+        sAvaSmall = OureaTheme.Text(15, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.MiddleCenter);
         sDotLabel = OureaTheme.Text(10, OureaTheme.Muted, true, FontStyle.Normal, TextAnchor.UpperLeft);
         sPrimary = OureaTheme.Primary(14);
         sButton = OureaTheme.Button(12);
@@ -211,6 +225,7 @@ public class StoryMode : MonoBehaviour
     // clean column on the left: what this is, the question, three short points, two buttons.
     // On narrow screens the globe sits on top and the column below it.
     public static bool Wide { get { return Screen.width > Screen.height * 1.15f; } }
+    public static bool ShortPhone { get { return OureaTheme.Phone && Screen.height < Screen.width * 2f; } }
 
     void DrawIntro(float W, float H, float s)
     {
@@ -228,6 +243,12 @@ public class StoryMode : MonoBehaviour
             "NASA-ISRO's NISAR radar sees through cloud. Each pass becomes a map of new flood water and a ranked list of communes where it reaches homes with small children.",
             "Commune officials, child-protection and education offices and drowning-prevention programs: where to check first, which day care to open, who to warn."
         };
+        if (ShortPhone)   // a phone with the browser's bars: the same points, shorter, so the globe keeps its room
+            bodies = new[] {
+                drowningFact + ". Floods come under monsoon cloud, when cameras see nothing.",
+                "NISAR radar sees through cloud: each pass, a map of new flood water and a ranked list of communes.",
+                "Commune officials and child-protection staff: where to check first, which day care to open."
+            };
         // measure, then centre the column vertically (wide) or sit it at the bottom, under the globe (narrow)
         string src = "Source: " + drowningSource + ". NISAR data is provisional. The guide in the story is fictional; her numbers are real.";
         var sSrc = OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
@@ -379,8 +400,11 @@ public class StoryMode : MonoBehaviour
         }
 
         const float M = 16f;
-        float pw = 340f, ph = 412f;
-        var r = OureaTheme.Phone ? new Rect(M, M + 58f + 8f, W - 2 * M, ph) : new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
+        bool phone = OureaTheme.Phone;
+        float rowH = phone ? 52f : 60f, rowStep = rowH + 6f;
+        float pw = 340f, ph = 412f - (60f - rowH) * 3f;
+        if (phone) ph = Mathf.Min(ph, OureaTheme.PhoneDock(W, H).y - 8f - GuideH(H) - 8f - (M + 58f + 8f));
+        var r = phone ? new Rect(M, M + 58f + 8f, W - 2 * M, ph) : new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
         if (OureaTheme.Phone && draftFor >= 0) { DrawDraft(r, W, H, s, f); return; }   // the message takes the panel's place
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
@@ -404,21 +428,21 @@ public class StoryMode : MonoBehaviour
         };
         for (int i = 0; i < 3; i++)
         {
-            var row = new Rect(x0, yy, w, 60);
+            var row = new Rect(x0, yy, w, rowH);
             if (GUI.Button(row, GUIContent.none, sButton))
             {
                 done[i] = !done[i];
                 if (i == 2 && done[i]) lab.OpenAlerts(f.code, true);   // texting parents: the real sign-up (Twilio)
                 if (i < 2) draftFor = done[i] ? i : (draftFor == i ? -1 : draftFor);   // the message to send for it
             }
-            var box = new Rect(row.x + 10, row.y + 20, 18, 18);
+            var box = new Rect(row.x + 10, row.y + rowH * 0.5f - 9f, 18, 18);
             var old = GUI.color;
             GUI.color = OureaTheme.A(done[i] ? OureaTheme.Good : OureaTheme.S(70, 84, 88));
             GUI.DrawTexture(box, texRound);
             GUI.color = old;
             if (!done[i]) { GUI.color = OureaTheme.A(OureaTheme.Glass); GUI.DrawTexture(new Rect(box.x + 3, box.y + 3, 12, 12), texRound); GUI.color = old; }   // hollow until ticked
-            GUI.Label(new Rect(row.x + 38, row.y + 7, row.width - 46, 50), acts[i], OureaTheme.Text(12, done[i] ? OureaTheme.Muted : OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
-            yy += 66;
+            GUI.Label(new Rect(row.x + 38, row.y + 7, row.width - 46, rowH - 8), acts[i], OureaTheme.Text(12, done[i] ? OureaTheme.Muted : OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
+            yy += rowStep;
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
         if (OureaLinks.Button(new Rect(x0, yy + 30, w, 30), "ROUTES TO DAY CARE & SCHOOL  >", sButton)) OureaLinks.Routes(f.pass, null);
@@ -428,29 +452,32 @@ public class StoryMode : MonoBehaviour
     void DrawGuide(float W, float H, float s)
     {
         const float M = 16f;
-        float gw = Mathf.Min(470f, W - 2 * M), gh = 214f;
+        float gw = Mathf.Min(470f, W - 2 * M), gh = GuideH(H);
+        bool compact = gh < GuideFullH;
         // phone: on the tool bar, full width; laptop: bottom left, above the timeline
         var r = OureaTheme.Phone ? new Rect(M, OureaTheme.PhoneDock(W, H).y - 8f - gh, W - 2 * M, gh)
                                  : new Rect(M, H - M - 72f - 12f - gh, gw, gh);
+        GuideTop = r.y;
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
 
         // avatar
-        var av = new Rect(r.x + 16, r.y + 16, 52, 52);
+        var av = compact ? new Rect(r.x + 14, r.y + 10, 32, 32) : new Rect(r.x + 16, r.y + 16, 52, 52);
         var old = GUI.color;
         GUI.color = OureaTheme.A(OureaTheme.S(27, 58, 64));
         GUI.DrawTexture(av, texRound);
         GUI.color = old;
-        GUI.Label(av, "L", sAva);
+        GUI.Label(av, "L", compact ? sAvaSmall : sAva);
 
         float tx = av.xMax + 14, tw = r.xMax - 16 - tx;
-        GUI.Label(new Rect(tx, r.y + 16, tw, 16), "LAN  <color=#93a8a3><size=11>preschool teacher · fictional guide</size></color>", sWho);
-        GUI.Label(new Rect(tx, r.y + 34, tw, 16), (chapter + 1) + " / " + Chapters + "   ·   " + Titles[chapter], sDotLabel);
+        float ty = compact ? r.y + 8 : r.y + 16;
+        GUI.Label(new Rect(tx, ty, tw, 16), "LAN  <color=#93a8a3><size=11>preschool teacher · fictional guide</size></color>", sWho);
+        GUI.Label(new Rect(tx, ty + 18, tw, 16), (chapter + 1) + " / " + Chapters + "   ·   " + Titles[chapter], sDotLabel);
 
-        // typewriter
+        // typewriter (folded away on a short phone while the panel above has the room)
         string line = Line(chapter);
-        int n = Mathf.Clamp(Mathf.FloorToInt((Time.time - chapterStart) * 70f), 0, line.Length);
-        GUI.Label(new Rect(r.x + 16, r.y + 76, r.width - 32, gh - 76 - 52), line.Substring(0, n), sBody);
+        int n = compact ? line.Length : Mathf.Clamp(Mathf.FloorToInt((Time.time - chapterStart) * 70f), 0, line.Length);
+        if (!compact) GUI.Label(new Rect(r.x + 16, r.y + 76, r.width - 32, gh - 76 - 52), line.Substring(0, n), sBody);
 
         // controls
         float by = r.yMax - 44f;
@@ -465,7 +492,7 @@ public class StoryMode : MonoBehaviour
         }
         // progress dots: between the buttons when there's room, otherwise top right
         float dl = r.x + (chapter > 0 ? 184f : 104f) + 8f, dr = r.xMax - 166f - 8f, dw = Chapters * 12f;
-        float dx = dr - dl >= dw ? (dl + dr - dw) * 0.5f : r.xMax - 16f - dw, dy = dr - dl >= dw ? by + 12f : r.y + 40f;
+        float dx = dr - dl >= dw ? (dl + dr - dw) * 0.5f : r.xMax - 16f - dw, dy = dr - dl >= dw ? by + 12f : r.y + (compact ? 30f : 40f);
         for (int i = 0; i < Chapters; i++)
         {
             GUI.color = OureaTheme.A(i <= chapter ? OureaTheme.Accent : OureaTheme.S(70, 84, 88));

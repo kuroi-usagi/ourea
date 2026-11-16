@@ -276,8 +276,9 @@ public class FloodLab : MonoBehaviour
         GUI.Label(new Rect(x, y + 34, 130, 16), "NISAR pass", sSmall);
         float bx = x + 120f, bw = r.xMax - 18f - bx;
         GUI.Label(new Rect(bx, y, bw, 34), kids.ToString("#,0"), sBigRed);
-        GUI.Label(new Rect(bx, y + 34, bw, 16), "under-5s within 100 m of new flood water", sSmall);
-        GUI.Label(new Rect(x, y + 56, r.width - 36 - 64, 16), "+" + km2.ToString("#,0") + " km² new water since 11 Jul  ·  NISAR, provisional", sSmall);
+        bool phone = OureaTheme.Phone;   // shorter lines, so nothing wraps into the next
+        GUI.Label(new Rect(bx, y + 34, bw, 16), phone ? "under-5s near new water" : "under-5s within 100 m of new flood water", sSmall);
+        GUI.Label(new Rect(x, y + 56, r.width - 36 - 64, 16), "+" + km2.ToString("#,0") + " km² new water since 11 Jul" + (phone ? "" : "  ·  NISAR, provisional"), sSmall);
         if (GUI.Button(new Rect(r.xMax - 70f, r.yMax - 32f, 56f, 22f), "Clear", sBtn)) observed = false;
     }
 
@@ -467,7 +468,7 @@ public class FloodLab : MonoBehaviour
             if (phone)
             {
                 // up to just under the title; during the story it stops above the guide's panel
-                float bottom = StoryMode.Running ? dock.y - 8f - 214f - 8f : dock.y - 8f;
+                float bottom = StoryMode.Running && StoryMode.GuideTop > 0f ? StoryMode.GuideTop - 8f : dock.y - 8f;
                 float maxH = bottom - (M + 58f + 8f);
                 float ch = CardHeight(card, maxH);
                 c = new Rect(M, bottom - ch, W - 2 * M, ch);
@@ -482,7 +483,7 @@ public class FloodLab : MonoBehaviour
             }
             GUI.Box(c, GUIContent.none, sPanel);
             Block(c, s);
-            if (GUI.Button(new Rect(c.xMax - 36, c.y + 10, 24, 24), "x", sClose)) Toggle(card);
+            if (GUI.Button(new Rect(c.xMax - 42, c.y + 9, 30, 30), "×", sClose)) Toggle(card);   // 30 px: the rounded texture is 28 px, smaller boxes draw seams
             switch (card)
             {
                 case Card.Water: DrawWaterCard(c); break;
@@ -668,6 +669,7 @@ public class FloodLab : MonoBehaviour
         var whyH = new float[rows.Length];
         float total = 0f;
         for (int i = 0; i < rows.Length; i++) { whyH[i] = sSmall.CalcHeight(new GUIContent(rows[i].why), view.width - 24); total += 30 + whyH[i] + 8 + gapH; }
+        communeScroll = OureaTheme.DragScroll(view, communeScroll, total + 8);
         communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, total + 8), false, false, GUIStyle.none, GUIStyle.none);
         float ry = 0f;
         for (int i = 0; i < rows.Length; i++)
@@ -690,7 +692,10 @@ public class FloodLab : MonoBehaviour
     // ---- flood texts: pick a commune, enter a number, sign up through Asher's Twilio endpoint ----
     public bool AlertsOpen { get { return card == Card.Alerts; } }
     public bool CardOpen { get { return card != Card.None; } }
-    public static bool SheetOpen;   // a card is open as a phone sheet: the timeline steps aside
+    public static bool SheetOpen;
+    public float OpenCardHeight { get { return card == Card.None ? 0f : CardHeight(card, 9999f); } }
+    // the least a card can work in: the sign-up form needs all its fields, lists can scroll
+    public float OpenCardMinHeight { get { return card == Card.Alerts ? 400f : 260f; } }   // a card is open as a phone sheet: the timeline steps aside
 
     bool alertsFromStory;   // opened from the story's checklist: offer the way back, and the routes
 
@@ -749,8 +754,10 @@ public class FloodLab : MonoBehaviour
         GUI.Label(new Rect(x, y, w, 30), note, sSmall);
         y += 36;
 
-        // what the text looks like on the phone
-        GUI.Label(new Rect(x, y, w, 14), "WHAT YOU'LL GET", sEyebrow); y += 18;
+        // what the text looks like on the phone (left out when the card is too short for it)
+        float byTop = p.yMax - 16 - 32 - 10;
+        bool preview = byTop - y > 90f;
+        if (preview) { GUI.Label(new Rect(x, y, w, 14), "WHAT YOU'LL GET", sEyebrow); y += 18; }
         string date = viewer.passes[viewer.passes.Count - 1].date;
         string sms = "Ourea: new flood water within 100 m of homes in " + cm.name + " on the " + date +
                      " NISAR pass (provisional). " + cm.under5Near.ToString("#,0") + " children under 5 live near it. Keep small children away from canals and flood water. Reply STOP to stop.";
@@ -763,6 +770,7 @@ public class FloodLab : MonoBehaviour
             if (OureaLinks.Button(new Rect(x + 100, by, w - 100, 32), "ROUTES THAT FLOODED  >", sBtnOn)) OureaLinks.Routes(date, null);
         }
         else if (OureaLinks.Button(new Rect(x, by, w, 32), "ROUTES THAT FLOODED  >", sBtnOn)) OureaLinks.Routes(date, null);
+        if (!preview) return;
         var bubble = new Rect(x, y, w, Mathf.Min(bh, by - 10 - y));
         GUI.Box(bubble, GUIContent.none, sSmsBox);
         GUI.Label(new Rect(bubble.x + 12, bubble.y + 8, bubble.width - 24, 14), "OUREA ALERTS  ·  SMS", sSmsHead);
@@ -802,6 +810,7 @@ public class FloodLab : MonoBehaviour
     {
         GUI.Label(new Rect(p.x + 18, p.y + 18, p.width - 76, 20), "Key", sTitle);
         var view = new Rect(p.x + 4, p.y + 50, p.width - 8, p.height - 58);
+        keyScroll = OureaTheme.DragScroll(view, keyScroll, keyH);
         keyScroll = GUI.BeginScrollView(view, keyScroll, new Rect(0, 0, view.width - 4, keyH), false, false, GUIStyle.none, GUIStyle.none);
         float x = 14, y = 0, w = view.width - 32;
         keyW = w;

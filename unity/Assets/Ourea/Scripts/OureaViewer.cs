@@ -333,6 +333,7 @@ public class OureaViewer : MonoBehaviour
             Vector3 sp = cam.WorldToScreenPoint(pl.pin.position + Vector3.up * 7f);
             if (sp.z < 0) continue;
             float x = sp.x / uiScale, y = (Screen.height - sp.y) / uiScale;
+            if (PointerOverUI(new Vector2(sp.x, Screen.height - sp.y - 11f * uiScale))) continue;   // under a panel: hide, don't show through
             var old = GUI.color;
             GUI.color = OureaTheme.A(RankColor(s.rank));
             GUI.DrawTexture(new Rect(x - 13, y - 22, 26, 22), texRound);
@@ -376,6 +377,7 @@ public class OureaViewer : MonoBehaviour
         var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
         const float rowH = 62f;
         var content = new Rect(0, 0, view.width, Mathf.Max(view.height, top.Count * rowH));
+        listScroll = OureaTheme.DragScroll(view, listScroll, content.height);
         listScroll = GUI.BeginScrollView(view, listScroll, content, false, false, GUIStyle.none, GUIStyle.none);
         float y = 0;
         foreach (var s in top)
@@ -395,7 +397,7 @@ public class OureaViewer : MonoBehaviour
 
             GUI.Label(new Rect(row.x + 46, row.y + 8, row.width - 100, 18), name, sRowName);
             // short enough for one line on a phone
-            string why = s.reason.Replace("children under 5 live within ~100 m of flood water", "under-5s within ~100 m of flood water");
+            string why = s.reason.Replace("children under 5 live within ~100 m of flood water", "under-5s near flood water");
             GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), why, sRowReason);
             if (s.parts != null)
             {
