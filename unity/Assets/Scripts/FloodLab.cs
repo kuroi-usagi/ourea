@@ -234,7 +234,7 @@ public class FloodLab : MonoBehaviour
             if (guided || SheetOpen) return;
             var b = new Rect(16f, 16f + 58f + 10f + 48f, 268f, 40f);
             Block(b, curScale);
-            if (GUI.Button(b, "WATCH A VILLAGE FLOOD  >", sBtnOn)) StartStory();
+            if (GUI.Button(b, "FOLLOW THE WATER IN ONE TOWN  >", sBtnOn)) StartStory();
             return;
         }
         float cw = Mathf.Min(460f, W - x0 - 16f - 120f);
