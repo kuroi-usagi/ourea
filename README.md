@@ -6,7 +6,7 @@
 |---|---|
 | **Live app** | https://ourea-2wp.pages.dev (runs in the browser on a laptop or a phone) |
 | **Space Apps project page** | https://www.spaceappschallenge.org/2026/find-a-team/ourea/?tab=project |
-| **Demo video** | https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing |
+| **Pitch deck (PDF)** | https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing |
 | **Event** | NASA Space Apps NYC, Nov 13–15, 2026, hosted by NYU Tandon CUSP. Submitted for judging Nov 15. |
 
 Every flood season, children in Vietnam's Mekong Delta drown in the water that rises around their homes (nearly 2,000 children die from drowning in Vietnam every year, Ministry of Health, Jul 2025), and the flood arrives under monsoon clouds that blind camera satellites. **Ourea turns each NISAR L-band radar pass into a plain answer for the people who keep children safe: where is flood water now close to homes, schools and young children, and which communes should we check first?**
@@ -67,7 +67,7 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
 ## Try it
 
 - **Live app:** https://ourea-2wp.pages.dev/ (laptop or phone: the layout fits phone screens and lists scroll by touch)
-- **Demo video:** https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing
+- **Pitch deck (PDF):** https://drive.google.com/file/d/1jIizF0tbyuVo7ima89qnd2LgV84Umfd-/view?usp=sharing
 - **Playable build:** `web/public/unity` (Unity WebGL). Locally: `cd web/public/unity && python3 -m http.server 8000`, then open http://localhost:8000
 - **In the app:** it opens on the globe. **Begin the story** flies you down to Đồng Tháp and walks through the three passes with a guide; **Explore the map** lands you on the map.
   - Scrub the **timeline** to watch the flood spread; **Follow the water in one town** plays the real passes over one town, houses turning red as new water comes within 100 m.
