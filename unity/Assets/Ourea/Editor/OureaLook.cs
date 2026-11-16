@@ -267,6 +267,7 @@ public static class OureaLook
         EditorUtility.SetDirty(pm);
         lab.buildings = AddBuildings(groundTex, sizeX, sizeZ, heightScale, lab.minM, lab.maxM);
         AddTrees(lab.buildings);
+        AddRoutes(lab.buildings, app, sizeX, sizeZ);
 
         // the guided story (Scripts/StoryMode.cs), with the team's sourced numbers
         var story = lab.gameObject.AddComponent<StoryMode>();
@@ -312,6 +313,17 @@ public static class OureaLook
         SaveAsset(bm, GenDir + "/Building.mat");
         field.material = bm;
         return field;
+    }
+
+    // Walking routes on OSM roads from the selected hamlet (pipeline/make_osm_routes.py, Scripts/RouteField.cs)
+    static void AddRoutes(BuildingField ground, OureaViewer app, float sizeX, float sizeZ)
+    {
+        var field = new GameObject("Routes").AddComponent<RouteField>();
+        field.viewer = app; field.ground = ground; field.sizeX = sizeX; field.sizeZ = sizeZ;
+        var m = new Material(Shader.Find("Ourea/Beacon"));
+        m.SetFloat("_Glow", 1.3f);
+        SaveAsset(m, GenDir + "/Route.mat");
+        field.material = m;
     }
 
     static TreeField AddTrees(BuildingField ground)

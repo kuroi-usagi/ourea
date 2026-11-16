@@ -550,10 +550,13 @@ public class FloodLab : MonoBehaviour
         {
             if (viewer == null) return;
             // the hamlet list, and under it the walking routes to school on Google Maps (web/public/unity/routes/)
-            viewer.DrawRanking(new Rect(body.x, body.y, body.width, body.height - 50f));
+            viewer.DrawRanking(new Rect(body.x, body.y, body.width, body.height - 92f));
+            // how sure the order is (handoff/findings/sensitivity.json, validation_baseline.json)
+            GUI.Label(new Rect(body.x + 18f, body.yMax - 88f, body.width - 36f, 40f),
+                      "Weights moved ±50%: 7 to 10 of these 10 stay. Ranks water new since 11 Jul; another baseline gives another list.", sSmall);
             var rb = new Rect(body.x + 18f, body.yMax - 44f, body.width - 36f, 32f);
             string sel = viewer.SelectedPlaceId;
-            if (OureaLinks.Button(rb, string.IsNullOrEmpty(sel) ? "ROUTES TO SCHOOL  >" : "ROUTES TO SCHOOL FROM THIS HAMLET  >", sBtnOn))
+            if (OureaLinks.Button(rb, string.IsNullOrEmpty(sel) ? "ROUTES TO DAY CARE & SCHOOL  >" : "ROUTES FROM THIS HAMLET  >", sBtnOn))
                 OureaLinks.Routes(viewer.CurrentPassDate, sel);
             return;
         }
@@ -649,6 +652,7 @@ public class FloodLab : MonoBehaviour
 
     // ---- flood texts: pick a commune, enter a number, sign up through Asher's Twilio endpoint ----
     public bool AlertsOpen { get { return card == Card.Alerts; } }
+    public bool CardOpen { get { return card != Card.None; } }
 
     public void OpenAlerts(string communeCode)
     {

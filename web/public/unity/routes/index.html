@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ourea · Routes to school</title>
+<title>Ourea · Routes to day care and school</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
 <style>
@@ -66,6 +66,26 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .sw { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
 .box { width: 12px; height: 12px; border-radius: 3px; display: inline-block; background: var(--flood); opacity: 0.8; }
+.dests { display: flex; flex-wrap: wrap; gap: 6px; }
+.dests button { text-transform: none; letter-spacing: 0; font: 500 12px var(--body); }
+.dests .kind { font: 600 10px var(--display); letter-spacing: 0.08em; color: var(--accent); margin-right: 4px; }
+.dests button[aria-pressed="true"] .kind { color: #03171a; }
+select { font: 500 12px var(--body); color: var(--fg); background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 9px; padding: 7px 8px; max-width: 100%; }
+select option { background: #0b1418; }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; }
+.embed .brand { visibility: hidden; }
+.embed .panel { top: max(60px, env(safe-area-inset-top, 0px)); }
+#sheet { display: none; }
+@media print {
+  body { background: #fff; color: #000; font: 11px/1.35 Arial, sans-serif; }
+  .mapwrap, .panel { display: none !important; }
+  #sheet { display: block; padding: 0 4mm; }
+  #sheet h2 { font-size: 16px; margin: 0 0 2px; }
+  #sheet p { margin: 0 0 8px; color: #333; }
+  #sheet table { width: 100%; border-collapse: collapse; }
+  #sheet th, #sheet td { border: 1px solid #999; padding: 3px 5px; text-align: left; vertical-align: top; }
+  #sheet th { background: #eee; }
+}
 @media (max-width: 640px) {
   .panel { top: auto; bottom: max(12px, env(safe-area-inset-bottom, 0px)); max-height: 55%; }
 }
@@ -82,7 +102,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     </div>
   </div>
   <div>
-    <h1 id="t-title">Routes to school</h1>
+    <h1 id="t-title">Routes to day care and school</h1>
     <p class="lede" id="t-lede">Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs within 100 m of new flood water on that radar pass.</p>
   </div>
   <div>
@@ -93,14 +113,24 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     <div class="label" id="t-hamlets">Check first</div>
     <ul class="hamlets" id="hamlets"></ul>
   </div>
+  <div id="dest-block" hidden>
+    <div class="label" id="t-dests">Where to</div>
+    <div class="dests" id="dests"></div>
+    <select id="other" aria-label="Another school or day care"></select>
+  </div>
   <div class="routes" id="routes"></div>
   <div class="legend">
     <span><i class="box"></i><span id="t-flood">New flood water</span></span>
     <span><i class="sw" style="background:var(--dry)"></i><span id="t-low">Less water</span></span>
     <span><i class="sw" style="background:var(--wet)"></i><span id="t-high">More water</span></span>
   </div>
+  <div>
+    <div class="label" id="t-export">For the meeting</div>
+    <div class="tools"><button id="csv">CSV</button><button id="print">PRINT SHEET</button></div>
+  </div>
   <p class="note" id="t-note">NISAR data is provisional. A route with less water is not a safe route: it had the least flood water on that pass. Routes by Google Maps; check on the ground.</p>
 </aside>
+<div id="sheet"></div>
 
 <script>
 // Paste the key from Google Cloud here. It is meant to be public: it only works on this site
@@ -108,33 +138,60 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 const GOOGLE_MAPS_KEY = "AIzaSyD_lmdyNiizYpVz3DW0GkhDN9BDlUKxfHQ";
 
 const T = {
-  en: { title: "Routes to school", pass: "NISAR pass", hamlets: "Check first", flood: "New flood water", low: "Less water", high: "More water",
-        lede: "Walking routes from the hamlets to check first, to their nearest school or day-care point. Each route shows how much of it runs within 100 m of new flood water on that radar pass.",
-        note: "NISAR data is provisional. A route with less water is not a safe route: it had the least flood water on that pass. Routes by Google Maps; check on the ground.",
+  en: { title: "Routes to day care and school", pass: "NISAR pass", hamlets: "Check first", flood: "New flood water", low: "Less at risk", high: "More at risk",
+        lede: "Walking routes from the hamlets to check first. Flood-season day care keeps under-fives away from the water, so day care comes first. Each route shows how much of it is under water or on low ground next to new flood water on that radar pass; raised dikes and roads don't count.",
+        note: "NISAR data is provisional. A route with less risk is not a safe route: it had the least flood water on that pass. Ground heights: FABDEM (±1–2 m). Routes by Google Maps; walking distances on OpenStreetMap roads. Check on the ground.",
+        dests: "Where to", export: "For the meeting", other: "Another school or day care…",
         baseline: "11 Jul is the baseline pass: no new flood water yet. Pick a later pass.", pick: "Pick a hamlet to see its routes.",
         loading: "Asking Google Maps for walking routes…", none: "Google Maps found no walking route here.", nokey: "Add the Google Maps key to this page to show the map and routes.",
-        least: d => "Least water on the " + d + " pass", through: "of the route within 100 m of new flood water", route: "Route", to: "to", school: "school", childcare: "day care",
-        min: "min", fail: "Couldn't get routes from Google Maps: " },
-  vi: { title: "Đường đến trường", pass: "Lượt chụp NISAR", hamlets: "Cần kiểm tra trước", flood: "Nước lũ mới", low: "Ít nước hơn", high: "Nhiều nước hơn",
-        lede: "Đường đi bộ từ các ấp cần kiểm tra trước đến trường học hoặc điểm giữ trẻ gần nhất. Mỗi tuyến cho biết bao nhiêu phần đi cách nước lũ mới dưới 100 m trong lượt chụp radar đó.",
-        note: "Số liệu NISAR là tạm thời. Tuyến ít nước hơn không có nghĩa là an toàn: đó chỉ là tuyến ít nước lũ nhất trong lượt chụp đó. Tuyến đường từ Google Maps; hãy kiểm tra thực tế.",
+        least: d => "Least risk on the " + d + " pass", risk: "at risk", raised: "on raised dikes or roads", under: "under water", route: "Route", to: "to", school: "school", childcare: "day care",
+        min: "min", walk: "walk", fail: "Couldn't get routes from Google Maps: ",
+        noroad: "No mapped road within 1 km of this hamlet in OpenStreetMap (it may be reached by boat). Check on the ground.",
+        pickYours: "Pick the school your children actually attend: the nearest is not always theirs.",
+        sheet: (d) => "Ourea · check-first hamlets, NISAR pass " + d + " (provisional)",
+        sheetNote: "Walking routes on OpenStreetMap roads. At risk = under water, or low ground (< 1 m above the flood water) within ~100 m of new flood water. Raised = within 100 m but on a dike or raised road. Not a safety rating: check on the ground.",
+        cols: ["Rank", "Hamlet", "Children under 5", "Goes to", "Name", "Walk (km)", "Minutes", "Route", "At risk %", "Under water %", "Raised %", "Note"],
+        shortest: "shortest", driest: "least water" },
+  vi: { title: "Đường đến điểm giữ trẻ và trường", pass: "Lượt chụp NISAR", hamlets: "Cần kiểm tra trước", flood: "Nước lũ mới", low: "Ít rủi ro hơn", high: "Rủi ro hơn",
+        lede: "Đường đi bộ từ các ấp cần kiểm tra trước. Điểm giữ trẻ mùa lũ giúp trẻ dưới 5 tuổi tránh xa nước, nên điểm giữ trẻ được ưu tiên. Mỗi tuyến cho biết bao nhiêu phần ngập nước hoặc đi trên đất thấp sát nước lũ mới trong lượt chụp đó; đê và đường đắp cao không tính.",
+        note: "Số liệu NISAR là tạm thời. Tuyến ít rủi ro hơn không có nghĩa là an toàn: đó chỉ là tuyến ít nước lũ nhất trong lượt chụp đó. Độ cao mặt đất: FABDEM (±1–2 m). Tuyến từ Google Maps; quãng đi bộ tính trên đường OpenStreetMap. Hãy kiểm tra thực tế.",
+        dests: "Đi đến", export: "Cho cuộc họp", other: "Trường hoặc điểm giữ trẻ khác…",
         baseline: "11/7 là lượt chụp gốc: chưa có nước lũ mới. Hãy chọn lượt sau.", pick: "Chọn một ấp để xem các tuyến đường.",
         loading: "Đang lấy tuyến đi bộ từ Google Maps…", none: "Google Maps không tìm thấy tuyến đi bộ ở đây.", nokey: "Thêm khóa Google Maps vào trang này để hiện bản đồ và tuyến đường.",
-        least: d => "Ít nước nhất trong lượt chụp " + d, through: "quãng đường cách nước lũ mới dưới 100 m", route: "Tuyến", to: "đến", school: "trường", childcare: "điểm giữ trẻ",
-        min: "phút", fail: "Không lấy được tuyến đường từ Google Maps: " }
+        least: d => "Ít rủi ro nhất trong lượt chụp " + d, risk: "có rủi ro", raised: "trên đê hoặc đường đắp cao", under: "ngập nước", route: "Tuyến", to: "đến", school: "trường", childcare: "điểm giữ trẻ",
+        min: "phút", walk: "đi bộ", fail: "Không lấy được tuyến đường từ Google Maps: ",
+        noroad: "Không có đường nào trên OpenStreetMap trong vòng 1 km quanh ấp này (có thể đi bằng ghe). Hãy kiểm tra thực tế.",
+        pickYours: "Chọn trường con em đang học: trường gần nhất chưa chắc là trường của các em.",
+        sheet: (d) => "Ourea · các ấp cần kiểm tra trước, lượt chụp NISAR " + d + " (tạm thời)",
+        sheetNote: "Tuyến đi bộ trên đường OpenStreetMap. Có rủi ro = ngập nước, hoặc đất thấp (cao hơn mặt nước lũ < 1 m) trong vòng ~100 m quanh nước lũ mới. Đắp cao = trong vòng 100 m nhưng trên đê hoặc đường đắp. Không phải đánh giá an toàn: hãy kiểm tra thực tế.",
+        cols: ["Hạng", "Ấp", "Trẻ dưới 5 tuổi", "Đến", "Tên", "Đi bộ (km)", "Phút", "Tuyến", "Rủi ro %", "Ngập %", "Đắp cao %", "Ghi chú"],
+        shortest: "ngắn nhất", driest: "ít nước nhất" }
 };
 let lang = "en";
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmtDate = (iso, l) => { const [y, m, d] = iso.split("-").map(Number); return l === "vi" ? d + "/" + m : d + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1]; };
+const q = new URLSearchParams(location.search);
+if (q.get("embed")) document.body.classList.add("embed");
 
-let data, map, overlay, pass, hamlet, lines = [], marks = [], floodPx = null, floodW = 0, floodH = 0, results = [];
+let data, osm, map, overlay, pass, hamlet, chosen = [], lines = [], marks = [], results = [];
+let floodPx = null, floodW = 0, floodH = 0, riskPx = null, riskW = 0, riskH = 0;
 
 function texts() {
   const t = T[lang];
-  for (const k of ["title", "pass", "hamlets", "flood", "low", "high", "lede", "note"]) $("t-" + k).textContent = t[k];
+  for (const k of ["title", "pass", "hamlets", "flood", "low", "high", "lede", "note", "dests", "export"]) $("t-" + k).textContent = t[k];
   document.documentElement.lang = lang;
   $("lang-en").setAttribute("aria-pressed", lang === "en"); $("lang-vi").setAttribute("aria-pressed", lang === "vi");
+}
+
+function osmHamlet(id) { const p = osm && osm.passes.find(x => x.date === pass.date); return p ? p.hamlets.find(h => h.id === id) : null; }
+const km = (a, b) => Math.hypot((a.lat - b.lat) * 111.32, (a.lon - b.lon) * 111.32 * Math.cos(a.lat * Math.PI / 180));
+
+// where this hamlet's children go: nearest day care and schools by walking distance on OSM roads
+function destsFor(h) {
+  const o = osmHamlet(h.id);
+  if (o && o.dests.length) return o.dests.map(d => ({ ...d, walk: d.walk_m }));
+  return h.to.map(d => ({ ...d, walk: null }));
 }
 
 function drawPasses() {
@@ -144,25 +201,45 @@ function drawPasses() {
 
 function drawHamlets() {
   const list = pass.hamlets;
-  $("hamlets").innerHTML = list.length ? list.map(h => `<li><button data-id="${h.id}" aria-pressed="${hamlet && hamlet.id === h.id}"><span class="rank">#${h.rank}</span><span>${esc(h.name)}</span></button></li>`).join("")
+  $("hamlets").innerHTML = list.length ? list.map(h => `<li><button data-id="${h.id}" aria-pressed="${hamlet && hamlet.id === h.id}"><span class="rank">H${h.rank}</span><span>${esc(h.name)}</span></button></li>`).join("")
     : `<li class="note">${T[lang].baseline}</li>`;
   $("hamlets").querySelectorAll("button").forEach(b => b.onclick = () => selectHamlet(b.dataset.id));
+}
+
+function drawDests() {
+  const t = T[lang];
+  $("dest-block").hidden = !hamlet;
+  if (!hamlet) return;
+  const ds = destsFor(hamlet);
+  const extra = chosen.filter(c => !ds.some(d => d.id === c.id));
+  $("dests").innerHTML = [...ds, ...extra].map(d => `<button data-id="${esc(d.id)}" aria-pressed="${chosen.some(c => c.id === d.id)}"><span class="kind">${d.type === "school" ? t.school.toUpperCase() : t.childcare.toUpperCase()}</span>${esc(d.name)}${d.walk ? " · " + (d.walk / 1000).toFixed(1) + " km " + t.walk : ""}</button>`).join("")
+    + `<p class="note" style="margin:4px 0 0">${t.pickYours}</p>`;
+  $("dests").querySelectorAll("button").forEach(b => b.onclick = () => {
+    const d = [...ds, ...extra].find(x => x.id === b.dataset.id);
+    chosen = chosen.some(c => c.id === d.id) ? chosen.filter(c => c.id !== d.id) : [...chosen, d];
+    route();
+  });
+  const others = (osm ? osm.places : []).filter(p => !ds.some(d => d.id === p.id)).sort((a, b) => km(hamlet, a) - km(hamlet, b));
+  $("other").innerHTML = `<option value="">${t.other}</option>` + others.map(p => `<option value="${esc(p.id)}">${esc(p.name)} · ${p.type === "school" ? t.school : t.childcare} · ${km(hamlet, p).toFixed(1)} km</option>`).join("");
+  $("other").onchange = () => { const p = others.find(x => x.id === $("other").value); if (p && !chosen.some(c => c.id === p.id)) { chosen = [...chosen, { ...p, walk: null }]; route(); } };
 }
 
 function drawRoutes() {
   const t = T[lang];
   if (!hamlet) { $("routes").innerHTML = pass.hamlets.length ? `<p class="note">${t.pick}</p>` : ""; return; }
-  if (!results.length) return;
+  const o = osmHamlet(hamlet.id);
+  const warn = o && o.no_road ? `<p class="warn">${t.noroad}</p>` : "";
+  if (!results.length) { $("routes").innerHTML = warn; return; }
   const scored = results.filter(r => r.ok);
-  const best = scored.length ? scored.reduce((a, b) => (a.wet <= b.wet ? a : b)) : null;
-  $("routes").innerHTML = results.map((r, i) => {
+  const best = scored.length ? scored.reduce((a, b) => (a.risk <= b.risk ? a : b)) : null;
+  $("routes").innerHTML = warn + results.map((r, i) => {
     if (!r.ok) return `<p class="warn">${esc(r.msg)}</p>`;
     const dest = r.dest;
     return `<div class="route${r === best ? " on" : ""}" data-i="${i}" tabindex="0">
       ${r === best ? `<span class="tag">${t.least(fmtDate(pass.date, lang))}</span>` : ""}
-      <div class="head"><span>${t.route} ${String.fromCharCode(65 + i)} · ${(r.meters / 1000).toFixed(1)} km · ${Math.round(r.seconds / 60)} ${t.min}</span>
-        <span class="pct" style="color:${colour(r.wet)}">${Math.round(r.wet * 100)}%</span></div>
-      <small>${t.through} · ${t.to} ${esc(dest.name)} (${dest.type === "school" ? t.school : t.childcare})</small>
+      <div class="head"><span>${t.route} ${String.fromCharCode(65 + i)} ${t.to} ${dest.type === "school" ? t.school : t.childcare} · ${(r.meters / 1000).toFixed(1)} km · ${Math.round(r.seconds / 60)} ${t.min}</span>
+        <span class="pct" style="color:${colour(r.risk)}">${Math.round(r.risk * 100)}%</span></div>
+      <small>${esc(dest.name)} · ${Math.round(r.risk * 100)}% ${t.risk}${r.under > 0.005 ? " (" + Math.round(r.under * 100) + "% " + t.under + ")" : ""} · ${Math.round(r.raised * 100)}% ${t.raised}</small>
     </div>`;
   }).join("");
   $("routes").querySelectorAll(".route").forEach(el => el.onclick = () => highlight(+el.dataset.i));
@@ -171,23 +248,29 @@ function drawRoutes() {
 function colour(w) { return w < 0.15 ? "var(--dry)" : w < 0.45 ? "var(--mid)" : "var(--wet)"; }
 const lineColour = w => (w < 0.15 ? "#eef5f3" : w < 0.45 ? "#f2b544" : "#ff6b57");
 
-// how much of a path runs within ~100 m of new flood water (the app's "near water" rule): sample every
-// ~20 m and look for flood pixels in a ~100 m radius. Roads here sit on dikes, so the road itself often
-// reads dry at the radar's ~30 m pixels while the fields beside it are under water.
-function wetShare(path) {
-  if (!floodPx) return 0;
-  const b = data.bounds; let wet = 0, n = 0;
+// every ~20 m of a path classed by the pipeline's map (pipeline/make_osm_routes.py): under water, low ground
+// within ~100 m of new flood water, or raised (a dike or road at least 1 m above that water). At risk =
+// under water + low. Without a class map (the baseline pass), falls back to "within 100 m".
+function riskShare(path) {
+  const b = data.bounds; let n = 0, under = 0, low = 0, raised = 0;
   for (let i = 1; i < path.length; i++) {
     const a = path[i - 1], c = path[i];
     const steps = Math.max(1, Math.round(google.maps.geometry.spherical.computeDistanceBetween(a, c) / 20));
     for (let s = 0; s < steps; s++) {
       const lat = a.lat() + (c.lat() - a.lat()) * s / steps, lng = a.lng() + (c.lng() - a.lng()) * s / steps;
-      const x = Math.floor((lng - b.west) / (b.east - b.west) * floodW), y = Math.floor((b.north - lat) / (b.north - b.south) * floodH);
       n++;
-      if (nearFlood(x, y)) wet++;
+      if (riskPx) {
+        const x = Math.floor((lng - b.west) / (b.east - b.west) * riskW), y = Math.floor((b.north - lat) / (b.north - b.south) * riskH);
+        if (x < 0 || y < 0 || x >= riskW || y >= riskH) continue;
+        const v = riskPx[(y * riskW + x) * 4];
+        if (v > 212) under++; else if (v > 127) low++; else if (v > 42) raised++;
+      } else if (floodPx) {
+        const x = Math.floor((lng - b.west) / (b.east - b.west) * floodW), y = Math.floor((b.north - lat) / (b.north - b.south) * floodH);
+        if (nearFlood(x, y)) low++;
+      }
     }
   }
-  return n ? wet / n : 0;
+  return n ? { risk: (under + low) / n, under: under / n, raised: raised / n } : { risk: 0, under: 0, raised: 0 };
 }
 
 const R100 = 3;   // overlay pixels are ~32 m, so 3 pixels is ~100 m
@@ -201,14 +284,14 @@ function nearFlood(x, y) {
   return false;
 }
 
-function loadFlood(src) {
+function pixels(src) {
   return new Promise(res => {
     const img = new Image();
     img.onload = () => {
-      const c = document.createElement("canvas"); c.width = floodW = img.width; c.height = floodH = img.height;
-      const g = c.getContext("2d"); g.drawImage(img, 0, 0); floodPx = g.getImageData(0, 0, c.width, c.height).data; res();
+      const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+      const g = c.getContext("2d"); g.drawImage(img, 0, 0); res({ px: g.getImageData(0, 0, c.width, c.height).data, w: img.width, h: img.height });
     };
-    img.onerror = () => { floodPx = null; res(); };
+    img.onerror = () => res(null);
     img.src = src;
   });
 }
@@ -222,12 +305,13 @@ function highlight(i) {
 
 async function selectPass(d) {
   pass = data.passes.find(p => p.date === d) || data.passes[data.passes.length - 1];
-  hamlet = null; results = []; clearMap();
+  hamlet = null; results = []; chosen = []; clearMap();
   if (overlay) overlay.setMap(null);
   overlay = new google.maps.GroundOverlay(pass.overlay, data.bounds, { opacity: 0.85, clickable: false });
   overlay.setMap(map);
-  await loadFlood(pass.overlay);
-  drawPasses(); drawHamlets(); drawRoutes();
+  const f = await pixels(pass.overlay); floodPx = f && f.px; floodW = f ? f.w : 0; floodH = f ? f.h : 0;
+  const r = await pixels("risk_" + pass.date + ".png"); riskPx = r && r.px; riskW = r ? r.w : 0; riskH = r ? r.h : 0;
+  drawPasses(); drawHamlets(); drawDests(); drawRoutes();
   map.fitBounds(data.bounds);
 }
 
@@ -247,31 +331,73 @@ async function routesTo(h, dest) {
                                      path: google.maps.geometry.encoding.decodePath(x.polyline.encodedPolyline) }));
 }
 
-async function selectHamlet(id) {
+function selectHamlet(id) {
   hamlet = pass.hamlets.find(h => h.id === id); if (!hamlet) return;
-  drawHamlets(); clearMap(); results = [];
+  // default: the nearest day care (it keeps under-fives safe) and the nearest school, by walking distance
+  const ds = destsFor(hamlet);
+  chosen = ["childcare", "school"].map(k => ds.find(d => d.type === k)).filter(Boolean);
+  drawHamlets(); route();
+}
+
+let routeToken = 0;
+async function route() {
+  const token = ++routeToken;
+  drawDests(); clearMap(); results = [];
   $("routes").innerHTML = `<p class="note">${T[lang].loading}</p>`;
   marks.push(new google.maps.Marker({ map, position: { lat: hamlet.lat, lng: hamlet.lon }, title: hamlet.name,
-    label: { text: "#" + hamlet.rank, color: "#03171a", fontWeight: "700", fontSize: "11px" },
+    label: { text: "H" + hamlet.rank, color: "#03171a", fontWeight: "700", fontSize: "11px" },
     icon: { path: google.maps.SymbolPath.CIRCLE, scale: 13, fillColor: "#5fd4e0", fillOpacity: 1, strokeColor: "#03171a", strokeWeight: 2 } }));
   const bounds = new google.maps.LatLngBounds({ lat: hamlet.lat, lng: hamlet.lon });
-  for (const dest of hamlet.to) {
+  const out = [];
+  for (const dest of chosen) {
     marks.push(new google.maps.Marker({ map, position: { lat: dest.lat, lng: dest.lon }, title: dest.name,
-      icon: { path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW, scale: 5, fillColor: "#eef5f3", fillOpacity: 1, strokeColor: "#03171a", strokeWeight: 1.5 } }));
+      icon: { path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW, scale: 5, fillColor: dest.type === "school" ? "#eef5f3" : "#5fd4e0", fillOpacity: 1, strokeColor: "#03171a", strokeWeight: 1.5 } }));
     bounds.extend({ lat: dest.lat, lng: dest.lon });
     try {
       const rs = await routesTo(hamlet, dest);
-      if (!rs.length) results.push({ ok: false, msg: T[lang].none + " (" + dest.name + ")" });
-      for (const r of rs) { r.ok = true; r.wet = wetShare(r.path); results.push(r); r.path.forEach(p => bounds.extend(p)); }
-    } catch (e) { results.push({ ok: false, msg: T[lang].fail + e.message }); }
+      if (!rs.length) out.push({ ok: false, msg: T[lang].none + " (" + dest.name + ")" });
+      for (const r of rs) { r.ok = true; Object.assign(r, riskShare(r.path)); out.push(r); r.path.forEach(p => bounds.extend(p)); }
+    } catch (e) { out.push({ ok: false, msg: T[lang].fail + e.message }); }
   }
+  if (token !== routeToken) return;   // a newer pick is already on its way
+  results = out;
   // one line per result (null where Google found none), so a route's index is its line's index
-  lines = results.map(r => r.ok ? new google.maps.Polyline({ map, path: r.path, strokeColor: lineColour(r.wet), strokeWeight: 4, strokeOpacity: 0.8 }) : null);
+  lines = results.map(r => r.ok ? new google.maps.Polyline({ map, path: r.path, strokeColor: lineColour(r.risk), strokeWeight: 4, strokeOpacity: 0.8 }) : null);
   map.fitBounds(bounds, 60);
   drawRoutes();
   const okRoutes = results.filter(r => r.ok);
-  if (okRoutes.length) highlight(results.indexOf(okRoutes.reduce((a, b) => (a.wet <= b.wet ? a : b))));
+  if (okRoutes.length) highlight(results.indexOf(okRoutes.reduce((a, b) => (a.risk <= b.risk ? a : b))));
 }
+
+// ---- for the meeting: every check-first hamlet on this pass with its walking routes (OSM, ours to keep)
+function rows() {
+  const t = T[lang], p = osm && osm.passes.find(x => x.date === pass.date);
+  if (!p) return [];
+  const out = [];
+  for (const h of p.hamlets) {
+    if (h.no_road || !h.routes.length) { out.push([h.rank, h.name, h.under5 ?? "", "", "", "", "", "", "", "", "", t.noroad]); continue; }
+    for (const r of h.routes)
+      out.push([h.rank, h.name, h.under5 ?? "", r.to_type === "school" ? t.school : t.childcare, r.to_name, (r.m / 1000).toFixed(1), r.min,
+                r.kind === "driest" ? t.driest : t.shortest, Math.round(r.wet * 100), Math.round(r.under * 100), Math.round(r.raised * 100), ""]);
+  }
+  return out;
+}
+$("csv").onclick = () => {
+  const t = T[lang], q = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  const csv = "﻿" + [t.cols, ...rows()].map(r => r.map(q).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "ourea_check_first_" + pass.date + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+};
+$("print").onclick = () => {
+  const t = T[lang];
+  $("sheet").innerHTML = `<h2>${esc(t.sheet(pass.date))}</h2><p>${esc(t.sheetNote)}</p>
+    <table><thead><tr>${t.cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${rows().map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+    <p style="margin-top:8px">ourea-2wp.pages.dev · Roads © OpenStreetMap contributors · NISAR (NASA-ISRO) · FABDEM</p>`;
+  window.print();
+};
 
 function loadGoogle() {
   // Google's own bootstrap loader (importLibrary)
@@ -280,7 +406,7 @@ function loadGoogle() {
 
 async function start() {
   texts();
-  data = await (await fetch("data.json")).json();
+  [data, osm] = await Promise.all([fetch("data.json").then(r => r.json()), fetch("osm.json").then(r => r.ok ? r.json() : null).catch(() => null)]);
   pass = data.passes[data.passes.length - 1];
   drawPasses(); drawHamlets();
   if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY.startsWith("PASTE")) { $("routes").innerHTML = `<p class="warn">${T[lang].nokey}</p>`; return; }
@@ -288,13 +414,13 @@ async function start() {
   await google.maps.importLibrary("maps"); await google.maps.importLibrary("geometry"); await google.maps.importLibrary("marker");
   map = new google.maps.Map($("map"), { mapTypeId: "hybrid", disableDefaultUI: true, zoomControl: true, gestureHandling: "greedy",
                                         backgroundColor: "#04080a", tilt: 0 });
-  const q = new URLSearchParams(location.search);
   await selectPass(q.get("pass") || pass.date);
   if (q.get("h")) selectHamlet(q.get("h"));
 }
 
-$("lang-en").onclick = () => { lang = "en"; texts(); drawPasses(); drawHamlets(); drawRoutes(); };
-$("lang-vi").onclick = () => { lang = "vi"; texts(); drawPasses(); drawHamlets(); drawRoutes(); };
+const relang = l => { lang = l; texts(); drawPasses(); drawHamlets(); drawDests(); drawRoutes(); };
+$("lang-en").onclick = () => relang("en");
+$("lang-vi").onclick = () => relang("vi");
 start();
 </script>
 </body>

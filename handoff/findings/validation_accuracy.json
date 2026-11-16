@@ -1,0 +1,777 @@
+{
+  "what": "Agreement of Ourea NISAR land/water maps with an independent Sentinel-1 water map",
+  "nisar_maps": "handoff/layers/landwater/<date>.png (NISAR L2 GCOV, stand-in rule HH < -13 dB)",
+  "nisar_codes_found": {
+    "2026-07-11": [
+      0,
+      255
+    ],
+    "2026-08-28": [
+      0,
+      255
+    ],
+    "2026-10-03": [
+      0,
+      255
+    ]
+  },
+  "method": {
+    "reference_product": "Microsoft Planetary Computer sentinel-1-rtc (Sentinel-1 IW GRDH, RTC gamma0, 10 m)",
+    "resampling": "10 m linear gamma0 averaged onto the 2048x2048 NISAR grid (EPSG:32648, ~32x30 m), then dB",
+    "water_rule": "VV < -18.0 dB, then 3x3 majority (same clean-up as the NISAR rule); Otsu-threshold variant also reported",
+    "excluded": "NISAR 128 (no data) and Sentinel-1 no-data pixels",
+    "rice_200": "scored twice: as land and as water",
+    "positive_class": "water; NISAR treated as prediction, Sentinel-1 as reference",
+    "new_flood_water": "water on the pass date AND land on 2026-07-11 (each sensor vs its own baseline)",
+    "land_cover_for_notes": "ESA WorldCover 2021 v200 (Planetary Computer esa-worldcover), mode-resampled",
+    "script": "pipeline/validate_s1.py",
+    "run_on": "2026-11-15"
+  },
+  "caveats": [
+    "This is agreement between two radars, not accuracy against ground truth. Neither map is truth.",
+    "The NISAR maps contain only codes 0 and 255 (no 128 no-data, no 200 rice yet), so both rice variants give identical numbers and nothing is excluded.",
+    "NISAR maps use the stand-in rule HH < -13 dB, which is lenient; the fixed S1 rule VV < -18 dB is strict. Most disagreement is NISAR water / S1 land on cropland (paddies): smooth wet or bare soil and shallow water among young rice. Who is right there is unknown without field data.",
+    "C-band (S1, 5.5 cm) sees less water under rice than L-band (NISAR, 24 cm), so S1 under-counts water under crops; the low precision is partly an S1 limitation, not only a NISAR error.",
+    "Sentinel-1 is 1 day (main) or 2 days (check) after NISAR; water can rise or drain in between. The two S1 passes themselves agree only 92-98%, and their August water share differs (18% vs 11%).",
+    "Permanent rivers/canals: S1 calls only ~45-49% of WorldCover 'permanent water' pixels water (wind-roughened river surface, mixed 30 m pixels on narrow canals); NISAR ~74%.",
+    "The Otsu split on each S1 scene is reported too; on the July scene Otsu (-9.9 dB) is not a water/land split (the scene has almost no open water) and should be ignored.",
+    "Sentinel-2 optical was not used: 76-95% cloud on these dates (handoff/layers/optical/optical.json)."
+  ],
+  "references": {
+    "main (S1C descending, +1 day)": {
+      "items": {
+        "2026-07-11": {
+          "id": "S1C_IW_GRDH_1SDV_20260712T224436_20260712T224501_008516_010DC0_rtc",
+          "s1_date": "2026-07-12",
+          "days_after_nisar": 1,
+          "otsu_vv_threshold_db": -9.89
+        },
+        "2026-08-28": {
+          "id": "S1C_IW_GRDH_1SDV_20260829T224438_20260829T224503_009216_0124FB_rtc",
+          "s1_date": "2026-08-29",
+          "days_after_nisar": 1,
+          "otsu_vv_threshold_db": -13.35
+        },
+        "2026-10-03": {
+          "id": "S1C_IW_GRDH_1SDV_20261004T224440_20261004T224505_009741_013669_rtc",
+          "s1_date": "2026-10-04",
+          "days_after_nisar": 1,
+          "otsu_vv_threshold_db": -13.36
+        }
+      },
+      "per_date": {
+        "2026-07-11": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 75.32,
+            "water_precision": 0.0772,
+            "water_recall": 0.9547,
+            "f1": 0.1429,
+            "cohen_kappa": 0.1073,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 2.15,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 86272,
+              "nisar_water_s1_land": 1031128,
+              "nisar_land_s1_water": 4094,
+              "both_land": 3072810
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 75.32,
+            "water_precision": 0.0772,
+            "water_recall": 0.9547,
+            "f1": 0.1429,
+            "cohen_kappa": 0.1073,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 2.15,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 86272,
+              "nisar_water_s1_land": 1031128,
+              "nisar_land_s1_water": 4094,
+              "both_land": 3072810
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 58.55,
+            "water_precision": 0.5762,
+            "water_recall": 0.3373,
+            "f1": 0.4255,
+            "cohen_kappa": 0.1347,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 45.51,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 643791,
+              "nisar_water_s1_land": 473609,
+              "nisar_land_s1_water": 1264924,
+              "both_land": 1811980
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 99.2,
+              "nisar_water_pct": 0.8,
+              "s1_water_pct": 0.0
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 99.6,
+              "nisar_water_pct": 0.5,
+              "s1_water_pct": 0.0
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 89.2,
+              "nisar_water_pct": 11.0,
+              "s1_water_pct": 0.2
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 69.3,
+              "nisar_water_pct": 30.7,
+              "s1_water_pct": 0.2
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.7,
+              "nisar_water_pct": 0.3,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 64.7,
+              "nisar_water_pct": 35.9,
+              "s1_water_pct": 0.7
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 68.7,
+              "nisar_water_pct": 74.2,
+              "s1_water_pct": 44.4
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 80.0,
+              "nisar_water_pct": 21.4,
+              "s1_water_pct": 1.5
+            }
+          }
+        },
+        "2026-08-28": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 78.17,
+            "water_precision": 0.4512,
+            "water_recall": 0.9849,
+            "f1": 0.6189,
+            "cohen_kappa": 0.494,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 18.0,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 743631,
+              "nisar_water_s1_land": 904314,
+              "nisar_land_s1_water": 11400,
+              "both_land": 2534959
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 78.17,
+            "water_precision": 0.4512,
+            "water_recall": 0.9849,
+            "f1": 0.6189,
+            "cohen_kappa": 0.494,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 18.0,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 743631,
+              "nisar_water_s1_land": 904314,
+              "nisar_land_s1_water": 11400,
+              "both_land": 2534959
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 83.44,
+            "water_precision": 0.6339,
+            "water_recall": 0.9196,
+            "f1": 0.7504,
+            "cohen_kappa": 0.6327,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 27.08,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1044561,
+              "nisar_water_s1_land": 603384,
+              "nisar_land_s1_water": 91353,
+              "both_land": 2455006
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 98.5,
+              "nisar_water_pct": 1.7,
+              "s1_water_pct": 0.2
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 96.6,
+              "nisar_water_pct": 3.6,
+              "s1_water_pct": 0.2
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 83.8,
+              "nisar_water_pct": 16.9,
+              "s1_water_pct": 0.8
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 73.2,
+              "nisar_water_pct": 47.4,
+              "s1_water_pct": 21.2
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.8,
+              "nisar_water_pct": 0.2,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 69.3,
+              "nisar_water_pct": 31.2,
+              "s1_water_pct": 0.6
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 72.1,
+              "nisar_water_pct": 73.7,
+              "s1_water_pct": 47.5
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 53.7,
+              "nisar_water_pct": 68.1,
+              "s1_water_pct": 22.2
+            }
+          },
+          "new_flood_water": {
+            "overall_agreement_pct": 82.22,
+            "water_precision": 0.4674,
+            "water_recall": 0.7011,
+            "f1": 0.5609,
+            "cohen_kappa": 0.4549,
+            "nisar_water_pct": 24.29,
+            "s1_water_pct": 16.19,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 476210,
+              "nisar_water_s1_land": 542708,
+              "nisar_land_s1_water": 203043,
+              "both_land": 2972343
+            },
+            "nisar_new_km2": 973.4,
+            "s1_new_km2": 648.9,
+            "share_of_nisar_new_water_that_s1_calls_water": 0.4686
+          }
+        },
+        "2026-10-03": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 73.01,
+            "water_precision": 0.518,
+            "water_recall": 0.9889,
+            "f1": 0.6798,
+            "cohen_kappa": 0.4833,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 28.98,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1202135,
+              "nisar_water_s1_land": 1118717,
+              "nisar_land_s1_water": 13523,
+              "both_land": 1859929
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 73.01,
+            "water_precision": 0.518,
+            "water_recall": 0.9889,
+            "f1": 0.6798,
+            "cohen_kappa": 0.4833,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 28.98,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1202135,
+              "nisar_water_s1_land": 1118717,
+              "nisar_land_s1_water": 13523,
+              "both_land": 1859929
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 78.73,
+            "water_precision": 0.6633,
+            "water_recall": 0.933,
+            "f1": 0.7753,
+            "cohen_kappa": 0.5841,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 39.34,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1539327,
+              "nisar_water_s1_land": 781525,
+              "nisar_land_s1_water": 110543,
+              "both_land": 1762909
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 98.0,
+              "nisar_water_pct": 2.5,
+              "s1_water_pct": 0.5
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 94.7,
+              "nisar_water_pct": 5.5,
+              "s1_water_pct": 0.2
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 84.4,
+              "nisar_water_pct": 16.6,
+              "s1_water_pct": 1.1
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 66.4,
+              "nisar_water_pct": 68.7,
+              "s1_water_pct": 35.9
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.8,
+              "nisar_water_pct": 0.2,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 67.9,
+              "nisar_water_pct": 33.0,
+              "s1_water_pct": 1.0
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 72.3,
+              "nisar_water_pct": 75.5,
+              "s1_water_pct": 49.2
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 63.6,
+              "nisar_water_pct": 64.9,
+              "s1_water_pct": 28.6
+            }
+          },
+          "new_flood_water": {
+            "overall_agreement_pct": 74.99,
+            "water_precision": 0.5319,
+            "water_recall": 0.653,
+            "f1": 0.5863,
+            "cohen_kappa": 0.4097,
+            "nisar_water_pct": 33.31,
+            "s1_water_pct": 27.14,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 743238,
+              "nisar_water_s1_land": 654049,
+              "nisar_land_s1_water": 394965,
+              "both_land": 2402052
+            },
+            "nisar_new_km2": 1334.8,
+            "s1_new_km2": 1087.3,
+            "share_of_nisar_new_water_that_s1_calls_water": 0.5334
+          }
+        }
+      }
+    },
+    "check (S1C ascending, +2 days)": {
+      "items": {
+        "2026-07-11": {
+          "id": "S1C_IW_GRDH_1SDV_20260713T111043_20260713T111112_008524_010E04_rtc",
+          "s1_date": "2026-07-13",
+          "days_after_nisar": 2,
+          "otsu_vv_threshold_db": -10.2
+        },
+        "2026-08-28": {
+          "id": "S1C_IW_GRDH_1SDV_20260830T111046_20260830T111115_009224_01253E_rtc",
+          "s1_date": "2026-08-30",
+          "days_after_nisar": 2,
+          "otsu_vv_threshold_db": -12.24
+        },
+        "2026-10-03": {
+          "id": "S1C_IW_GRDH_1SDV_20261005T111047_20261005T111116_009749_0136AE_rtc",
+          "s1_date": "2026-10-05",
+          "days_after_nisar": 2,
+          "otsu_vv_threshold_db": -14.03
+        }
+      },
+      "per_date": {
+        "2026-07-11": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 74.32,
+            "water_precision": 0.0396,
+            "water_recall": 0.9188,
+            "f1": 0.0758,
+            "cohen_kappa": 0.0551,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 1.15,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 44200,
+              "nisar_water_s1_land": 1073200,
+              "nisar_land_s1_water": 3908,
+              "both_land": 3072996
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 74.32,
+            "water_precision": 0.0396,
+            "water_recall": 0.9188,
+            "f1": 0.0758,
+            "cohen_kappa": 0.0551,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 1.15,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 44200,
+              "nisar_water_s1_land": 1073200,
+              "nisar_land_s1_water": 3908,
+              "both_land": 3072996
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 57.52,
+            "water_precision": 0.561,
+            "water_recall": 0.3268,
+            "f1": 0.413,
+            "cohen_kappa": 0.1151,
+            "nisar_water_pct": 26.64,
+            "s1_water_pct": 45.74,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 626887,
+              "nisar_water_s1_land": 490513,
+              "nisar_land_s1_water": 1291419,
+              "both_land": 1785485
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 99.2,
+              "nisar_water_pct": 0.8,
+              "s1_water_pct": 0.0
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 99.6,
+              "nisar_water_pct": 0.5,
+              "s1_water_pct": 0.0
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 89.2,
+              "nisar_water_pct": 11.0,
+              "s1_water_pct": 0.1
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 69.3,
+              "nisar_water_pct": 30.7,
+              "s1_water_pct": 0.2
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.7,
+              "nisar_water_pct": 0.3,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 64.3,
+              "nisar_water_pct": 35.9,
+              "s1_water_pct": 0.3
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 47.1,
+              "nisar_water_pct": 74.2,
+              "s1_water_pct": 22.0
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 79.1,
+              "nisar_water_pct": 21.4,
+              "s1_water_pct": 0.8
+            }
+          }
+        },
+        "2026-08-28": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 71.95,
+            "water_precision": 0.2893,
+            "water_recall": 0.9894,
+            "f1": 0.4476,
+            "cohen_kappa": 0.3282,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 11.49,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 476681,
+              "nisar_water_s1_land": 1171264,
+              "nisar_land_s1_water": 5115,
+              "both_land": 2541244
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 71.95,
+            "water_precision": 0.2893,
+            "water_recall": 0.9894,
+            "f1": 0.4476,
+            "cohen_kappa": 0.3282,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 11.49,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 476681,
+              "nisar_water_s1_land": 1171264,
+              "nisar_land_s1_water": 5115,
+              "both_land": 2541244
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 82.26,
+            "water_precision": 0.6835,
+            "water_recall": 0.8351,
+            "f1": 0.7517,
+            "cohen_kappa": 0.6159,
+            "nisar_water_pct": 39.29,
+            "s1_water_pct": 32.16,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1126390,
+              "nisar_water_s1_land": 521555,
+              "nisar_land_s1_water": 222452,
+              "both_land": 2323907
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 98.4,
+              "nisar_water_pct": 1.7,
+              "s1_water_pct": 0.1
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 96.5,
+              "nisar_water_pct": 3.6,
+              "s1_water_pct": 0.1
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 83.5,
+              "nisar_water_pct": 16.9,
+              "s1_water_pct": 0.5
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 66.6,
+              "nisar_water_pct": 47.4,
+              "s1_water_pct": 14.3
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.8,
+              "nisar_water_pct": 0.2,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 69.0,
+              "nisar_water_pct": 31.2,
+              "s1_water_pct": 0.2
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 44.0,
+              "nisar_water_pct": 73.7,
+              "s1_water_pct": 18.2
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 47.4,
+              "nisar_water_pct": 68.1,
+              "s1_water_pct": 15.8
+            }
+          },
+          "new_flood_water": {
+            "overall_agreement_pct": 79.67,
+            "water_precision": 0.3099,
+            "water_recall": 0.6783,
+            "f1": 0.4255,
+            "cohen_kappa": 0.3222,
+            "nisar_water_pct": 24.29,
+            "s1_water_pct": 11.1,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 315783,
+              "nisar_water_s1_land": 703135,
+              "nisar_land_s1_water": 149763,
+              "both_land": 3025623
+            },
+            "nisar_new_km2": 973.4,
+            "s1_new_km2": 444.7,
+            "share_of_nisar_new_water_that_s1_calls_water": 0.3103
+          }
+        },
+        "2026-10-03": {
+          "rice200_as_land": {
+            "overall_agreement_pct": 72.98,
+            "water_precision": 0.5172,
+            "water_recall": 0.9895,
+            "f1": 0.6793,
+            "cohen_kappa": 0.4829,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 28.92,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1200330,
+              "nisar_water_s1_land": 1120522,
+              "nisar_land_s1_water": 12767,
+              "both_land": 1860685
+            }
+          },
+          "rice200_as_water": {
+            "overall_agreement_pct": 72.98,
+            "water_precision": 0.5172,
+            "water_recall": 0.9895,
+            "f1": 0.6793,
+            "cohen_kappa": 0.4829,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 28.92,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1200330,
+              "nisar_water_s1_land": 1120522,
+              "nisar_land_s1_water": 12767,
+              "both_land": 1860685
+            }
+          },
+          "rice200_pixels": 0,
+          "otsu_variant": {
+            "overall_agreement_pct": 78.15,
+            "water_precision": 0.6413,
+            "water_recall": 0.9466,
+            "f1": 0.7646,
+            "cohen_kappa": 0.5743,
+            "nisar_water_pct": 55.33,
+            "s1_water_pct": 37.49,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 1488399,
+              "nisar_water_s1_land": 832453,
+              "nisar_land_s1_water": 84027,
+              "both_land": 1789425
+            }
+          },
+          "by_land_cover": {
+            "trees": {
+              "share_of_tile_pct": 15.0,
+              "agreement_pct": 98.0,
+              "nisar_water_pct": 2.5,
+              "s1_water_pct": 0.5
+            },
+            "shrub": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 94.7,
+              "nisar_water_pct": 5.5,
+              "s1_water_pct": 0.2
+            },
+            "grass": {
+              "share_of_tile_pct": 1.9,
+              "agreement_pct": 84.4,
+              "nisar_water_pct": 16.6,
+              "s1_water_pct": 1.1
+            },
+            "cropland": {
+              "share_of_tile_pct": 74.2,
+              "agreement_pct": 66.5,
+              "nisar_water_pct": 68.7,
+              "s1_water_pct": 36.0
+            },
+            "built-up": {
+              "share_of_tile_pct": 3.7,
+              "agreement_pct": 99.8,
+              "nisar_water_pct": 0.2,
+              "s1_water_pct": 0.0
+            },
+            "bare": {
+              "share_of_tile_pct": 0.3,
+              "agreement_pct": 68.2,
+              "nisar_water_pct": 33.0,
+              "s1_water_pct": 1.5
+            },
+            "permanent water": {
+              "share_of_tile_pct": 4.5,
+              "agreement_pct": 68.5,
+              "nisar_water_pct": 75.5,
+              "s1_water_pct": 45.3
+            },
+            "herbaceous wetland": {
+              "share_of_tile_pct": 0.2,
+              "agreement_pct": 65.0,
+              "nisar_water_pct": 64.9,
+              "s1_water_pct": 30.0
+            }
+          },
+          "new_flood_water": {
+            "overall_agreement_pct": 74.35,
+            "water_precision": 0.5381,
+            "water_recall": 0.6359,
+            "f1": 0.5829,
+            "cohen_kappa": 0.3996,
+            "nisar_water_pct": 33.31,
+            "s1_water_pct": 28.19,
+            "pixels": {
+              "valid": 4194304,
+              "both_water": 751870,
+              "nisar_water_s1_land": 645417,
+              "nisar_land_s1_water": 430491,
+              "both_land": 2366526
+            },
+            "nisar_new_km2": 1334.8,
+            "s1_new_km2": 1129.5,
+            "share_of_nisar_new_water_that_s1_calls_water": 0.5392
+          }
+        }
+      }
+    }
+  },
+  "s1_desc_vs_s1_asc_agreement_pct": {
+    "2026-07-11": 98.34,
+    "2026-08-28": 91.9,
+    "2026-10-03": 94.89
+  }
+}

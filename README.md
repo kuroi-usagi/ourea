@@ -61,16 +61,18 @@ Each commune shows its reasons, e.g. *"about 488 of 538 children under 5 live wi
   - Scrub the **timeline** to watch the flood spread; **Watch a village flood** plays the real passes over one town, houses turning red as new water comes within 100 m.
   - In the dock: **PHOTO** wipes between the cloudy camera photo and the radar, **RADAR** shows the raw NISAR backscatter, **WATER** is the modeled "what if" level, **TOP 10 → Communes** has the ranked list and the reasons behind each rank, **ALERTS** signs a phone up for flood texts (Twilio, via the API), **KEY** explains every colour.
   - **GLOBE** (top left) flies back out.
-  - **ROUTES TO SCHOOL** (under the Top 10 hamlet list, and in the story) opens a Google Maps page with the walking routes from that hamlet to its nearest schools, scored by how much of each runs within 100 m of new flood water.
+  - Click a hamlet in **TOP 10 → Hamlets**: its walking routes to the nearest day care and school appear on the 3D map (OpenStreetMap roads), coloured by how much of each is **at risk**: under water, or low ground next to new flood water. Raised dikes and roads don't count. Each hamlet's bar shows what put it on the list.
+  - **ROUTES TO DAY CARE & SCHOOL** slides in a Google Maps panel over the app. It shows walking routes to the nearest day care first, then schools. You can pick the school your children actually attend. Use **CSV** or **PRINT SHEET** to take the list to a meeting.
+  - In the story's last step, the commune office's message drafts have **SHARE · ZALO**.
 - **Rebuild the data:** `pipeline/run_pipeline.py` (NISAR), `pipeline/make_heightmap.py` (terrain), `pipeline/make_optical.py` (Sentinel-2), then `science/score.py` and `science/commune_score.py`.
 
 ## What's real, what's modeled
 
 Every number on screen traces to a file in `handoff/`. The full list, including what is modeled (the "what if" water-level slider) and what is fictional (the story guide), is in [`docs/SOURCES.md`](docs/SOURCES.md).
 
-Science notes, drivers and fact-check: [docs/SCIENCE.md](docs/SCIENCE.md).
+Science notes, drivers and fact-check: [docs/SCIENCE.md](docs/SCIENCE.md). How sure we are: accuracy against Sentinel-1, how the list changes with the baseline date and the weights, and how dikes are handled: [docs/VALIDATION.md](docs/VALIDATION.md).
 
-**Limits we state openly:** NISAR data is provisional. The water rule is a threshold. Rice fields flooded on purpose are not yet separated from river flood, because that rule needs passes 12 days apart and we have processed three passes six weeks apart. Canals narrower than ~30 m are missed. OSM school coverage is incomplete, and WorldPop counts are modeled. 2026 was a low-flood year. Ourea targets protection that already exists (flood-season childcare points, swim classes); it does not see children or prevent drownings by itself.
+**Limits we state openly:** NISAR data is provisional. The water rule is a threshold: against Sentinel-1 a day later, NISAR finds 98–99% of the water Sentinel-1 sees, but only about half of its own flood-season water pixels are confirmed (agreement 73–78%, F1 0.62–0.68; mostly rice paddies, where L-band sees water under the crop and C-band does not). The list also depends on the dry-season baseline date. Details: [docs/VALIDATION.md](docs/VALIDATION.md). Rice fields flooded on purpose are not yet separated from river flood, because that rule needs passes 12 days apart and we have processed three passes six weeks apart. Canals narrower than ~30 m are missed. OSM school coverage is incomplete, and WorldPop counts are modeled. 2026 was a low-flood year. Ourea targets protection that already exists (flood-season childcare points, swim classes); it does not see children or prevent drownings by itself.
 
 ## Data
 

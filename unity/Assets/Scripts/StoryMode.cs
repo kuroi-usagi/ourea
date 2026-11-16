@@ -93,17 +93,27 @@ public class StoryMode : MonoBehaviour
         viewer.timeline.SetPosition(Mathf.Min(i, Mathf.Max(0, viewer.passes.Count - 1)));
     }
 
-    DataLoader.BakedCommune First()
+    DataLoader.BakedCommune First() { return Ranked(1); }
+
+    // the commune at this rank on the latest pass
+    DataLoader.BakedCommune Ranked(int rank)
     {
         if (lab == null || lab.live == null || viewer.passes.Count == 0) return null;
         string date = viewer.passes[viewer.passes.Count - 1].date;
-        foreach (var b in lab.live.baked) if (b.pass == date && b.rank == 1) return b;
+        foreach (var b in lab.live.baked) if (b.pass == date && b.rank == rank) return b;
         return null;
+    }
+
+    int RankedCount()
+    {
+        int n = 0;
+        while (n < 10 && Ranked(n + 1) != null) n++;
+        return n;
     }
 
     void FlyToFirst()
     {
-        var f = First();
+        var f = Ranked(actRank);
         if (f != null && viewer.orbit != null) viewer.orbit.Focus(new Vector3(f.u * lab.sizeX, 0f, (1f - f.v) * lab.sizeZ), 60f, 38f);
     }
 
@@ -165,7 +175,8 @@ public class StoryMode : MonoBehaviour
         else if (journey != null && journey.mode == GlobeJourney.Mode.Flying) { }
         else if (running)
         {
-            if (chapter == 5 && !lab.AlertsOpen) DrawAct(W, H, s);
+            // the action panel steps aside while a dock card is open, and can be folded to a chip
+            if (chapter == 5 && !lab.CardOpen) { if (actMin) DrawActChip(W, s); else DrawAct(W, H, s); }
             DrawGuide(W, H, s);
         }
         else
@@ -264,6 +275,8 @@ public class StoryMode : MonoBehaviour
     // Chapter 6: the decision itself, for the first commune on the list — a marker on the map and
     // the three things a commune office does with it, as a checklist people can tick.
     readonly bool[] done = new bool[3];
+    int actRank = 1;            // which commune on the list the panel is about (1 = check first)
+    bool actMin;                // folded to a chip so the map shows
     int draftFor = -1;          // which action's message is open (0 = send someone, 1 = day care)
     bool draftVi = true;        // Vietnamese first: it goes to commune staff
     float copiedAt = -10f;
@@ -294,7 +307,7 @@ public class StoryMode : MonoBehaviour
         float dw = 330f;
         string text = Draft(draftFor, f, draftVi);
         float th = sBody.CalcHeight(new GUIContent(text), dw - 36f);
-        string sub = "Draft from the " + f.pass + " pass. Edit it, then paste into Zalo, SMS or email.";
+        string sub = "Draft from the " + f.pass + " pass. Share it to Zalo, or copy it into SMS or email. Edit before sending.";
         float sh = sSmall.CalcHeight(new GUIContent(sub), dw - 36f);
         float dh = 16 + 22 + sh + 8 + th + 16 + 34 + 16;
         // beside the action panel when there's room, otherwise under it
@@ -311,12 +324,28 @@ public class StoryMode : MonoBehaviour
         GUI.Label(new Rect(x, y, w, th), text, sBody);
         y += th + 16;
         bool copied = Time.time - copiedAt < 2f;
-        if (GUI.Button(new Rect(x, y, 120, 32), copied ? "COPIED" : "COPY TEXT", sPrimarySmall)) { OureaCopy(text); copiedAt = Time.time; }
-        if (GUI.Button(new Rect(x + 128, y, 90, 32), "CLOSE", sButtonSmall)) draftFor = -1;
+        // Zalo is how commune staff message each other: the phone's share sheet, or copy + open Zalo on the web
+        if (OureaLinks.Button(new Rect(x, y, 116, 32), "SHARE · ZALO", sPrimarySmall)) { if (!OureaLinks.Share(text)) copiedAt = Time.time; }
+        if (GUI.Button(new Rect(x + 124, y, 94, 32), copied ? "COPIED" : "COPY", sButtonSmall)) { OureaCopy(text); copiedAt = Time.time; }
+        if (GUI.Button(new Rect(x + 226, y, w - 226, 32), "CLOSE", sButtonSmall)) draftFor = -1;
     }
+    void DrawActChip(float W, float s)
+    {
+        var f = Ranked(actRank);
+        if (f == null) return;
+        const float M = 16f;
+        string t = (actRank == 1 ? "CHECK FIRST  ·  " : "#" + actRank + "  ·  ") + f.name;
+        float cw = Mathf.Min(W - 2 * M - 108f, sHeadKey.CalcSize(new GUIContent(t)).x + 112f);
+        var r = new Rect(W - M - 96f - 12f - cw, M + 64f, cw, 44f);
+        GUI.Box(r, GUIContent.none, sPanel);
+        Block(r, s);
+        GUI.Label(new Rect(r.x + 16, r.y + 13, r.width - 100, 20), t, sHeadKey);
+        if (GUI.Button(new Rect(r.xMax - 80, r.y + 8, 68, 28), "SHOW", sPrimarySmall)) actMin = false;
+    }
+
     void DrawAct(float W, float H, float s)
     {
-        var f = First();
+        var f = Ranked(actRank);
         if (f == null) return;
         string name = f.name;   // Vietnamese first, as people there write it
         var cam = Camera.main;
@@ -333,7 +362,7 @@ public class StoryMode : MonoBehaviour
                 GUI.color = OureaTheme.A(OureaTheme.Bad);
                 GUI.DrawTexture(new Rect(x - 7, y - 7, 14, 14), texRound);
                 GUI.color = old;
-                string tag = "#1  " + name;
+                string tag = "#" + actRank + "  " + name;
                 float tw = sHeadKey.CalcSize(new GUIContent(tag)).x + 24f;
                 GUI.Box(new Rect(x - tw * 0.5f, y - 54, tw, 30), GUIContent.none, sPanel);
                 GUI.Label(new Rect(x - tw * 0.5f + 12, y - 48, tw, 20), tag, sHeadKey);
@@ -346,7 +375,13 @@ public class StoryMode : MonoBehaviour
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
         float x0 = r.x + 18, w = r.width - 36, yy = r.y + 16;
-        GUI.Label(new Rect(x0, yy, w, 14), "CHECK FIRST  ·  " + f.pass + "  ·  PROVISIONAL", sEyebrow); yy += 20;
+        GUI.Label(new Rect(x0, yy, w - 110, 14), (actRank == 1 ? "CHECK FIRST" : "#" + actRank + " ON THE LIST") + "  ·  " + f.pass, sEyebrow);
+        // step through the list, or fold the panel away to see the map
+        int count = RankedCount();
+        if (GUI.Button(new Rect(r.xMax - 18 - 100, yy - 6, 30, 26), "<", sButtonSmall)) { actRank = actRank <= 1 ? count : actRank - 1; draftFor = -1; FlyToFirst(); }
+        if (GUI.Button(new Rect(r.xMax - 18 - 66, yy - 6, 30, 26), ">", sButtonSmall)) { actRank = actRank >= count ? 1 : actRank + 1; draftFor = -1; FlyToFirst(); }
+        if (GUI.Button(new Rect(r.xMax - 18 - 30, yy - 6, 30, 26), "–", sButtonSmall)) { actMin = true; draftFor = -1; }
+        yy += 20;
         GUI.Label(new Rect(x0, yy, w - 50, 24), name, OureaTheme.Text(18, OureaTheme.Ink, true)); 
         GUI.Label(new Rect(r.xMax - 18 - 50, yy, 50, 24), f.score.ToString("0"), OureaTheme.Text(18, OureaTheme.Bad, true, FontStyle.Normal, TextAnchor.UpperRight)); yy += 26;
         GUI.Label(new Rect(x0, yy, w, 40), f.reasons + ". Childcare gap not yet known.", OureaTheme.Text(12, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true)); yy += 48;
@@ -376,7 +411,7 @@ public class StoryMode : MonoBehaviour
             yy += 66;
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
-        if (OureaLinks.Button(new Rect(x0, yy + 30, w, 30), "SEE WALKING ROUTES TO SCHOOL  >", sButton)) OureaLinks.Routes(f.pass, null);
+        if (OureaLinks.Button(new Rect(x0, yy + 30, w, 30), "ROUTES TO DAY CARE & SCHOOL  >", sButton)) OureaLinks.Routes(f.pass, null);
         if (draftFor >= 0) DrawDraft(r, W, H, s, f);
     }
 

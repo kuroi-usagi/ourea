@@ -27,7 +27,8 @@ public static class OureaSceneBuilder
     [Serializable] class DatesWrap { public DateJ[] items; }
     [Serializable] class AssetJ { public string id; public string name; public string type; public float lon; public float lat; public float u; public float v; }
     [Serializable] class AssetsWrap { public AssetJ[] items; }
-    [Serializable] class ScoreJ { public string place_id; public string pass; public float score; public int rank; public int rank_change; public string[] reasons; }
+    [Serializable] class FactorsJ { public float water_near_homes, young_children, new_water, schools_routes; }
+    [Serializable] class ScoreJ { public string place_id; public string pass; public float score; public int rank; public int rank_change; public string[] reasons; public FactorsJ factors; }
     [Serializable] class ScoresWrap { public ScoreJ[] items; }
     [Serializable] class HeadlineJ { public float new_water_km2; public string pass; public int homes_near_water; public float children_under5_near_flood_water; }
 
@@ -365,7 +366,9 @@ public static class OureaSceneBuilder
             scores.Add(new OureaViewer.Score
             {
                 placeId = s.place_id, pass = pi, score = s.score, rank = s.rank, rankChange = s.rank_change,
-                reason = s.reasons != null && s.reasons.Length > 0 ? s.reasons[0] : ""
+                reason = s.reasons != null && s.reasons.Length > 0 ? s.reasons[0] : "",
+                // points each part adds to the score (science/score.py weights 35/25/20/20)
+                parts = s.factors == null ? null : new[] { 35f * s.factors.water_near_homes, 25f * s.factors.young_children, 20f * s.factors.new_water, 20f * s.factors.schools_routes }
             });
         }
 

@@ -1,23 +1,27 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-// Links out of the app: the Google Maps routes page (web/public/unity/routes/), on the same site.
+// Links out of the 3D map: the routes to school and day care (web/public/unity/routes/, a Google map)
+// in a panel over the app, and sharing a message to Zalo.
 public static class OureaLinks
 {
 #if UNITY_WEBGL && !UNITY_EDITOR
-    [DllImport("__Internal")] static extern void OureaOpenOnRelease(string url);
+    [DllImport("__Internal")] static extern void OureaRoutesPanel(string url);
+    [DllImport("__Internal")] static extern int OureaShare(string text);
 #else
-    static void OureaOpenOnRelease(string url) { Application.OpenURL("https://ourea-2wp.pages.dev/" + url); }
+    static void OureaRoutesPanel(string url) { Application.OpenURL("https://ourea-2wp.pages.dev/" + url); }
+    static int OureaShare(string text) { GUIUtility.systemCopyBuffer = text; return 0; }
 #endif
 
-    // Call on MouseDown over the button (the tab opens when the click is released).
     public static void Routes(string passDate, string hamletId)
     {
-        string q = "routes/?pass=" + passDate + (string.IsNullOrEmpty(hamletId) ? "" : "&h=" + hamletId);
-        OureaOpenOnRelease(q);
+        OureaRoutesPanel("routes/?pass=" + passDate + (string.IsNullOrEmpty(hamletId) ? "" : "&h=" + hamletId));
     }
 
-    // An IMGUI button that opens a link: returns true on the press, which is when the link is armed.
+    // true if the phone's share sheet opened; false if the text was copied and Zalo opened to paste it
+    public static bool Share(string text) { return OureaShare(text) == 1; }
+
+    // An IMGUI button that acts on the press (inside the browser's click, so pop-ups and sharing are allowed).
     public static bool Button(Rect r, string label, GUIStyle style)
     {
         var e = Event.current;

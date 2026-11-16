@@ -1,0 +1,980 @@
+{
+ "pass": "2026-10-03",
+ "question": "Does the hamlet check-first top 10 depend on the dry-season baseline date?",
+ "method": {
+  "formula": "100 x (0.35 water_near_homes + 0.25 young_children + 0.20 new_water + 0.20 schools_routes); gap factor off; 32 px squares; near = 3 px; >= 20 under-5s (science/score.py)",
+  "only_change": "the baseline mask that defines 'new flood water'",
+  "children": "PROXY. WorldPop under-5 raster not available locally; GHS-BUILT-S building share (handoff/buildings/built.png) scaled to 81,100 under-5s, with published under5_estimate forced for the 105 squares in assets.json",
+  "schools": "94 school + childcare assets from assets.json",
+  "universes": {
+   "published_squares": "105 squares with real WorldPop totals; kept counts are an upper bound on stability; compared to published top 10",
+   "all_squares_proxy": "all squares, proxy children outside the 105; compared to the proxy's own original-baseline top 10"
+  },
+  "reading_note": "The 2026-08-28 pass already had 39% water (vs 27% on 2026-07-11), so baselines a and c remove most of the season's flood and rank only late-season water; b ranks permanent canals/rivers too, which science/score.py excludes on purpose.",
+  "script": "pipeline/validate_baseline.py"
+ },
+ "reproduction_of_published": {
+  "2026-07-11": {
+   "published_top10": [
+    "cell_00_20",
+    "cell_00_42",
+    "cell_00_53",
+    "cell_01_14",
+    "cell_01_15",
+    "cell_01_21",
+    "cell_02_12",
+    "cell_02_13",
+    "cell_02_15",
+    "cell_02_21"
+   ],
+   "proxy_top10": [
+    "cell_00_08",
+    "cell_00_20",
+    "cell_00_42",
+    "cell_00_53",
+    "cell_00_54",
+    "cell_00_60",
+    "cell_00_62",
+    "cell_01_00",
+    "cell_01_05",
+    "cell_01_14"
+   ],
+   "top10_overlap": 4,
+   "top5_overlap": 3,
+   "published_top10_proxy_ranks": [
+    2,
+    3,
+    4,
+    10,
+    11,
+    12,
+    15,
+    16,
+    17,
+    18
+   ],
+   "published_squares_only": {
+    "top10": [
+     "cell_00_20",
+     "cell_00_42",
+     "cell_00_53",
+     "cell_01_14",
+     "cell_01_15",
+     "cell_01_21",
+     "cell_02_12",
+     "cell_02_13",
+     "cell_02_15",
+     "cell_02_21"
+    ],
+    "top10_overlap": 10,
+    "top5_overlap": 5,
+    "published_top10_ranks": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "score_abs_err_top50_mean": 0.0,
+   "score_abs_err_top50_max": 0.0,
+   "factor_abs_err_top50_mean": {
+    "water_near_homes": 0.0,
+    "young_children": 0.0,
+    "new_water": 0.0,
+    "schools_routes": 0.0
+   }
+  },
+  "2026-08-28": {
+   "published_top10": [
+    "cell_30_35",
+    "cell_38_23",
+    "cell_10_02",
+    "cell_22_02",
+    "cell_37_19",
+    "cell_02_21",
+    "cell_16_13",
+    "cell_43_26",
+    "cell_42_27",
+    "cell_63_11"
+   ],
+   "proxy_top10": [
+    "cell_24_52",
+    "cell_10_56",
+    "cell_38_23",
+    "cell_10_02",
+    "cell_30_35",
+    "cell_13_43",
+    "cell_22_02",
+    "cell_16_13",
+    "cell_37_19",
+    "cell_35_25"
+   ],
+   "top10_overlap": 6,
+   "top5_overlap": 3,
+   "published_top10_proxy_ranks": [
+    5,
+    3,
+    4,
+    7,
+    9,
+    12,
+    8,
+    11,
+    15,
+    16
+   ],
+   "published_squares_only": {
+    "top10": [
+     "cell_38_23",
+     "cell_10_02",
+     "cell_30_35",
+     "cell_22_02",
+     "cell_16_13",
+     "cell_37_19",
+     "cell_43_26",
+     "cell_02_21",
+     "cell_42_27",
+     "cell_63_11"
+    ],
+    "top10_overlap": 10,
+    "top5_overlap": 4,
+    "published_top10_ranks": [
+     3,
+     1,
+     2,
+     4,
+     6,
+     8,
+     5,
+     7,
+     9,
+     10
+    ]
+   },
+   "score_abs_err_top50_mean": 0.57,
+   "score_abs_err_top50_max": 3.1,
+   "factor_abs_err_top50_mean": {
+    "water_near_homes": 0.0136,
+    "young_children": 0.0067,
+    "new_water": 0.0002,
+    "schools_routes": 0.0
+   }
+  },
+  "2026-10-03": {
+   "published_top10": [
+    "cell_10_02",
+    "cell_30_35",
+    "cell_38_23",
+    "cell_43_26",
+    "cell_22_02",
+    "cell_37_19",
+    "cell_02_21",
+    "cell_09_01",
+    "cell_15_62",
+    "cell_35_02"
+   ],
+   "proxy_top10": [
+    "cell_10_56",
+    "cell_10_02",
+    "cell_02_56",
+    "cell_18_61",
+    "cell_30_35",
+    "cell_24_52",
+    "cell_31_57",
+    "cell_14_61",
+    "cell_38_23",
+    "cell_08_50"
+   ],
+   "top10_overlap": 3,
+   "top5_overlap": 2,
+   "published_top10_proxy_ranks": [
+    2,
+    5,
+    9,
+    16,
+    19,
+    21,
+    39,
+    25,
+    28,
+    32
+   ],
+   "published_squares_only": {
+    "top10": [
+     "cell_10_02",
+     "cell_30_35",
+     "cell_38_23",
+     "cell_43_26",
+     "cell_22_02",
+     "cell_37_19",
+     "cell_09_01",
+     "cell_15_62",
+     "cell_15_63",
+     "cell_35_02"
+    ],
+    "top10_overlap": 9,
+    "top5_overlap": 5,
+    "published_top10_ranks": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     11,
+     7,
+     8,
+     10
+    ]
+   },
+   "score_abs_err_top50_mean": 0.38,
+   "score_abs_err_top50_max": 1.6,
+   "factor_abs_err_top50_mean": {
+    "water_near_homes": 0.0088,
+    "young_children": 0.0051,
+    "new_water": 0.0002,
+    "schools_routes": 0.0
+   }
+  }
+ },
+ "variants": {
+  "original": {
+   "description": "baseline 2026-07-11 (published definition), proxy children",
+   "new_water_km2": 1334.8,
+   "published_squares_vs_published_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_10_02",
+      "name": "near Bình Thành B",
+      "score": 66.0,
+      "published_rank": 1
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_30_35",
+      "name": "near Tràm Chim",
+      "score": 63.8,
+      "published_rank": 2
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_38_23",
+      "name": "near Tràm Chim",
+      "score": 63.1,
+      "published_rank": 3
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_43_26",
+      "name": "near Thanh Bình",
+      "score": 62.0,
+      "published_rank": 4
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_22_02",
+      "name": "near Chợ Vàm",
+      "score": 61.7,
+      "published_rank": 5
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_37_19",
+      "name": "near Thanh Bình",
+      "score": 61.3,
+      "published_rank": 6
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_09_01",
+      "name": "near Bình Thành B",
+      "score": 60.6,
+      "published_rank": 8
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_15_62",
+      "name": "near Gò Ớt",
+      "score": 60.3,
+      "published_rank": 9
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_15_63",
+      "name": "near Gò Ớt",
+      "score": 59.9,
+      "published_rank": 11
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_35_02",
+      "name": "near Phú Tân",
+      "score": 59.9,
+      "published_rank": 10
+     }
+    ],
+    "top10_kept": 9,
+    "top5_kept": 5,
+    "rank_of_original_no1": 1,
+    "ranks_of_original_top10": {
+     "cell_10_02": 1,
+     "cell_30_35": 2,
+     "cell_38_23": 3,
+     "cell_43_26": 4,
+     "cell_22_02": 5,
+     "cell_37_19": 6,
+     "cell_02_21": 11,
+     "cell_09_01": 7,
+     "cell_15_62": 8,
+     "cell_35_02": 10
+    }
+   },
+   "all_squares_proxy_vs_proxy_original_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_10_56",
+      "name": "(no published name; proxy-only square)",
+      "score": 68.0,
+      "published_rank": null
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_10_02",
+      "name": "near Bình Thành B",
+      "score": 66.0,
+      "published_rank": 1
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_02_56",
+      "name": "(no published name; proxy-only square)",
+      "score": 64.6,
+      "published_rank": null
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_18_61",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.8,
+      "published_rank": null
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_30_35",
+      "name": "near Tràm Chim",
+      "score": 63.8,
+      "published_rank": 2
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_24_52",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.4,
+      "published_rank": null
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_31_57",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.3,
+      "published_rank": null
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_14_61",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.2,
+      "published_rank": null
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_38_23",
+      "name": "near Tràm Chim",
+      "score": 63.1,
+      "published_rank": 3
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_08_50",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.0,
+      "published_rank": null
+     }
+    ],
+    "top10_kept": 10,
+    "top5_kept": 5,
+    "rank_of_original_no1": 1,
+    "ranks_of_original_top10": {
+     "cell_10_56": 1,
+     "cell_10_02": 2,
+     "cell_02_56": 3,
+     "cell_18_61": 4,
+     "cell_30_35": 5,
+     "cell_24_52": 6,
+     "cell_31_57": 7,
+     "cell_14_61": 8,
+     "cell_38_23": 9,
+     "cell_08_50": 10
+    }
+   }
+  },
+  "a_aug": {
+   "description": "baseline 2026-08-28: water now that was land in late August",
+   "new_water_km2": 806.5,
+   "published_squares_vs_published_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 62.0,
+      "published_rank": 18
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_48_50",
+      "name": "near Mỹ An",
+      "score": 61.1,
+      "published_rank": 45
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_40_02",
+      "name": "near Phú Tân",
+      "score": 58.0,
+      "published_rank": 31
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_35_02",
+      "name": "near Phú Tân",
+      "score": 57.0,
+      "published_rank": 10
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_09_01",
+      "name": "near Bình Thành B",
+      "score": 48.7,
+      "published_rank": 8
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_40_04",
+      "name": "near Phú Tân",
+      "score": 48.5,
+      "published_rank": 46
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_05_14",
+      "name": "near Sa Rài",
+      "score": 47.9,
+      "published_rank": null
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_08_54",
+      "name": "near Vĩnh Hưng",
+      "score": 47.3,
+      "published_rank": 16
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_15_63",
+      "name": "near Gò Ớt",
+      "score": 46.5,
+      "published_rank": 11
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_15_62",
+      "name": "near Gò Ớt",
+      "score": 46.0,
+      "published_rank": 9
+     }
+    ],
+    "top10_kept": 3,
+    "top5_kept": 0,
+    "rank_of_original_no1": 38,
+    "ranks_of_original_top10": {
+     "cell_10_02": 38,
+     "cell_30_35": 58,
+     "cell_38_23": 36,
+     "cell_43_26": 37,
+     "cell_22_02": 26,
+     "cell_37_19": 43,
+     "cell_02_21": 18,
+     "cell_09_01": 5,
+     "cell_15_62": 10,
+     "cell_35_02": 4
+    }
+   },
+   "all_squares_proxy_vs_proxy_original_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_27_44",
+      "name": "(no published name; proxy-only square)",
+      "score": 65.5,
+      "published_rank": null
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_44_57",
+      "name": "(no published name; proxy-only square)",
+      "score": 63.6,
+      "published_rank": null
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_37_44",
+      "name": "(no published name; proxy-only square)",
+      "score": 62.8,
+      "published_rank": null
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_47_48",
+      "name": "(no published name; proxy-only square)",
+      "score": 62.4,
+      "published_rank": null
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_44_53",
+      "name": "(no published name; proxy-only square)",
+      "score": 62.3,
+      "published_rank": null
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 62.0,
+      "published_rank": 18
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_42_57",
+      "name": "(no published name; proxy-only square)",
+      "score": 61.4,
+      "published_rank": null
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_48_50",
+      "name": "near Mỹ An",
+      "score": 61.1,
+      "published_rank": 45
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_54_48",
+      "name": "(no published name; proxy-only square)",
+      "score": 60.7,
+      "published_rank": null
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_55_46",
+      "name": "(no published name; proxy-only square)",
+      "score": 60.6,
+      "published_rank": null
+     }
+    ],
+    "top10_kept": 0,
+    "top5_kept": 0,
+    "rank_of_original_no1": 78,
+    "ranks_of_original_top10": {
+     "cell_10_56": 78,
+     "cell_10_02": 364,
+     "cell_02_56": 238,
+     "cell_18_61": 133,
+     "cell_30_35": 501,
+     "cell_24_52": 278,
+     "cell_31_57": 15,
+     "cell_14_61": 86,
+     "cell_38_23": 351,
+     "cell_08_50": 191
+    }
+   }
+  },
+  "b_none": {
+   "description": "no baseline: all water on 2026-10-03 counts (rivers and canals included)",
+   "new_water_km2": 2217.1,
+   "published_squares_vs_published_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 74.1,
+      "published_rank": 18
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_10_02",
+      "name": "near Bình Thành B",
+      "score": 72.1,
+      "published_rank": 1
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_05_14",
+      "name": "near Sa Rài",
+      "score": 66.4,
+      "published_rank": null
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_63_11",
+      "name": "near An Châu",
+      "score": 65.5,
+      "published_rank": 13
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_02_21",
+      "name": "near Sa Rài",
+      "score": 65.2,
+      "published_rank": 7
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_63_10",
+      "name": "near An Châu",
+      "score": 65.1,
+      "published_rank": 26
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_22_02",
+      "name": "near Chợ Vàm",
+      "score": 64.5,
+      "published_rank": 5
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_09_01",
+      "name": "near Bình Thành B",
+      "score": 64.0,
+      "published_rank": 8
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_16_14",
+      "name": "near Sa Rài",
+      "score": 64.0,
+      "published_rank": 39
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_43_00",
+      "name": "near Phú Tân",
+      "score": 63.9,
+      "published_rank": 41
+     }
+    ],
+    "top10_kept": 4,
+    "top5_kept": 1,
+    "rank_of_original_no1": 2,
+    "ranks_of_original_top10": {
+     "cell_10_02": 2,
+     "cell_30_35": 13,
+     "cell_38_23": 23,
+     "cell_43_26": 15,
+     "cell_22_02": 7,
+     "cell_37_19": 19,
+     "cell_02_21": 5,
+     "cell_09_01": 8,
+     "cell_15_62": 21,
+     "cell_35_02": 28
+    }
+   },
+   "all_squares_proxy_vs_proxy_original_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 74.1,
+      "published_rank": 18
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_10_02",
+      "name": "near Bình Thành B",
+      "score": 72.1,
+      "published_rank": 1
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_10_56",
+      "name": "(no published name; proxy-only square)",
+      "score": 72.1,
+      "published_rank": null
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_27_44",
+      "name": "(no published name; proxy-only square)",
+      "score": 69.1,
+      "published_rank": null
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_56_16",
+      "name": "(no published name; proxy-only square)",
+      "score": 68.0,
+      "published_rank": null
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_38_53",
+      "name": "(no published name; proxy-only square)",
+      "score": 66.8,
+      "published_rank": null
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_05_14",
+      "name": "near Sa Rài",
+      "score": 66.4,
+      "published_rank": null
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_39_05",
+      "name": "(no published name; proxy-only square)",
+      "score": 65.8,
+      "published_rank": null
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_63_11",
+      "name": "near An Châu",
+      "score": 65.5,
+      "published_rank": 13
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_37_52",
+      "name": "(no published name; proxy-only square)",
+      "score": 65.5,
+      "published_rank": null
+     }
+    ],
+    "top10_kept": 2,
+    "top5_kept": 2,
+    "rank_of_original_no1": 3,
+    "ranks_of_original_top10": {
+     "cell_10_56": 3,
+     "cell_10_02": 2,
+     "cell_02_56": 15,
+     "cell_18_61": 37,
+     "cell_30_35": 40,
+     "cell_24_52": 53,
+     "cell_31_57": 61,
+     "cell_14_61": 36,
+     "cell_38_23": 70,
+     "cell_08_50": 75
+    }
+   }
+  },
+  "c_both": {
+   "description": "water now that was land on BOTH 2026-07-11 and 2026-08-28",
+   "new_water_km2": 458.2,
+   "published_squares_vs_published_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 54.8,
+      "published_rank": 18
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_48_50",
+      "name": "near Mỹ An",
+      "score": 53.0,
+      "published_rank": 45
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_40_02",
+      "name": "near Phú Tân",
+      "score": 49.3,
+      "published_rank": 31
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_35_02",
+      "name": "near Phú Tân",
+      "score": 49.2,
+      "published_rank": 10
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_15_63",
+      "name": "near Gò Ớt",
+      "score": 46.4,
+      "published_rank": 11
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_15_62",
+      "name": "near Gò Ớt",
+      "score": 44.9,
+      "published_rank": 9
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_08_54",
+      "name": "near Vĩnh Hưng",
+      "score": 44.6,
+      "published_rank": 16
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_09_01",
+      "name": "near Bình Thành B",
+      "score": 42.5,
+      "published_rank": 8
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_61_18",
+      "name": "near Cái Tàu Thượng",
+      "score": 40.9,
+      "published_rank": 49
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_16_63",
+      "name": "near Gò Ớt",
+      "score": 40.7,
+      "published_rank": 48
+     }
+    ],
+    "top10_kept": 3,
+    "top5_kept": 0,
+    "rank_of_original_no1": 29,
+    "ranks_of_original_top10": {
+     "cell_10_02": 29,
+     "cell_30_35": 39,
+     "cell_38_23": 22,
+     "cell_43_26": 25,
+     "cell_22_02": 17,
+     "cell_37_19": 38,
+     "cell_02_21": 23,
+     "cell_09_01": 8,
+     "cell_15_62": 6,
+     "cell_35_02": 4
+    }
+   },
+   "all_squares_proxy_vs_proxy_original_top10": {
+    "top10": [
+     {
+      "rank": 1,
+      "place_id": "cell_24_62",
+      "name": "(no published name; proxy-only square)",
+      "score": 59.8,
+      "published_rank": null
+     },
+     {
+      "rank": 2,
+      "place_id": "cell_31_57",
+      "name": "(no published name; proxy-only square)",
+      "score": 58.4,
+      "published_rank": null
+     },
+     {
+      "rank": 3,
+      "place_id": "cell_34_62",
+      "name": "(no published name; proxy-only square)",
+      "score": 58.4,
+      "published_rank": null
+     },
+     {
+      "rank": 4,
+      "place_id": "cell_24_61",
+      "name": "(no published name; proxy-only square)",
+      "score": 57.6,
+      "published_rank": null
+     },
+     {
+      "rank": 5,
+      "place_id": "cell_16_61",
+      "name": "(no published name; proxy-only square)",
+      "score": 56.8,
+      "published_rank": null
+     },
+     {
+      "rank": 6,
+      "place_id": "cell_25_61",
+      "name": "(no published name; proxy-only square)",
+      "score": 56.5,
+      "published_rank": null
+     },
+     {
+      "rank": 7,
+      "place_id": "cell_44_53",
+      "name": "(no published name; proxy-only square)",
+      "score": 55.5,
+      "published_rank": null
+     },
+     {
+      "rank": 8,
+      "place_id": "cell_15_03",
+      "name": "near Thường Lạc",
+      "score": 54.8,
+      "published_rank": 18
+     },
+     {
+      "rank": 9,
+      "place_id": "cell_19_62",
+      "name": "(no published name; proxy-only square)",
+      "score": 54.5,
+      "published_rank": null
+     },
+     {
+      "rank": 10,
+      "place_id": "cell_20_63",
+      "name": "(no published name; proxy-only square)",
+      "score": 54.5,
+      "published_rank": null
+     }
+    ],
+    "top10_kept": 1,
+    "top5_kept": 0,
+    "rank_of_original_no1": 23,
+    "ranks_of_original_top10": {
+     "cell_10_56": 23,
+     "cell_10_02": 227,
+     "cell_02_56": 115,
+     "cell_18_61": 60,
+     "cell_30_35": 319,
+     "cell_24_52": 145,
+     "cell_31_57": 2,
+     "cell_14_61": 31,
+     "cell_38_23": 194,
+     "cell_08_50": 99
+    }
+   }
+  },
+  "d_jrc": {
+   "description": "JRC Global Surface Water occurrence/seasonality as baseline",
+   "status": "not run: requires downloading GSW tiles (no account needed, but the download was not approved in this session). Re-run with a GSW-derived mask in place of water['2026-07-11']."
+  }
+ }
+}

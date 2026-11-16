@@ -35,6 +35,7 @@ public class OureaViewer : MonoBehaviour
         public int rank;
         public int rankChange;
         public string reason;
+        public float[] parts;   // points from homes near water, young children, new water, schools (sum = score before the gap factor)
     }
 
     public Renderer deltaRenderer;
@@ -328,14 +329,33 @@ public class OureaViewer : MonoBehaviour
         }
     }
 
+    GUIStyle sPartKey;
+    static readonly string[] PartNames = { "homes", "under-5s", "new water", "schools" };
+    static readonly Color[] PartColors = { new Color(1f, 0.42f, 0.34f), new Color(0.37f, 0.83f, 0.88f), new Color(0.25f, 0.62f, 1f), new Color(0.93f, 0.96f, 0.95f) };
+
     void DrawList(Rect list)
     {
         GUI.Label(new Rect(list.x + 16, list.y + 14, 300, 14), simulated ? "CHECK FIRST  ·  SIMULATED" : "CHECK FIRST", simulated ? Text(11, Amber, FontStyle.Bold) : sEyebrow);
         GUI.Label(new Rect(list.x + 16, list.y + 30, list.width - 60, 24), "Top 10 this pass", sTitle);
-        GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), simulated ? "Simulated until Mitch's scores land." : "Ranked by water near homes. Low rank is not \"safe\".", sSub);
+        if (simulated) GUI.Label(new Rect(list.x + 16, list.y + 56, 300, 16), "Simulated until Mitch's scores land.", sSub);
+        else
+        {
+            // the key to each row's bar: what pushes a hamlet up the list
+            float kx = list.x + 16;
+            for (int i = 0; i < PartNames.Length; i++)
+            {
+                var o = GUI.color; GUI.color = OureaTheme.A(PartColors[i]);
+                GUI.DrawTexture(new Rect(kx, list.y + 60, 8, 8), Texture2D.whiteTexture);
+                GUI.color = o;
+                if (sPartKey == null) sPartKey = Text(10, Muted);
+                float w = sPartKey.CalcSize(new GUIContent(PartNames[i])).x;
+                GUI.Label(new Rect(kx + 11, list.y + 56, w + 4, 14), PartNames[i], sPartKey);
+                kx += 11 + w + 8;
+            }
+        }
 
         var view = new Rect(list.x + 8, list.y + 80, list.width - 16, list.height - 88);
-        const float rowH = 54f;
+        const float rowH = 62f;
         var content = new Rect(0, 0, view.width, Mathf.Max(view.height, top.Count * rowH));
         listScroll = GUI.BeginScrollView(view, listScroll, content, false, false, GUIStyle.none, GUIStyle.none);
         float y = 0;
@@ -356,6 +376,22 @@ public class OureaViewer : MonoBehaviour
 
             GUI.Label(new Rect(row.x + 46, row.y + 8, row.width - 100, 18), name, sRowName);
             GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), s.reason, sRowReason);
+            if (s.parts != null)
+            {
+                // score bar, 0..100, split into what each part adds
+                float bx = row.x + 46, bw = row.width - 56, by = row.y + 46;
+                var o = GUI.color;
+                GUI.color = OureaTheme.A(new Color(1f, 1f, 1f, 0.08f));
+                GUI.DrawTexture(new Rect(bx, by, bw, 5), Texture2D.whiteTexture);
+                for (int i = 0; i < s.parts.Length && i < PartColors.Length; i++)
+                {
+                    float pw = bw * s.parts[i] / 100f;
+                    GUI.color = OureaTheme.A(PartColors[i]);
+                    GUI.DrawTexture(new Rect(bx, by, pw, 5), Texture2D.whiteTexture);
+                    bx += pw;
+                }
+                GUI.color = o;
+            }
 
             if (s.rankChange != 0)
             {
