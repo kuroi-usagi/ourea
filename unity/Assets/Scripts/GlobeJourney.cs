@@ -163,7 +163,7 @@ public class GlobeJourney : MonoBehaviour
     {
         float half = (cam != null ? cam.fieldOfView : 40f) * 0.5f * Mathf.Deg2Rad;
         // wide screens: a big globe on the right of the front page; narrow: smaller, above the text
-        return R / Mathf.Sin(half * (StoryMode.Wide ? 0.66f : 0.31f)) - R;
+        return R / Mathf.Sin(half * (StoryMode.Wide ? 0.66f : 0.21f)) - R;
     }
 
     Vector3 IdleDir()
@@ -269,7 +269,7 @@ public class GlobeJourney : MonoBehaviour
             var right0 = Vector3.Cross(up0, fwd0).normalized;
             look -= right0 * R * 0.62f * k;   // aim left of the globe, so it sits on the right of the front page
         }
-        else look -= up0 * R * 1.55f * k;     // aim low, so the globe sits in the top part of the view, above the text
+        else look -= up0 * R * 3.4f * k;      // aim low, so the globe sits at the top of the view, above the text
         var fwd = (look - pos).normalized;
         var upHint = Vector3.ProjectOnPlane(PolarAxis(), fwd);
         cam.transform.rotation = Quaternion.LookRotation(fwd, upHint.sqrMagnitude > 1e-4f ? upHint : Vector3.forward);
@@ -315,7 +315,7 @@ public class GlobeJourney : MonoBehaviour
             texDot = OureaTheme.Rounded(Color.white, 10);
         }
         GUI.depth = -5;
-        float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
+        float s = OureaTheme.UIScale;
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float alt = (cam.transform.position - C).magnitude - R;
         if (alt > 3000f)

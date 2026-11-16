@@ -20,6 +20,14 @@ public static class OureaTheme
 
     public static Font display;
 
+    // Phones held upright get their own layout: tools in a bar along the bottom, cards as sheets above it.
+    public static bool Phone { get { return Screen.width < Screen.height * 0.85f; } }
+    // IMGUI scale: the layout is ~820 units tall on a laptop, ~390 units wide on a phone
+    public static float UIScale { get { return Mathf.Clamp(Phone ? Screen.width / 390f : Screen.height / 820f, 0.7f, 3.5f); } }
+    public const float PhoneDockH = 56f;
+    // the phone's bottom bar, in GUI units (W, H already divided by UIScale)
+    public static Rect PhoneDock(float W, float H) { return new Rect(16f, H - 16f - PhoneDockH, W - 32f, PhoneDockH); }
+
     // the map's panels fade in after the fly-in lands instead of popping in (GlobeJourney sets it)
     public static float HudAlpha = 1f;
     public static Color A(Color c) { c.a *= HudAlpha; return c; }   // Chakra Petch SemiBold, set by OureaViewer

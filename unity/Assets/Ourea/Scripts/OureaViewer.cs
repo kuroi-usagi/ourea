@@ -279,7 +279,7 @@ public class OureaViewer : MonoBehaviour
         if (displayFont != null) OureaTheme.display = displayFont;
         MakeStyles();
         GUI.color = OureaTheme.A(Color.white);
-        uiScale = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
+        uiScale = OureaTheme.UIScale;
         GUI.matrix = Matrix4x4.Scale(new Vector3(uiScale, uiScale, 1f));
         float W = Screen.width / uiScale, H = Screen.height / uiScale;
         const float M = 16f;
@@ -288,17 +288,36 @@ public class OureaViewer : MonoBehaviour
 
         // Quiet map: a small title, a small data note, the timeline pill. Everything else lives
         // behind the tool dock on the right (Scripts/FloodLab.cs).
-        var head = Panel(new Rect(M, M, 268, 58));
-        GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "O U R E A   ·   NISAR FLOOD WATCH", sEyebrow);
-        GUI.Label(new Rect(head.x + 14, head.y + 26, 240, 24), "Mekong Delta, Vietnam", sTitle);
-
+        bool phone = OureaTheme.Phone;
         string note = simulated ? "WATER: REAL NISAR  ·  RANKS SIMULATED" : "NISAR  ·  PROVISIONAL";
         var noteSize = sPill.CalcSize(new GUIContent(note));
-        GUI.Label(new Rect(W - M - noteSize.x - 16, M + 6, noteSize.x + 16, 24), note, sPill);
+        // phone: one full-width header with the data note inside it; laptop: title left, note right
+        var head = Panel(new Rect(M, M, phone ? W - 2 * M : 268, 58));
+        GUI.Label(new Rect(head.x + 14, head.y + 10, 240, 14), "O U R E A   ·   NISAR FLOOD WATCH", sEyebrow);
+        GUI.Label(new Rect(head.x + 14, head.y + 26, 240, 24), "Mekong Delta, Vietnam", sTitle);
+        if (phone)
+        {
+            string shortNote = simulated ? "SIMULATED" : "PROVISIONAL";
+            var ss = sPill.CalcSize(new GUIContent(shortNote));
+            GUI.Label(new Rect(head.xMax - 10 - ss.x - 12, head.y + 10, ss.x + 12, 20), shortNote, sPill);
+        }
+        else GUI.Label(new Rect(W - M - noteSize.x - 16, M + 6, noteSize.x + 16, 24), note, sPill);
 
-        float pw = Mathf.Min(760f, W - 2 * M - 120f);
-        var tl = Panel(new Rect((W - pw) * 0.5f, H - M - 72f, pw, 72f));
-        DrawTimeline(tl);
+        // phone: the timeline sits on the tool bar, and gives way to an open card or the story's guide
+        if (phone)
+        {
+            if (!FloodLab.SheetOpen && !StoryMode.Running)
+            {
+                var dock = OureaTheme.PhoneDock(W, H);
+                DrawTimeline(Panel(new Rect(M, dock.y - 8f - 100f, W - 2 * M, 100f)));
+            }
+        }
+        else
+        {
+            float pw = Mathf.Min(760f, W - 2 * M - 120f);
+            var tl = Panel(new Rect((W - pw) * 0.5f, H - M - 72f, pw, 72f));
+            DrawTimeline(tl);
+        }
 
         GUI.matrix = Matrix4x4.identity;
     }
@@ -375,7 +394,9 @@ public class OureaViewer : MonoBehaviour
             GUI.Label(new Rect(row.x + 10, row.y + 12, 26, 26), "H" + s.rank, Text(11, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
 
             GUI.Label(new Rect(row.x + 46, row.y + 8, row.width - 100, 18), name, sRowName);
-            GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), s.reason, sRowReason);
+            // short enough for one line on a phone
+            string why = s.reason.Replace("children under 5 live within ~100 m of flood water", "under-5s within ~100 m of flood water");
+            GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), why, sRowReason);
             if (s.parts != null)
             {
                 // score bar, 0..100, split into what each part adds
@@ -418,17 +439,27 @@ public class OureaViewer : MonoBehaviour
         // play
         if (GUI.Button(new Rect(tl.x + 14, tl.y + 14, 44, 44), timeline.Playing ? "||" : ">", sPlay)) timeline.TogglePlay();
 
-        // headline number on the right
-        float nx = tl.xMax - 186;
-        GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", OureaTheme.Text(22, Ink, true, FontStyle.Normal, TextAnchor.UpperRight));
         string sub = p.childrenNearWater > 0
             ? p.childrenNearWater.ToString("#,0") + " under-5s within ~100 m"
             : "new flood water since " + ShortDate(passes[0].date);
-        GUI.Label(new Rect(nx - 40, tl.y + 42, 212, 16), sub, Text(11, Muted, FontStyle.Normal, TextAnchor.UpperRight));
+        float tx0, tx1, trackY;
+        if (tl.height > 90f)
+        {
+            // phone, two rows: play and the headline number, then the track across the full width
+            GUI.Label(new Rect(tl.x + 70, tl.y + 12, tl.width - 84, 28), "+" + p.newWaterKm2.ToString("#,0") + " km² new water", OureaTheme.Text(18, Ink, true));
+            GUI.Label(new Rect(tl.x + 70, tl.y + 38, tl.width - 84, 16), sub, Text(11, Muted));
+            tx0 = tl.x + 40; tx1 = tl.xMax - 40; trackY = tl.y + 70;
+        }
+        else
+        {
+            // headline number on the right
+            float nx = tl.xMax - 186;
+            GUI.Label(new Rect(nx, tl.y + 12, 172, 30), "+" + p.newWaterKm2.ToString("#,0") + " km²", OureaTheme.Text(22, Ink, true, FontStyle.Normal, TextAnchor.UpperRight));
+            GUI.Label(new Rect(nx - 40, tl.y + 42, 212, 16), sub, Text(11, Muted, FontStyle.Normal, TextAnchor.UpperRight));
+            tx0 = tl.x + 84; tx1 = nx - 28; trackY = tl.y + 30;
+        }
 
         // track with the passes
-        float tx0 = tl.x + 84, tx1 = nx - 28;
-        float trackY = tl.y + 30;
         var trackRect = new Rect(tx0, trackY - 3, tx1 - tx0, 6);
         int max = Mathf.Max(1, passes.Count - 1);
         float frac = passes.Count > 1 ? timeline.Position / max : 1f;

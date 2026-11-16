@@ -128,7 +128,7 @@ public class RouteField : MonoBehaviour
         }
         GUI.depth = -5;
         GUI.color = OureaTheme.A(Color.white);
-        float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
+        float s = OureaTheme.UIScale;
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         for (int i = 0; i < shown.Count; i++)
         {

@@ -148,7 +148,7 @@ public class FloodLab : MonoBehaviour
     {
         if (compareOn < 0.01f || viewer == null) return;
         const float M = 16f;
-        float top = M, bottom = H - M - 72f - 10f;   // stops above the timeline pill
+        float top = M, bottom = OureaTheme.Phone ? OureaTheme.PhoneDock(W, H).y - 116f : H - M - 72f - 10f;   // stops above the timeline pill
         float lx = wipe * W;
         var old = GUI.color;
         GUI.color = OureaTheme.A(new Color(1f, 1f, 1f, compareOn));
@@ -219,6 +219,9 @@ public class FloodLab : MonoBehaviour
         if (card == Card.Photo || card == Card.Radar) Toggle(card);   // plain map while it floods
     }
 
+    // phone: readouts go full width under the title and the story buttons
+    static Rect PhoneTop(float W) { return new Rect(16f, 16f + 58f + 8f + 40f + 8f, W - 32f, 96f); }
+
     // A big readout at the top while modeled water is up: depth and how much village land is under it.
     void DrawFloodCounter(float W)
     {
@@ -227,14 +230,14 @@ public class FloodLab : MonoBehaviour
         if (observed) { DrawObservedCounter(W, x0); return; }
         if (!any)
         {
-            if (guided) return;
+            if (guided || SheetOpen) return;
             var b = new Rect(16f, 16f + 58f + 10f + 48f, 268f, 40f);
             Block(b, curScale);
             if (GUI.Button(b, "WATCH A VILLAGE FLOOD  >", sBtnOn)) StartStory();
             return;
         }
         float cw = Mathf.Min(460f, W - x0 - 16f - 120f);
-        var r = new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
+        var r = OureaTheme.Phone ? PhoneTop(W) : new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, curScale);
         float x = r.x + 18f, y = r.y + 12f;
@@ -263,7 +266,7 @@ public class FloodLab : MonoBehaviour
         float km2 = Mathf.Lerp(pa.newWaterKm2, pb.newWaterKm2, f);
         var pn = viewer.passes[Mathf.RoundToInt(pos)];
         float cw = Mathf.Min(480f, W - x0 - 16f - 120f);
-        var r = new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
+        var r = OureaTheme.Phone ? PhoneTop(W) : new Rect(Mathf.Max(x0, W * 0.5f - cw * 0.5f), 16f, cw, 96f);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, curScale);
         float x = r.x + 18f, y = r.y + 12f;
@@ -412,7 +415,7 @@ public class FloodLab : MonoBehaviour
         if (GlobeJourney.HideHud) return;
         Styles();
         GUI.color = OureaTheme.A(Color.white);
-        float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
+        float s = OureaTheme.UIScale;
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float W = Screen.width / s, H = Screen.height / s;
         const float M = 16f;
@@ -422,17 +425,29 @@ public class FloodLab : MonoBehaviour
         DrawCommuneFocus(s);
         DrawFloodCounter(W);
 
-        // --- dock
+        // --- dock: a column on the right; on a phone, a bar along the bottom
         string[] labels = { "WATER", "PHOTO", "RADAR", "TOP 10", "ALERTS", "KEY" };
         Card[] cards = { Card.Water, Card.Photo, Card.Radar, Card.Ranking, Card.Alerts, Card.Key };
-        const float bw = 64f, bh = 46f, gap = 6f, pad = 8f;
-        float dh = pad * 2 + cards.Length * bh + (cards.Length - 1) * gap;
-        var dock = new Rect(W - M - bw - pad * 2, Mathf.Max(70f, H * 0.5f - dh * 0.5f - 30f), bw + pad * 2, dh);
+        bool phone = OureaTheme.Phone;
+        const float gap = 6f, pad = 8f;
+        float bw = 64f, bh = 46f;
+        Rect dock;
+        if (phone)
+        {
+            dock = OureaTheme.PhoneDock(W, H);
+            bw = (dock.width - pad * 2 - gap * (cards.Length - 1)) / cards.Length; bh = dock.height - pad * 2;
+        }
+        else
+        {
+            float dh = pad * 2 + cards.Length * bh + (cards.Length - 1) * gap;
+            dock = new Rect(W - M - bw - pad * 2, Mathf.Max(70f, H * 0.5f - dh * 0.5f - 30f), bw + pad * 2, dh);
+        }
         GUI.Box(dock, GUIContent.none, sPanel);
         Block(dock, s);
         for (int i = 0; i < cards.Length; i++)
         {
-            var r = new Rect(dock.x + pad, dock.y + pad + i * (bh + gap), bw, bh);
+            var r = phone ? new Rect(dock.x + pad + i * (bw + gap), dock.y + pad, bw, bh)
+                          : new Rect(dock.x + pad, dock.y + pad + i * (bh + gap), bw, bh);
             if (GUI.Button(r, labels[i], card == cards[i] ? sDockOn : sDock)) Toggle(cards[i]);
             // a small dot when a mode stays on behind another card (e.g. water raised while reading the key)
             bool live = (cards[i] == Card.Water && level > minM + 0.02f) || (cards[i] == Card.Photo && compareWanted) || (cards[i] == Card.Radar && radarWanted);
@@ -444,14 +459,27 @@ public class FloodLab : MonoBehaviour
             }
         }
 
-        // --- the open card, beside the dock
+        // --- the open card, beside the dock; on a phone, a sheet over the bottom of the screen
+        SheetOpen = phone && card != Card.None;
         if (card != Card.None)
         {
-            const float cw = 300f;
-            float maxH = H - M - 96f - 12f - M;   // above the timeline pill
-            float ch = CardHeight(card, maxH);
-            float cy = Mathf.Clamp(dock.y, M, H - M - 96f - 12f - ch);
-            var c = new Rect(dock.x - 12f - cw, cy, cw, ch);
+            Rect c;
+            if (phone)
+            {
+                // up to just under the title; during the story it stops above the guide's panel
+                float bottom = StoryMode.Running ? dock.y - 8f - 214f - 8f : dock.y - 8f;
+                float maxH = bottom - (M + 58f + 8f);
+                float ch = CardHeight(card, maxH);
+                c = new Rect(M, bottom - ch, W - 2 * M, ch);
+            }
+            else
+            {
+                const float cw = 300f;
+                float maxH = H - M - 96f - 12f - M;   // above the timeline pill
+                float ch = CardHeight(card, maxH);
+                float cy = Mathf.Clamp(dock.y, M, H - M - 96f - 12f - ch);
+                c = new Rect(dock.x - 12f - cw, cy, cw, ch);
+            }
             GUI.Box(c, GUIContent.none, sPanel);
             Block(c, s);
             if (GUI.Button(new Rect(c.xMax - 36, c.y + 10, 24, 24), "x", sClose)) Toggle(card);
@@ -662,6 +690,7 @@ public class FloodLab : MonoBehaviour
     // ---- flood texts: pick a commune, enter a number, sign up through Asher's Twilio endpoint ----
     public bool AlertsOpen { get { return card == Card.Alerts; } }
     public bool CardOpen { get { return card != Card.None; } }
+    public static bool SheetOpen;   // a card is open as a phone sheet: the timeline steps aside
 
     bool alertsFromStory;   // opened from the story's checklist: offer the way back, and the routes
 

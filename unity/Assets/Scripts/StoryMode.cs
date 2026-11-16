@@ -16,6 +16,7 @@ public class StoryMode : MonoBehaviour
     public string drowningSource = "Ministry of Health, via Tuoi Tre News, Jul 2025";
 
     bool intro = true, running, storyAfterFlight;
+    public static bool Running;   // the guide is on screen (on a phone the timeline gives it the space)
     int chapter;
     float chapterStart, introFade = 1f;
     Vector2 introScroll;
@@ -24,6 +25,7 @@ public class StoryMode : MonoBehaviour
     static readonly string[] Titles = { "HOME", "UNDER CLOUD", "THE WATER", "ONE VILLAGE", "CHECK FIRST", "WHAT PEOPLE DO", "EVERY PASS" };
 
     GUIStyle sPrimarySmall, sButtonSmall;
+    GUIStyle sHugePhone;
     GUIStyle sHuge, sLead, sBody, sSmall, sEyebrow, sWho, sWhoSmall, sAva, sPrimary, sButton, sPanel, sDotLabel, sHeadKey;
     Texture2D texShade, texSide, texRound;
 
@@ -32,6 +34,7 @@ public class StoryMode : MonoBehaviour
         if (sPanel != null) return;
         sPanel = OureaTheme.Box(OureaTheme.PanelTex, 14, OureaTheme.Ink, 12, false);
         sHuge = OureaTheme.Text(60, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.UpperLeft);
+        sHugePhone = OureaTheme.Text(42, OureaTheme.Accent, true, FontStyle.Normal, TextAnchor.UpperLeft);
         sLead = OureaTheme.Text(19, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sBody = OureaTheme.Text(13, OureaTheme.Ink, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
         sSmall = OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
@@ -66,6 +69,7 @@ public class StoryMode : MonoBehaviour
         if (journey != null) intro = journey.mode == GlobeJourney.Mode.Globe;
         introFade = Mathf.MoveTowards(introFade, intro ? 1f : 0f, Time.deltaTime * 2.5f);
         if (lab != null) lab.guided = intro || running;
+        Running = running && !intro;
     }
 
     void Go(int c)
@@ -166,7 +170,7 @@ public class StoryMode : MonoBehaviour
         if (viewer.displayFont != null) OureaTheme.display = viewer.displayFont;
         Styles();
         if (introFade <= 0.01f) GUI.color = OureaTheme.A(Color.white);
-        float s = Mathf.Clamp(Screen.height / 820f, 0.7f, 2.5f);
+        float s = OureaTheme.UIScale;
         GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
         float W = Screen.width / s, H = Screen.height / s;
         const float M = 16f;
@@ -179,7 +183,7 @@ public class StoryMode : MonoBehaviour
             if (chapter == 5 && !lab.CardOpen) { if (actMin) DrawActChip(W, s); else DrawAct(W, H, s); }
             DrawGuide(W, H, s);
         }
-        else
+        else if (!FloodLab.SheetOpen)   // on a phone an open card covers this spot
         {
             // the story is always one click away, under the title
             var b = new Rect(M, M + 58f + 10f, journey != null ? 184f : 268f, 40f);
@@ -224,16 +228,21 @@ public class StoryMode : MonoBehaviour
             "NASA-ISRO's NISAR radar sees through cloud. Each pass becomes a map of new flood water and a ranked list of communes where it reaches homes with small children.",
             "Commune officials, child-protection and education offices and drowning-prevention programs: where to check first, which day care to open, who to warn."
         };
-        // measure, then centre the column vertically (wide) or sit it at the bottom (narrow)
+        // measure, then centre the column vertically (wide) or sit it at the bottom, under the globe (narrow)
+        string src = "Source: " + drowningSource + ". NISAR data is provisional. The guide in the story is fictional; her numbers are real.";
+        var sSrc = OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true);
+        float srcW = wide ? W * 0.55f : cw, srcH = sSrc.CalcHeight(new GUIContent(src), srcW);
+        var huge = wide ? sHuge : sHugePhone;
+        float hugeH = wide ? 74f : 52f;
         float leadH = sLead.CalcHeight(new GUIContent(Lead), cw);
         float itemsH = 0f;
-        for (int i = 0; i < 3; i++) itemsH += 22f + sBody.CalcHeight(new GUIContent(bodies[i]), cw) + 18f;
-        float total = 18f + 74f + leadH + 26f + itemsH + 8f + 48f;
-        float y = wide ? Mathf.Max(24f, (H - total) * 0.5f) : Mathf.Max(24f, H - 24f - total - 30f);
+        for (int i = 0; i < 3; i++) itemsH += 22f + sBody.CalcHeight(new GUIContent(bodies[i]), cw) + (wide ? 18f : 12f);
+        float total = 18f + hugeH + leadH + (wide ? 26f : 16f) + itemsH + 8f + 48f;
+        float y = wide ? Mathf.Max(24f, (H - total) * 0.5f) : Mathf.Max(24f, H - 16f - srcH - 14f - total);
 
         GUI.Label(new Rect(x, y, cw, 16), "NASA SPACE APPS 2026  ·  NISAR FLOOD WATCH", sEyebrow); y += 18f;
-        GUI.Label(new Rect(x - 2, y, cw, 70), "O U R E A", sHuge); y += 74f;
-        GUI.Label(new Rect(x, y, cw, leadH), Lead, sLead); y += leadH + 26f;
+        GUI.Label(new Rect(x - 2, y, cw, hugeH - 4f), "O U R E A", huge); y += hugeH;
+        GUI.Label(new Rect(x, y, cw, leadH), Lead, sLead); y += leadH + (wide ? 26f : 16f);
 
         for (int i = 0; i < 3; i++)
         {
@@ -243,7 +252,7 @@ public class StoryMode : MonoBehaviour
             GUI.Label(new Rect(x, y + 10, cw, 16), heads[i], sEyebrow);
             float bh = sBody.CalcHeight(new GUIContent(bodies[i]), cw);
             GUI.Label(new Rect(x, y + 30, cw, bh), bodies[i], sBody);
-            y += 22f + bh + 18f;
+            y += 22f + bh + (wide ? 18f : 12f);
         }
         y += 8f;
 
@@ -265,8 +274,7 @@ public class StoryMode : MonoBehaviour
             if (journey != null) { storyAfterFlight = false; running = false; journey.FlyIn(); }
             else { intro = false; running = false; }
         }
-        GUI.Label(new Rect(x, H - 34f, wide ? W * 0.55f : cw, 30), "Source: " + drowningSource + ". NISAR data is provisional. The guide in the story is fictional; her numbers are real.",
-                  OureaTheme.Text(11, OureaTheme.Muted, false, FontStyle.Normal, TextAnchor.UpperLeft, true));
+        GUI.Label(new Rect(x, H - 16f - srcH, srcW, srcH + 2f), src, sSrc);
         GUI.color = old;
     }
 
@@ -311,7 +319,8 @@ public class StoryMode : MonoBehaviour
         float sh = sSmall.CalcHeight(new GUIContent(sub), dw - 36f);
         float dh = 16 + 22 + sh + 8 + th + 16 + 34 + 16;
         // beside the action panel when there's room, otherwise under it
-        var r = act.x - 12f - dw >= M ? new Rect(act.x - 12f - dw, act.y, dw, dh) : new Rect(act.x, Mathf.Min(act.yMax + 12f, H - M - 96f - dh), act.width, dh);
+        var r = OureaTheme.Phone ? new Rect(act.x, act.y, act.width, Mathf.Max(dh, act.height))   // phone: over the checklist; CLOSE goes back
+              : act.x - 12f - dw >= M ? new Rect(act.x - 12f - dw, act.y, dw, dh) : new Rect(act.x, Mathf.Min(act.yMax + 12f, H - M - 96f - dh), act.width, dh);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
         float x = r.x + 18, w = r.width - 36, y = r.y + 16;
@@ -335,8 +344,8 @@ public class StoryMode : MonoBehaviour
         if (f == null) return;
         const float M = 16f;
         string t = (actRank == 1 ? "CHECK FIRST  ·  " : "#" + actRank + "  ·  ") + f.name;
-        float cw = Mathf.Min(W - 2 * M - 108f, sHeadKey.CalcSize(new GUIContent(t)).x + 112f);
-        var r = new Rect(W - M - 96f - 12f - cw, M + 64f, cw, 44f);
+        float cw = Mathf.Min(W - 2 * M - (OureaTheme.Phone ? 0f : 108f), sHeadKey.CalcSize(new GUIContent(t)).x + 112f);
+        var r = OureaTheme.Phone ? new Rect(M, M + 58f + 8f, cw, 44f) : new Rect(W - M - 96f - 12f - cw, M + 64f, cw, 44f);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
         GUI.Label(new Rect(r.x + 16, r.y + 13, r.width - 100, 20), t, sHeadKey);
@@ -371,7 +380,8 @@ public class StoryMode : MonoBehaviour
 
         const float M = 16f;
         float pw = 340f, ph = 412f;
-        var r = new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
+        var r = OureaTheme.Phone ? new Rect(M, M + 58f + 8f, W - 2 * M, ph) : new Rect(W - M - 96f - 12f - pw, M + 64f, pw, ph);
+        if (OureaTheme.Phone && draftFor >= 0) { DrawDraft(r, W, H, s, f); return; }   // the message takes the panel's place
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
         float x0 = r.x + 18, w = r.width - 36, yy = r.y + 16;
@@ -412,14 +422,16 @@ public class StoryMode : MonoBehaviour
         }
         GUI.Label(new Rect(x0, yy, w, 30), "The next NISAR pass re-checks this commune in 12 days.", sSmall);
         if (OureaLinks.Button(new Rect(x0, yy + 30, w, 30), "ROUTES TO DAY CARE & SCHOOL  >", sButton)) OureaLinks.Routes(f.pass, null);
-        if (draftFor >= 0) DrawDraft(r, W, H, s, f);
+        if (draftFor >= 0 && !OureaTheme.Phone) DrawDraft(r, W, H, s, f);
     }
 
     void DrawGuide(float W, float H, float s)
     {
         const float M = 16f;
         float gw = Mathf.Min(470f, W - 2 * M), gh = 214f;
-        var r = new Rect(M, H - M - 72f - 12f - gh, gw, gh);
+        // phone: on the tool bar, full width; laptop: bottom left, above the timeline
+        var r = OureaTheme.Phone ? new Rect(M, OureaTheme.PhoneDock(W, H).y - 8f - gh, W - 2 * M, gh)
+                                 : new Rect(M, H - M - 72f - 12f - gh, gw, gh);
         GUI.Box(r, GUIContent.none, sPanel);
         Block(r, s);
 
@@ -451,11 +463,13 @@ public class StoryMode : MonoBehaviour
             else if (lastCh) { running = false; }
             else Go(chapter + 1);
         }
-        // progress dots
+        // progress dots: between the buttons when there's room, otherwise top right
+        float dl = r.x + (chapter > 0 ? 184f : 104f) + 8f, dr = r.xMax - 166f - 8f, dw = Chapters * 12f;
+        float dx = dr - dl >= dw ? (dl + dr - dw) * 0.5f : r.xMax - 16f - dw, dy = dr - dl >= dw ? by + 12f : r.y + 40f;
         for (int i = 0; i < Chapters; i++)
         {
             GUI.color = OureaTheme.A(i <= chapter ? OureaTheme.Accent : OureaTheme.S(70, 84, 88));
-            GUI.DrawTexture(new Rect(r.x + 200 + i * 12, by + 12, 7, 7), texRound);
+            GUI.DrawTexture(new Rect(dx + i * 12, dy, 7, 7), texRound);
         }
         GUI.color = old;
     }
