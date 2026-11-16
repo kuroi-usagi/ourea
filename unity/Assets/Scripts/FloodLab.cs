@@ -47,6 +47,7 @@ public class FloodLab : MonoBehaviour
     // "as NISAR saw it": the village fly-in plays the real passes, July to October, instead of a
     // modeled level; houses turn red where new flood water is within ~100 m (Shaders/OureaBuilding.shader)
     bool observed; float obsT;
+    public bool Observed { get { return observed; } }   // the real passes are playing over a village (OureaAudio)
     const float ObsDelay = 2.0f, ObsPlay = 10f;
 
     static readonly List<Rect> uiRects = new List<Rect>();

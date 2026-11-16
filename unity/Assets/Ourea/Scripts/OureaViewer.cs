@@ -55,7 +55,7 @@ public class OureaViewer : MonoBehaviour
     {
         for (int i = 0; i < uiRects.Count; i++)
             if (uiRects[i].Contains(guiPoint)) return true;
-        return FloodLab.PointerOver(guiPoint) || StoryMode.PointerOver(guiPoint);
+        return FloodLab.PointerOver(guiPoint) || StoryMode.PointerOver(guiPoint) || OureaSoundButton.Contains(guiPoint);
     }
 
     readonly Dictionary<string, Place> placeById = new Dictionary<string, Place>();

@@ -355,8 +355,8 @@ public class StoryMode : MonoBehaviour
         y += th + 16;
         bool copied = Time.time - copiedAt < 2f;
         // Zalo is how commune staff message each other: the phone's share sheet, or copy + open Zalo on the web
-        if (OureaLinks.Button(new Rect(x, y, 116, 32), "SHARE · ZALO", sPrimarySmall)) { if (!OureaLinks.Share(text)) copiedAt = Time.time; }
-        if (GUI.Button(new Rect(x + 124, y, 94, 32), copied ? "COPIED" : "COPY", sButtonSmall)) { OureaCopy(text); copiedAt = Time.time; }
+        if (OureaLinks.Button(new Rect(x, y, 116, 32), "SHARE · ZALO", sPrimarySmall)) { if (!OureaLinks.Share(text)) copiedAt = Time.time; OureaAudio.Success(); }
+        if (GUI.Button(new Rect(x + 124, y, 94, 32), copied ? "COPIED" : "COPY", sButtonSmall)) { OureaCopy(text); copiedAt = Time.time; OureaAudio.Success(); }
         if (GUI.Button(new Rect(x + 226, y, w - 226, 32), "CLOSE", sButtonSmall)) draftFor = -1;
     }
     void DrawActChip(float W, float s)
