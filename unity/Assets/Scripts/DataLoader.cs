@@ -29,6 +29,7 @@ public class DataLoader : MonoBehaviour
     [Serializable] public class BakedCommune
     {
         public string pass, name, name_en, province, confidence, reasons, code;
+        public string hotspots;   // the commune's worst 100 m cells, comma-separated hamlet ids (= map pins when ranked)
         public int rank, under5, under5Near;
         public float score, u, v;
     }

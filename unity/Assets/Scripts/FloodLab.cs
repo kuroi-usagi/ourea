@@ -418,6 +418,7 @@ public class FloodLab : MonoBehaviour
 
         curScale = s;
         DrawWipe(W, H, s);
+        DrawCommuneFocus(s);
         DrawFloodCounter(W);
 
         // --- dock
@@ -583,7 +584,7 @@ public class FloodLab : MonoBehaviour
         var list = new List<Row>();
         foreach (var b in live.baked)
             if (b.pass == date)
-                list.Add(new Row { rank = b.rank, name = b.name, score = b.score,
+                list.Add(new Row { rank = b.rank, name = b.name, score = b.score, hotspots = b.hotspots,
                                    why = (string.IsNullOrEmpty(b.name_en) ? "" : b.name_en + " · ") + b.reasons + " · childcare gap not yet known", at = new Vector3(b.u * sizeX, 0f, (1f - b.v) * sizeZ) });
         if (list.Count == 0)
         {
@@ -593,7 +594,37 @@ public class FloodLab : MonoBehaviour
         DrawCommuneRows(body, y, list.ToArray());
     }
 
-    struct Row { public int rank; public string name, why; public float score; public Vector3 at; }
+    struct Row { public int rank; public string name, why, hotspots; public float score; public Vector3 at; }
+
+    // the commune the camera was last sent to, labelled on the map so its rank isn't read off the hamlet pins
+    bool focusOn; Row focus;
+
+    void DrawCommuneFocus(float s)
+    {
+        if (!focusOn || viewer == null || card != Card.Ranking || !showCommunes) return;
+        var cam = Camera.main; if (cam == null) return;
+        Vector3 sp = cam.WorldToScreenPoint(focus.at + Vector3.up * 0.5f);
+        if (sp.z <= 0f) return;
+        float x = sp.x / s, y = (Screen.height - sp.y) / s;
+        string inside = "";
+        if (!string.IsNullOrEmpty(focus.hotspots))
+        {
+            var ranks = new List<string>();
+            foreach (var id in focus.hotspots.Split(',')) { int r = viewer.HamletRank(id); if (r > 0 && !ranks.Contains("H" + r)) ranks.Add("H" + r); }
+            if (ranks.Count > 0) inside = "includes hamlets " + string.Join(", ", ranks.ToArray());
+        }
+        string title = "Commune #" + focus.rank + "  ·  " + focus.name;
+        float tw = Mathf.Max(sTitle.CalcSize(new GUIContent(title)).x, sSmall.CalcSize(new GUIContent(inside)).x) + 28f;
+        float th = inside.Length > 0 ? 50f : 32f;
+        var r0 = new Rect(x - tw * 0.5f, y - th - 26f, tw, th);
+        GUI.Box(r0, GUIContent.none, sPanel);
+        GUI.Label(new Rect(r0.x + 14, r0.y + 7, tw - 28, 20), title, sTitle);
+        if (inside.Length > 0) GUI.Label(new Rect(r0.x + 14, r0.y + 29, tw - 28, 16), inside, sSmall);
+        var old = GUI.color; GUI.color = OureaTheme.A(Accent);
+        GUI.DrawTexture(new Rect(x - 1, r0.yMax, 2, 20), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(x - 5, y - 6, 10, 10), texDot);
+        GUI.color = old;
+    }
 
     void DrawCommuneRows(Rect body, float y, Row[] rows)
     {
@@ -605,7 +636,10 @@ public class FloodLab : MonoBehaviour
             var cm = rows[i];
             var row = new Rect(0, i * rowH, view.width - 4, rowH - 4);
             if (GUI.Button(row, GUIContent.none, sDock) && viewer != null && viewer.orbit != null)
+            {
                 viewer.orbit.Focus(cm.at, 120f);
+                focus = cm; focusOn = true;
+            }
             GUI.Label(new Rect(row.x + 10, row.y + 6, row.width - 70, 18), "<b>" + cm.rank + ".  " + cm.name + "</b>", sBody);
             GUI.Label(new Rect(row.xMax - 64, row.y + 6, 56, 18), "<b>" + cm.score.ToString("0") + "</b>", sBody);
             GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), cm.why, sSmall);
@@ -730,7 +764,7 @@ public class FloodLab : MonoBehaviour
             Swatch(x, y, KeyWetBuilding, "Buildings with ground under it"); y += 22;
         }
         bool sim = viewer != null && viewer.simulated;
-        GradientSwatch(x, y, sim ? "Hamlets ranked 1 to 10 (simulated)" : "Check first, ranked 1 to 10"); y += 22;
+        GradientSwatch(x, y, sim ? "Hamlet beams H1 to H10 (simulated)" : "Hamlet beams: check first, H1 (red) to H10"); y += 22;
         Swatch(x, y, KeySchool, sim ? "School (simulated)" : "School (OpenStreetMap)"); y += 30;
 
         GUI.Label(new Rect(x, y, w, 14), "CONTROLS", sEyebrow); y += 20;

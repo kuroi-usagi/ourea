@@ -168,6 +168,13 @@ public class OureaViewer : MonoBehaviour
     Vector2 listScroll;
     string selectedId;
     public string SelectedPlaceId { get { return selectedId; } }
+
+    // this pass's check-first rank of a hamlet (0 = not in the top 10)
+    public int HamletRank(string placeId)
+    {
+        foreach (var s in top) if (s.placeId == placeId) return s.rank;
+        return 0;
+    }
     public string CurrentPassDate { get { return passes.Count > 0 ? passes[Mathf.Clamp(currentPass, 0, passes.Count - 1)].date : ""; } }
     bool draggingTrack;
 
@@ -308,11 +315,11 @@ public class OureaViewer : MonoBehaviour
             float x = sp.x / uiScale, y = (Screen.height - sp.y) / uiScale;
             var old = GUI.color;
             GUI.color = OureaTheme.A(RankColor(s.rank));
-            GUI.DrawTexture(new Rect(x - 11, y - 22, 22, 22), texRound);
+            GUI.DrawTexture(new Rect(x - 13, y - 22, 26, 22), texRound);
             GUI.color = old;
             if (GUI.Button(new Rect(x - 11, y - 22, 22, 22), GUIContent.none, GUIStyle.none)) Select(pl);
             GUI.color = old;
-            GUI.Label(new Rect(x - 11, y - 22, 22, 22), s.rank.ToString(), Text(12, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
+            GUI.Label(new Rect(x - 13, y - 22, 26, 22), "H" + s.rank, Text(10, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));   // H = hamlet rank, not commune
             if (pl.id == selectedId)
             {
                 var size = sCard.CalcSize(new GUIContent(pl.name));
@@ -345,7 +352,7 @@ public class OureaViewer : MonoBehaviour
             GUI.color = OureaTheme.A(RankColor(s.rank));
             GUI.DrawTexture(new Rect(row.x + 10, row.y + 12, 26, 26), texRound);
             GUI.color = old;
-            GUI.Label(new Rect(row.x + 10, row.y + 12, 26, 26), s.rank.ToString(), Text(13, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
+            GUI.Label(new Rect(row.x + 10, row.y + 12, 26, 26), "H" + s.rank, Text(11, Color.white, FontStyle.Bold, TextAnchor.MiddleCenter));
 
             GUI.Label(new Rect(row.x + 46, row.y + 8, row.width - 100, 18), name, sRowName);
             GUI.Label(new Rect(row.x + 46, row.y + 27, row.width - 56, 16), s.reason, sRowReason);

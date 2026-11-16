@@ -125,7 +125,7 @@ public static class OureaLook
     [System.Serializable] class OpticalPass { public string pass; public string image_date; public float cloud_pct; }
     [System.Serializable] class OpticalWrap { public OpticalPass[] items; }
     [System.Serializable] class Headline { public float children_under5_in_tile; public int schools_near_flood_water; public int schools_in_tile; }
-    [System.Serializable] class Hotspot { public float u; public float v; }
+    [System.Serializable] class Hotspot { public string place_id; public float u; public float v; }
     [System.Serializable] class CommuneScore
     {
         public string pass, name, name_en, province, confidence, commune_code;
@@ -150,7 +150,8 @@ public static class OureaLook
             outList.Add(new DataLoader.BakedCommune {
                 pass = c.pass, rank = c.rank, name = c.name, name_en = c.name_en, province = c.province, code = c.commune_code,
                 confidence = c.confidence, score = c.score, under5 = c.under5_in_tile, under5Near = c.under5_near_flood_water,
-                reasons = c.reasons != null && c.reasons.Length > 0 ? c.reasons[0] : "", u = hs.u, v = hs.v });
+                reasons = c.reasons != null && c.reasons.Length > 0 ? c.reasons[0] : "", u = hs.u, v = hs.v,
+                hotspots = c.hotspots != null ? string.Join(",", System.Array.ConvertAll(c.hotspots, h => h.place_id)) : "" });
         }
         outList.Sort((a, b) => a.pass == b.pass ? a.rank.CompareTo(b.rank) : string.CompareOrdinal(a.pass, b.pass));
         Debug.Log("Ourea: " + outList.Count + " commune rows from commune_scores.json");
