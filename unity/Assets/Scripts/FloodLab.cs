@@ -583,7 +583,7 @@ public class FloodLab : MonoBehaviour
             viewer.DrawRanking(new Rect(body.x, body.y, body.width, body.height - 92f));
             // how sure the order is (handoff/findings/sensitivity.json, validation_baseline.json)
             GUI.Label(new Rect(body.x + 18f, body.yMax - 88f, body.width - 36f, 40f),
-                      "Weights moved ±50%: 7 to 10 of these 10 stay. Ranks water new since 11 Jul; another baseline gives another list.", sSmall);
+                      "Change the score's weights by half and 7 to 10 of these 10 stay. It counts water on land that was dry on 11 Jul.", sSmall);
             var rb = new Rect(body.x + 18f, body.yMax - 44f, body.width - 36f, 32f);
             string sel = viewer.SelectedPlaceId;
             if (OureaLinks.Button(rb, string.IsNullOrEmpty(sel) ? "ROUTES TO DAY CARE & SCHOOL  >" : "ROUTES FROM THIS HAMLET  >", sBtnOn))
@@ -623,7 +623,7 @@ public class FloodLab : MonoBehaviour
                                    why = (string.IsNullOrEmpty(b.name_en) ? "" : b.name_en + " · ") + b.reasons + " · childcare gap not yet known", at = new Vector3(b.u * sizeX, 0f, (1f - b.v) * sizeZ) });
         if (list.Count == 0)
         {
-            GUI.Label(new Rect(x, y, w, 46), "No flood water yet on the " + date + " pass: it is the baseline. Move the timeline to a later pass.", sBody);
+            GUI.Label(new Rect(x, y, w, 46), "No flood water yet on the " + date + " pass: it is the dry-season start date the flood is measured from. Move the timeline to a later pass.", sBody);
             return;
         }
         DrawCommuneRows(body, y, list.ToArray());
@@ -795,7 +795,7 @@ public class FloodLab : MonoBehaviour
         float x = p.x + 18, y = p.y + 16, w = p.width - 36;
         GUI.Label(new Rect(x, y + 2, w - 40, 20), "What the radar saw", sTitle);
         y += 34;
-        GUI.Label(new Rect(x, y, w, 36), "The real NISAR image for this pass (HV backscatter). Smooth water bounces the signal away; plants and rough ground send it back.", sBody);
+        GUI.Label(new Rect(x, y, w, 36), "The real NISAR radar image for this pass. Calm water reflects the radar away and shows dark; plants and rough ground send it back and show bright.", sBody);
         y += 60;
         Swatch(x, y, Lin(14, 20, 30), "Dark: smooth open water"); y += 24;
         Swatch(x, y, Lin(205, 230, 222), "Bright: plants, rough ground"); y += 30;

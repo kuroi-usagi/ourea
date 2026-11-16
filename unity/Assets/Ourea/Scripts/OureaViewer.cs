@@ -424,7 +424,7 @@ public class OureaViewer : MonoBehaviour
             y += rowH;
         }
         if (top.Count == 0) GUI.Label(new Rect(8, 8, view.width - 16, 60), currentPass == 0
-            ? "No flood water yet. " + ShortDate(passes[0].date) + " is the baseline pass: flood water is water that was land on this date."
+            ? "No flood water yet. " + ShortDate(passes[0].date) + " is the dry-season start date: flood water means water on land that was dry that day."
             : "No rankings for this pass yet.", Text(13, Ink, FontStyle.Normal, TextAnchor.UpperLeft, true));
         GUI.EndScrollView();
     }
