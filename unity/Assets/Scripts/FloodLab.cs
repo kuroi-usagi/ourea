@@ -395,6 +395,7 @@ public class FloodLab : MonoBehaviour
     void Toggle(Card c)
     {
         bool closing = card == c;
+        alertsFromStory = false;   // OpenAlerts sets it again when the story opens the card
         // leaving a mode card turns its mode off, so what's on the map always matches the open card
         if (card == Card.Photo && (closing || c != Card.Key)) compareWanted = false;
         if (card == Card.Radar && (closing || c != Card.Key)) radarWanted = false;
@@ -477,8 +478,8 @@ public class FloodLab : MonoBehaviour
             case Card.Photo: return 170f;
             case Card.Radar: return 224f;
             case Card.Ranking: return Mathf.Min(maxH, 640f);
-            case Card.Alerts: return Mathf.Min(maxH, 520f);
-            default: return Mathf.Min(maxH, 368f);
+            case Card.Alerts: return Mathf.Min(maxH, 580f);
+            default: return Mathf.Min(maxH, 560f);
         }
     }
 
@@ -583,7 +584,9 @@ public class FloodLab : MonoBehaviour
         // no pass in the API yet: Mitch's commune scores for the pass on the timeline
         string date = viewer != null && viewer.passes.Count > viewer.currentPass ? viewer.passes[viewer.currentPass].date : "";
         GUI.Label(new Rect(x, y, w, 14), date + " PASS  ·  PROVISIONAL", sEyebrow); y += 20;
-        GUI.Label(new Rect(x, y, w, 30), live.message, sSmall); y += 32;
+        const string what = "A commune (xã / phường) is the local government that acts on this list; hamlets (ấp, H1–H10) are villages inside it.";
+        float wh = sSmall.CalcHeight(new GUIContent(what), w);
+        GUI.Label(new Rect(x, y, w, wh + 2), what, sSmall); y += wh + 8;
         var list = new List<Row>();
         foreach (var b in live.baked)
             if (b.pass == date)
@@ -632,12 +635,18 @@ public class FloodLab : MonoBehaviour
     void DrawCommuneRows(Rect body, float y, Row[] rows)
     {
         var view = new Rect(body.x + 8, y, body.width - 16, body.yMax - y - 8);
-        const float rowH = 64f;
-        communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, rows.Length * rowH), false, false, GUIStyle.none, GUIStyle.none);
+        // each row as tall as its reason text, with a gap before the next commune
+        const float gapH = 12f;
+        var whyH = new float[rows.Length];
+        float total = 0f;
+        for (int i = 0; i < rows.Length; i++) { whyH[i] = sSmall.CalcHeight(new GUIContent(rows[i].why), view.width - 24); total += 30 + whyH[i] + 8 + gapH; }
+        communeScroll = GUI.BeginScrollView(view, communeScroll, new Rect(0, 0, view.width - 4, total + 8), false, false, GUIStyle.none, GUIStyle.none);
+        float ry = 0f;
         for (int i = 0; i < rows.Length; i++)
         {
             var cm = rows[i];
-            var row = new Rect(0, i * rowH, view.width - 4, rowH - 4);
+            var row = new Rect(0, ry, view.width - 4, 30 + whyH[i] + 8);
+            ry += row.height + gapH;
             if (GUI.Button(row, GUIContent.none, sDock) && viewer != null && viewer.orbit != null)
             {
                 viewer.orbit.Focus(cm.at, 120f);
@@ -645,7 +654,7 @@ public class FloodLab : MonoBehaviour
             }
             GUI.Label(new Rect(row.x + 10, row.y + 6, row.width - 70, 18), "<b>" + cm.rank + ".  " + cm.name + "</b>", sBody);
             GUI.Label(new Rect(row.xMax - 64, row.y + 6, 56, 18), "<b>" + cm.score.ToString("0") + "</b>", sBody);
-            GUI.Label(new Rect(row.x + 10, row.y + 24, row.width - 20, 34), cm.why, sSmall);
+            GUI.Label(new Rect(row.x + 10, row.y + 28, row.width - 20, whyH[i] + 2), cm.why, sSmall);
         }
         GUI.EndScrollView();
     }
@@ -654,9 +663,12 @@ public class FloodLab : MonoBehaviour
     public bool AlertsOpen { get { return card == Card.Alerts; } }
     public bool CardOpen { get { return card != Card.None; } }
 
-    public void OpenAlerts(string communeCode)
+    bool alertsFromStory;   // opened from the story's checklist: offer the way back, and the routes
+
+    public void OpenAlerts(string communeCode, bool fromStory = false)
     {
         if (card != Card.Alerts) Toggle(Card.Alerts);
+        alertsFromStory = fromStory;
         var list = AlertCommunes();
         for (int i = 0; i < list.Count; i++) if (list[i].code == communeCode) alertPick = i;
     }
@@ -714,7 +726,15 @@ public class FloodLab : MonoBehaviour
         string sms = "Ourea: new flood water within 100 m of homes in " + cm.name + " on the " + date +
                      " NISAR pass (provisional). " + cm.under5Near.ToString("#,0") + " children under 5 live near it. Keep small children away from canals and flood water. Reply STOP to stop.";
         float bh = sSms.CalcHeight(new GUIContent(sms), w - 24) + 34;
-        var bubble = new Rect(x, y, w, Mathf.Min(bh, p.yMax - y - 12));
+        // the way on: the routes parents will be warned about, and back to the checklist
+        float by = p.yMax - 16 - 32;
+        if (alertsFromStory)
+        {
+            if (GUI.Button(new Rect(x, by, 92, 32), "<  BACK", sBtn)) { alertsFromStory = false; CloseCard(); }
+            if (OureaLinks.Button(new Rect(x + 100, by, w - 100, 32), "ROUTES THAT FLOODED  >", sBtnOn)) OureaLinks.Routes(date, null);
+        }
+        else if (OureaLinks.Button(new Rect(x, by, w, 32), "ROUTES THAT FLOODED  >", sBtnOn)) OureaLinks.Routes(date, null);
+        var bubble = new Rect(x, y, w, Mathf.Min(bh, by - 10 - y));
         GUI.Box(bubble, GUIContent.none, sSmsBox);
         GUI.Label(new Rect(bubble.x + 12, bubble.y + 8, bubble.width - 24, 14), "OUREA ALERTS  ·  SMS", sSmsHead);
         GUI.Label(new Rect(bubble.x + 12, bubble.y + 26, bubble.width - 24, bubble.height - 30), sms, sSms);
@@ -745,41 +765,63 @@ public class FloodLab : MonoBehaviour
         GUI.Label(new Rect(x, y, w, 30), "NISAR data is provisional.", sSmall);
     }
 
+    Vector2 keyScroll;
+    float keyH = 600f;
+
+    // Every line measured, so wrapped text never runs into the next; scrolls when the window is short.
     void DrawKeyCard(Rect p)
     {
-        float x = p.x + 18, y = p.y + 16, w = p.width - 36;
-        GUI.Label(new Rect(x, y + 2, w - 40, 20), "Key", sTitle);
-        y += 34;
-        GUI.Label(new Rect(x, y, w, 14), "ON THE MAP NOW", sEyebrow); y += 20;
+        GUI.Label(new Rect(p.x + 18, p.y + 18, p.width - 76, 20), "Key", sTitle);
+        var view = new Rect(p.x + 4, p.y + 50, p.width - 8, p.height - 58);
+        keyScroll = GUI.BeginScrollView(view, keyScroll, new Rect(0, 0, view.width - 4, keyH), false, false, GUIStyle.none, GUIStyle.none);
+        float x = 14, y = 0, w = view.width - 32;
+        keyW = w;
+        GUI.Label(new Rect(x, y, w, 14), "ON THE MAP NOW", sEyebrow); y += 22;
         if (radarWanted && radarOn > 0.5f)
         {
-            Swatch(x, y, Lin(14, 20, 30), "Radar: dark = open water"); y += 22;
-            Swatch(x, y, Lin(205, 230, 222), "Radar: bright = plants, rough ground"); y += 22;
+            y += Swatch(x, y, Lin(14, 20, 30), "Radar: dark = open water");
+            y += Swatch(x, y, Lin(205, 230, 222), "Radar: bright = plants, rough ground");
         }
         else
         {
-            Swatch(x, y, KeyRiver, "River and canals (water on 11 Jul)"); y += 22;
-            Swatch(x, y, KeyFlood, "Flood water, new since 11 Jul"); y += 22;
+            y += Swatch(x, y, KeyRiver, "River and canals (water on 11 Jul)");
+            y += Swatch(x, y, KeyFlood, "Flood water, new since 11 Jul");
         }
-        if (compareWanted) { Swatch(x, y, Color.white, "Left of the line: camera photo"); y += 22; }
+        if (compareWanted) y += Swatch(x, y, Color.white, "Left of the line: camera photo");
         if (level > minM + 0.02f)
         {
-            Swatch(x, y, KeySheet, "Modeled flat water level"); y += 22;
-            Swatch(x, y, KeyWetBuilding, "Buildings with ground under it"); y += 22;
+            y += Swatch(x, y, KeySheet, "Modeled flat water level");
+            y += Swatch(x, y, KeyWetBuilding, "Buildings with ground under it");
         }
         bool sim = viewer != null && viewer.simulated;
-        GradientSwatch(x, y, sim ? "Hamlet beams H1 to H10 (simulated)" : "Hamlet beams: check first, H1 (red) to H10"); y += 22;
-        Swatch(x, y, KeySchool, sim ? "School (simulated)" : "School (OpenStreetMap)"); y += 30;
+        y += GradientSwatch(x, y, sim ? "Hamlet beams H1 to H10 (simulated)" : "Hamlet beams: check first, H1 (red) to H10");
+        y += Swatch(x, y, KeySchool, sim ? "School (simulated)" : "School (OpenStreetMap)");
+        y += Swatch(x, y, RouteField.RiskColour(0.6f), "Walking route: white = little at risk, amber, red = most");
+        y += 12;
 
-        GUI.Label(new Rect(x, y, w, 14), "CONTROLS", sEyebrow); y += 20;
-        GUI.Label(new Rect(x, y, w, 52), "Drag to rotate · scroll to zoom · WASD to move\n[ and ] step passes · Space plays them", sSmall); y += 46;
+        y = Section(x, y, w, "COMMUNE OR HAMLET?",
+            "A commune (xã, or phường in town) is the local government: about 10,000–30,000 people, with its own People's Committee. " +
+            "It is who acts on the list: sends staff, opens day care, texts parents.\n" +
+            "A hamlet (ấp) is a village inside a commune, a few hundred homes. Hamlets are numbered H1–H10 on the map; communes are ranked in TOP 10 → Communes.");
+        y = Section(x, y, w, "CONTROLS", "Drag to rotate · scroll to zoom · WASD to move\n[ and ] step passes · Space plays them");
         if (GUI.Button(new Rect(x, y, w, 28), "Reset the view", sBtn) && viewer != null && viewer.orbit != null) viewer.orbit.ResetView();
-        y += 40;
-        GUI.Label(new Rect(x, y, w, 14), "SOURCES", sEyebrow); y += 20;
-        GUI.Label(new Rect(x, y, w, 76), "Water and radar: NISAR (NASA/ISRO), provisional. Children: WorldPop 2026. Schools: OpenStreetMap. Elevation: Copernicus GLO-30. Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu.", sSmall);
+        y += 42;
+        y = Section(x, y, w, "SOURCES", "Water and radar: NISAR (NASA/ISRO), provisional. Children: WorldPop 2026. Schools and roads: OpenStreetMap. Ground: FABDEM. Imagery: Sentinel-2 cloudless 2024 by EOX, s2maps.eu.");
+        keyH = y + 4;
+        GUI.EndScrollView();
     }
 
-    void Swatch(float x, float y, Color c, string text)
+    float Section(float x, float y, float w, string head, string body)
+    {
+        GUI.Label(new Rect(x, y, w, 14), head, sEyebrow); y += 20;
+        float h = sSmall.CalcHeight(new GUIContent(body), w);
+        GUI.Label(new Rect(x, y, w, h + 2), body, sSmall);
+        return y + h + 16;
+    }
+
+    float keyW = 240f;
+
+    float Swatch(float x, float y, Color c, string text)
     {
         var old = GUI.color;
         GUI.color = OureaTheme.A(new Color(0f, 0f, 0f, 0.25f));
@@ -787,15 +829,19 @@ public class FloodLab : MonoBehaviour
         GUI.color = OureaTheme.A(c);
         GUI.DrawTexture(new Rect(x, y + 2, 14, 14), texDot);
         GUI.color = old;
-        GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
+        float h = Mathf.Max(18f, sBody.CalcHeight(new GUIContent(text), keyW - 24));
+        GUI.Label(new Rect(x + 24, y + 1, keyW - 24, h + 2), text, sBody);
+        return h + 6;
     }
 
-    void GradientSwatch(float x, float y, string text)
+    float GradientSwatch(float x, float y, string text)
     {
         var old = GUI.color;
         GUI.color = OureaTheme.A(KeyTop1);  GUI.DrawTexture(new Rect(x, y + 2, 9, 14), texDot);
         GUI.color = OureaTheme.A(KeyTop10); GUI.DrawTexture(new Rect(x + 6, y + 2, 9, 14), texDot);
         GUI.color = old;
-        GUI.Label(new Rect(x + 24, y + 1, 240, 18), text, sBody);
+        float h = Mathf.Max(18f, sBody.CalcHeight(new GUIContent(text), keyW - 24));
+        GUI.Label(new Rect(x + 24, y + 1, keyW - 24, h + 2), text, sBody);
+        return h + 6;
     }
 }

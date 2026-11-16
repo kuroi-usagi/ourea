@@ -398,7 +398,7 @@ public class StoryMode : MonoBehaviour
             if (GUI.Button(row, GUIContent.none, sButton))
             {
                 done[i] = !done[i];
-                if (i == 2 && done[i]) lab.OpenAlerts(f.code);   // texting parents: the real sign-up (Twilio)
+                if (i == 2 && done[i]) lab.OpenAlerts(f.code, true);   // texting parents: the real sign-up (Twilio)
                 if (i < 2) draftFor = done[i] ? i : (draftFor == i ? -1 : draftFor);   // the message to send for it
             }
             var box = new Rect(row.x + 10, row.y + 20, 18, 18);
