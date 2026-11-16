@@ -282,7 +282,8 @@ public class GlobeJourney : MonoBehaviour
         float space = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(800f, 5000f, alt));
         cam.nearClipPlane = Mathf.Clamp(alt * 0.002f, 0.3f, 400f);
         cam.farClipPlane = alt < 1500f ? 8000f : alt + 2.2f * R;
-        RenderSettings.fogDensity = baseFogDensity * Mathf.Clamp01(700f / alt);
+        // ground haze near the map only: in space the fog laid a grey veil over the whole globe
+        RenderSettings.fogDensity = baseFogDensity * Mathf.Clamp01(700f / alt) * (1f - space);
         if (skyMat != null && skyMat.HasProperty("_Exposure")) skyMat.SetFloat("_Exposure", skyExposure * (1f - space));
         cam.clearFlags = space > 0.98f ? CameraClearFlags.SolidColor : CameraClearFlags.Skybox;
         cam.backgroundColor = new Color(0.004f, 0.006f, 0.012f);

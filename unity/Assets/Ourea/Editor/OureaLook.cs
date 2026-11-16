@@ -387,8 +387,8 @@ public static class OureaLook
     static GlobeJourney AddGlobe(OureaViewer app, float sizeX, float sizeZ)
     {
         var metaPath = Path.Combine(Handoff, "globe", "globe.json");
-        var earth = ImportImage("globe", "earth.jpg", 4096);
-        var context = ImportImage("globe", "context.jpg", 2048);
+        var earth = ImportImage("globe", "earth.jpg", 4096, true);
+        var context = ImportImage("globe", "context.jpg", 2048, true);
         if (!File.Exists(metaPath) || earth == null) { Debug.LogWarning("Ourea: no handoff/globe (run pipeline/make_globe.py); no globe."); return null; }
         var gm = JsonUtility.FromJson<GlobeMeta>(File.ReadAllText(metaPath));
         var j = new GameObject("Globe").AddComponent<GlobeJourney>();
@@ -406,7 +406,7 @@ public static class OureaLook
         j.contextMat.renderQueue = j.globeMat.shader.renderQueue + 1;   // after the Earth, so a faded ring never hides it
         SaveAsset(j.contextMat, GenDir + "/Context.mat");
         j.groundY = OureaSceneBuilder.EdgeY;
-        var near = ImportImage("globe", "near.jpg", 2048);
+        var near = ImportImage("globe", "near.jpg", 2048, true);
         if (near != null && gm.near_bounds_deg != null && gm.near_bounds_deg.Length == 4)
         {
             j.nearTex = near;
@@ -428,7 +428,9 @@ public static class OureaLook
         return j;
     }
 
-    static Texture2D ImportImage(string folder, string file, int maxSize)
+    // sharp: the globe's imagery, the first thing people see: no crunch (it smears detail) and a
+    // slightly finer mip so the disk stays crisp on high-DPI screens
+    static Texture2D ImportImage(string folder, string file, int maxSize, bool sharp = false)
     {
         string src = Path.Combine(Handoff, folder, file);
         if (!File.Exists(src) || new FileInfo(src).Length < 1024) return null;
@@ -442,8 +444,9 @@ public static class OureaLook
         imp.mipmapEnabled = true;
         imp.anisoLevel = 8;
         imp.textureCompression = TextureImporterCompression.Compressed;
-        imp.crunchedCompression = true;
-        imp.compressionQuality = 70;
+        imp.crunchedCompression = !sharp;
+        imp.compressionQuality = sharp ? 100 : 70;
+        if (sharp) imp.mipMapBias = -0.5f;
         imp.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Texture2D>(dst);
     }
